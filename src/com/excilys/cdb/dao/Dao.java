@@ -1,8 +1,9 @@
 package com.excilys.cdb.dao;
 
 import java.sql.*;
+import com.excilys.cdb.model.Model;
 
-public abstract class Dao<T> {
+public abstract class Dao<T extends Model> {
 	protected Connection conn;
 	
 	public Dao(Connection c) {

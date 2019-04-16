@@ -1,9 +1,9 @@
-package com.excilys.cdb.model;
+package com.excilys.cdb.dto;
 
-public class Company extends Model{
+public class CompanyDto extends Dto {
 	private String name;
 	
-	public Company(int id, String name) {
+	public CompanyDto(String id, String name) {
 		super(id);
 		this.name = name;
 	}
@@ -14,5 +14,5 @@ public class Company extends Model{
 
 	public void setName(String name) {
 		this.name = name;
-	}	
+	}
 }

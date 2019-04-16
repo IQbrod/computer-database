@@ -52,10 +52,9 @@ public class ComputerDao extends Dao<Computer>{
 	@Override
 	public Computer read(int id) {
 		try {
-			ResultSet r = this.conn.createStatement().executeQuery("SELECT * FROM computer WHERE id = "+id);
+			ResultSet r = this.conn.createStatement().executeQuery("SELECT computer.name as name, introduced, discontinued, company.name as company_name FROM computer INNER JOIN company ON computer.company_id = company.id WHERE computer.id = "+id);
 			if(r.first()) {
-				// TODO: Change Company id
-				Computer c = new Computer(id,r.getString("name"),r.getDate("introduced"),r.getDate("discontinued"), r.getInt("company_id"));
+				Computer c = new Computer(id,r.getString("name"),r.getDate("introduced"),r.getDate("discontinued"), r.getString("company_name"));
 				return c;
 			} else {
 				return null;
