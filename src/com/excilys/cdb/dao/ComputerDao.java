@@ -4,6 +4,7 @@ import java.sql.*;
 import com.excilys.cdb.model.*;
 
 // TODO: Vérifier le passage des dates (insert/update)
+// TODO: Throw les exceptions jusqu'au controller
 
 public class ComputerDao extends Dao<Computer>{
 
