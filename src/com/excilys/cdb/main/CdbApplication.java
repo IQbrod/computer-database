@@ -11,10 +11,12 @@ public class CdbApplication {
 			Class.forName("com.mysql.cj.jdbc.Driver");  
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/computer-database-db?serverTimezone=UTC","admincdb","qwerty1234");
 			
+			Computer c = new Computer(7500,"OrdiTest",null,null,3);
 			ComputerDao dao = new ComputerDao(con);
-			Computer c = dao.read(8);
+			dao.create(c);
+			Computer d = dao.read(7500);
 			if (c != null) {
-				System.out.println(c.getName());
+				System.out.println(d.getName());
 			}
 		}catch(Exception e){ System.out.println(e);}  
 		}  

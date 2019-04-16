@@ -8,9 +8,9 @@ public class Computer {
 	private Date dateIntro;
 	private Date dateDisc;
 	// TODO: SWAP TO COMPANY
-	private String manufacturer;
+	private int manufacturer;
 	
-	public Computer(int id, String name, Date dateIntro, Date dateDisc, String manufacturer) {
+	public Computer(int id, String name, Date dateIntro, Date dateDisc, int manufacturer) {
 		this.setId(id);
 		this.setName(name);
 		this.setDateIntro(dateIntro);
@@ -50,11 +50,11 @@ public class Computer {
 		this.dateDisc = dateDisc;
 	}
 
-	public String getManufacturer() {
+	public int getManufacturer() {
 		return manufacturer;
 	}
 
-	public void setManufacturer(String manufacturer) {
+	public void setManufacturer(int manufacturer) {
 		this.manufacturer = manufacturer;
 	}
 	

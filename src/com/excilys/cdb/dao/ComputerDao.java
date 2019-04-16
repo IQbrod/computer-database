@@ -11,6 +11,11 @@ public class ComputerDao extends Dao<Computer>{
 
 	@Override
 	public boolean create(Computer obj) {
+		try {
+			this.conn.createStatement().executeUpdate("INSERT INTO computer VALUES ("+ obj.getId() +", '"+ obj.getName() + "', "+ obj.getDateIntro() + ", "+ obj.getDateDisc() + ", "+ obj.getManufacturer() + ");");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
@@ -29,7 +34,8 @@ public class ComputerDao extends Dao<Computer>{
 		try {
 			ResultSet r = this.conn.createStatement().executeQuery("SELECT * FROM computer WHERE id = "+id);
 			if(r.first()) {
-				Computer c = new Computer(id,r.getString("name"),null,null,null);
+				// TODO: Change Company id
+				Computer c = new Computer(id,r.getString("name"),r.getDate("introduced"),r.getDate("discontinued"), -1);
 				return c;
 			} else {
 				return null;
