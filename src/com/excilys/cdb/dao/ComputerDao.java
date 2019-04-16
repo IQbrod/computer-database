@@ -27,7 +27,7 @@ public class ComputerDao extends Dao<Computer>{
 	@Override
 	public Computer read(int id) {
 		try {
-			ResultSet r = this.conn.createStatement().executeQuery("SELECT * FROM Computer WHERE id = "+id);
+			ResultSet r = this.conn.createStatement().executeQuery("SELECT * FROM computer WHERE id = "+id);
 			if(r.first()) {
 				Computer c = new Computer(id,r.getString("name"),null,null,null);
 				return c;
