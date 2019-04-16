@@ -3,6 +3,8 @@ package com.excilys.cdb.dao;
 import java.sql.*;
 import com.excilys.cdb.model.*;
 
+// TODO: Vérifier le passage des dates (insert/update)
+
 public class ComputerDao extends Dao<Computer>{
 
 	public ComputerDao(Connection c) {
@@ -33,6 +35,16 @@ public class ComputerDao extends Dao<Computer>{
 
 	@Override
 	public boolean delete(Computer obj) {
+		return this.deleteById(obj.getId());
+	}
+	
+	public boolean deleteById(int id) {
+		try {
+			int nbRow = this.conn.createStatement().executeUpdate("DELETE FROM computer WHERE id="+ id +";");
+			return nbRow == 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 

@@ -12,12 +12,11 @@ public class CdbApplication {
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/computer-database-db?serverTimezone=UTC","admincdb","qwerty1234");
 			ComputerDao dao = new ComputerDao(con);
 			
-			Computer c = new Computer(7500,"OrdiNateur",null,null,4);
+			dao.deleteById(7500);
 			
-			if (dao.update(c)) {
-				System.out.println(dao.read(7500).getName());
+			if (dao.read(7500) == null) {
+				System.out.println("OrdiNateur supprimé :)");
 			}
 		}catch(Exception e){ System.out.println(e);}  
-		}  
-
+	}
 }
