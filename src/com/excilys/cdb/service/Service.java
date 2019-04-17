@@ -10,7 +10,7 @@ public abstract class Service<T extends Dto, U extends Model> {
 	protected Mapper<T, U> mapper;
 	protected Dao<U> dao;
 	
-	public Service(Mapper<T, U> m, Dao<U> d) {
+	protected Service(Mapper<T, U> m, Dao<U> d) {
 		this.mapper = m;
 		this.dao = d;
 	}

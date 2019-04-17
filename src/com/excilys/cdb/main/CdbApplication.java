@@ -7,8 +7,8 @@ public class CdbApplication {
 
 	public static void main(String args[]){  
 		try{  			
-			ComputerService s = new ComputerService();
-			CompanyService cs = new CompanyService();
+			ComputerService s = ComputerService.getInstance();
+			CompanyService cs = CompanyService.getInstance();
 			
 			
 			ComputerDto c = new ComputerDto("7500","OrdiNateur","2018-03-05 10:12:06",null,"750");

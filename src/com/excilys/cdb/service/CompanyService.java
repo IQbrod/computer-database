@@ -6,8 +6,13 @@ import com.excilys.cdb.mapper.*;
 import com.excilys.cdb.model.Company;
 
 public class CompanyService extends Service<CompanyDto, Company>{
+	private static CompanyService instance = new CompanyService(); 
 	
-	public CompanyService() {
+	private CompanyService() {
 		super(new CompanyMapper(), new CompanyDao());
+	}
+	
+	public static CompanyService getInstance() {
+		return instance;
 	}
 }

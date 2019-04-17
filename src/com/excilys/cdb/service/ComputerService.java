@@ -6,8 +6,13 @@ import com.excilys.cdb.mapper.*;
 import com.excilys.cdb.model.Computer;
 
 public class ComputerService extends Service<ComputerDto, Computer>{
+	private static ComputerService instance = new ComputerService();
 	
-	public ComputerService() {
+	private ComputerService() {
 		super(new ComputerMapper(), new ComputerDao());
+	}
+	
+	public static ComputerService getInstance() {
+		return instance;
 	}
 }
