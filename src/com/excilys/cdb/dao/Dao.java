@@ -1,14 +1,13 @@
 package com.excilys.cdb.dao;
 
-import java.sql.*;
 import com.excilys.cdb.model.Model;
 
 public abstract class Dao<T extends Model> {
-	protected Connection conn;
+	protected final String DBACCESS = "jdbc:mysql://localhost:3306/computer-database-db?serverTimezone=UTC";
+	protected final String DBUSER = "admincdb";
+	protected final String DBPASS = "qwerty1234";
 	
-	public Dao(Connection c) {
-		this.conn = c;
-	}
+	public Dao() {}
 	
 	public abstract boolean create(T obj);
 	public abstract boolean update(T obj);

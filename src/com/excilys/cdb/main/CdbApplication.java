@@ -1,21 +1,14 @@
 package com.excilys.cdb.main;
 
-import java.sql.*;
-import com.excilys.cdb.dao.*;
 import com.excilys.cdb.dto.*;
 import com.excilys.cdb.service.*;
 
 public class CdbApplication {
 
 	public static void main(String args[]){  
-		try{  
-			Class.forName("com.mysql.cj.jdbc.Driver");  
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC","admincdb","qwerty1234");
-			
-			ComputerDao dao = new ComputerDao(con);
-			ComputerService s = new ComputerService(dao);
-			CompanyDao cdao = new CompanyDao(con);
-			CompanyService cs = new CompanyService(cdao);
+		try{  			
+			ComputerService s = new ComputerService();
+			CompanyService cs = new CompanyService();
 			
 			
 			ComputerDto c = new ComputerDto("7500","OrdiNateur","2018-03-05 10:12:06",null,"750");

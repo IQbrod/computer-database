@@ -1,7 +1,5 @@
 package com.excilys.cdb.service;
 
-import java.util.List;
-
 import com.excilys.cdb.dao.Dao;
 import com.excilys.cdb.dto.Dto;
 import com.excilys.cdb.mapper.Mapper;
@@ -33,5 +31,5 @@ public abstract class Service<T extends Dto, U extends Model> {
 		return this.mapper.modelToDto(this.dao.read(this.mapper.idToInt(id)));
 	};
 	
-	public abstract List<T> listAllElements();
+	//public abstract List<T> listAllElements();
 }
