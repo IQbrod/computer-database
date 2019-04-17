@@ -4,6 +4,7 @@ import java.sql.*;
 import com.excilys.cdb.model.*;
 
 // TODO: Throw les exceptions jusqu'au controller
+// TODO: Check les id à 0
 
 public class ComputerDao extends Dao<Computer>{
 

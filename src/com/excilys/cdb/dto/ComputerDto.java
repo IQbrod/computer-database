@@ -53,6 +53,6 @@ public class ComputerDto extends Dto {
 	
 	@Override
 	public String toString() {
-		return "Computer ["+this.getId()+"] " + this.getName() + " " + this.getIntro() + " " + this.getDiscon() + " " + this.getComp();
+		return "Computer ["+this.getId()+"] " + this.getName() + " (" + this.getIntro() + ") (" + this.getDiscon() + ") " + this.getComp();
 	}
 }

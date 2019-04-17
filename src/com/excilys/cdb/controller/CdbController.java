@@ -1,8 +1,11 @@
 package com.excilys.cdb.controller;
 
+// TODO: Verifier les dates avant le cast
+
+import java.util.Arrays;
+
 import com.excilys.cdb.dto.*;
 import com.excilys.cdb.exception.*;
-import com.excilys.cdb.model.*;
 import com.excilys.cdb.service.*;
 
 public class CdbController {
@@ -25,6 +28,7 @@ public class CdbController {
 				break;
 			case "update":
 			case "u":
+				this.update();
 				break;
 			case "delete":
 			case "d":
@@ -42,7 +46,7 @@ public class CdbController {
 		System.out.println("Please use custom format for dates: yyyy-MM-dd/HH:mm:ss\n");
 		System.out.println("create|update company <id> <new_name>");
 		System.out.println("create computer <id> <name> <intro | _> <disc | _> <company_id | _>");
-		System.out.println("update computer <id> <[-n:new_name] [-i:new_intro] [-d:new_disc] [-u:new_cid]>");
+		System.out.println("update computer <id> <[-n:new_name] [-i:new_intro] [-d:new_disc] [-c:new_cid]>");
 		System.out.println("read|delete <table> <id>");
 		System.out.println("help");
 	}
@@ -79,7 +83,7 @@ public class CdbController {
 				if (splitStr[1].toLowerCase().equals("computer")) {
 					throw new MissingArgumentException(msgErr,"disc");
 				} else if (splitStr[1].toLowerCase().equals("company")) {
-					throw new TooManyArgumentsException(splitStr[5]);
+					throw new TooManyArgumentsException(splitStr[4]);
 				} else {
 					throw new InvalidTableException(splitStr[1]);
 				}
@@ -87,7 +91,7 @@ public class CdbController {
 				if (splitStr[1].toLowerCase().equals("computer")) {
 					throw new MissingArgumentException(msgErr,"company_id");
 				} else if (splitStr[1].toLowerCase().equals("company")) {
-					throw new TooManyArgumentsException(splitStr[5]);
+					throw new TooManyArgumentsException(splitStr[4]);
 				} else {
 					throw new InvalidTableException(splitStr[1]);
 				}
@@ -160,6 +164,72 @@ public class CdbController {
 				break;
 			default:
 				throw new TooManyArgumentsException(splitStr[3]);
+		}
+	}
+	
+	private void updateTreatOption(ComputerDto c, String s) throws Exception {
+		if (s.charAt(0) != '-' || s.charAt(2) != ':' || s.length() == 3) {
+			throw new InvalidComputerOptionException(s);
+		} else {
+			// TODO: Passer par ENUM
+			// Switch sur l'initiale de l'option
+			switch(s.charAt(1)) {
+				case 'n':
+					c.setName(s.substring(3));
+					break;
+				case 'i':
+					c.setIntro(s.substring(3)); //TODO: CAST
+					break;
+				case 'd':
+					c.setDiscon(s.substring(3)); //TODO: CAST
+					break;
+				case 'u':
+					c.setComp(s.substring(3));
+					break;
+				default:
+					throw new InvalidComputerOptionException(s);
+			}
+		}
+	}
+	
+	private void update() throws Exception {
+		String msgErr = "";
+		for (String s : splitStr) {
+			msgErr += s+" ";
+		}
+		switch (splitStr.length) {
+		case 1:
+			throw new MissingArgumentException(msgErr,"table");
+		case 2:
+			throw new MissingArgumentException(msgErr,"id");
+		case 3:
+			if (splitStr[1].toLowerCase().equals("computer")) {
+				throw new MissingArgumentException(msgErr, "option(s)");
+			} else if (splitStr[1].toLowerCase().equals("company")) {
+				throw new MissingArgumentException(msgErr, "new_name");
+			} else {
+				throw new InvalidTableException(splitStr[1]);
+			}
+		default:
+			if (splitStr[1].toLowerCase().equals("computer")) {
+				ComputerDto c = new ComputerDto(splitStr[1]);
+				// Pour chaque option passée
+				for (String s : Arrays.copyOfRange(splitStr, 3, splitStr.length)) {
+					this.updateTreatOption(c,s);
+				}
+			} else if (splitStr[1].toLowerCase().equals("company")) {
+				if(splitStr.length == 4) {
+					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
+					if(CompanyService.getInstance().update(c)) {
+						System.out.println("Update "+c.toString());
+					}
+					return;
+				} else {
+					throw new TooManyArgumentsException(splitStr[4]);
+				}
+			} else {
+				throw new InvalidTableException(splitStr[1]);
+			}
 		}
 	}
 	

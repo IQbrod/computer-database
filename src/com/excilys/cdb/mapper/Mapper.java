@@ -11,6 +11,6 @@ public abstract class Mapper<T extends Dto, U extends Model> {
 	public abstract T modelToDto (U modelObject);
 	
 	public int idToInt(String id) {
-		return Integer.parseInt(id);
+		return (Integer.parseInt(id) <= 0) ? 0 : Integer.parseInt(id);
 	}
 }
