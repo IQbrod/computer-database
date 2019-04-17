@@ -1,42 +1,20 @@
 package com.excilys.cdb.main;
 
+import com.excilys.cdb.controller.CdbController;
 import com.excilys.cdb.dto.*;
+import com.excilys.cdb.exception.UnknownCommandException;
 import com.excilys.cdb.service.*;
 
 public class CdbApplication {
 
 	public static void main(String args[]){  
-		try{  			
-			ComputerService s = ComputerService.getInstance();
-			CompanyService cs = CompanyService.getInstance();
-			
-			
-			ComputerDto c = new ComputerDto("7500","OrdiNateur","2018-03-05 10:12:06",null,"750");
-			CompanyDto d = new CompanyDto("750","EntrePrise");
-			
-			if(cs.create(d)) {
-				System.out.println(cs.read("750").getName());
-			}
-			if(s.create(c)) {
-				System.out.println(s.read("7500").getName());
-			}
-			
-			d.setName("CompAny");
-			if(cs.update(d)) {
-				System.out.println(cs.read("750").getName());
-			}
-			c.setName("CompUter");c.setDiscon("2018-09-12 14:27:00");
-			if(s.update(c)) {
-				System.out.println(s.read("7500").getName());
-			}
-			
-			if(s.delete(c) && cs.delete(d)) {
-				System.out.println("Suppression OK");
-			}
-			
-			
-		} catch(Exception e) {
+		CdbController c = new CdbController();
+		try {
+			c.treatMessage("C computer 7500 OrdiNateur 2017-10-27/14:26:19 _ 5");
+			c.treatMessage("D computer 7500");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+			
 	}
 }

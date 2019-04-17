@@ -32,8 +32,8 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 			return new ComputerDto(
 				Integer.toString(modelObject.getId()),
 				modelObject.getName(),
-				(modelObject.getDateIntro() == null) ? "" : modelObject.getDateIntro().toString(),
-				(modelObject.getDateDisc() == null) ? "" : modelObject.getDateDisc().toString(),
+				(modelObject.getDateIntro() == null) ? "_" : modelObject.getDateIntro().toString(),
+				(modelObject.getDateDisc() == null) ? "_" : modelObject.getDateDisc().toString(),
 				(modelObject.getManufacturer() == 0) ? "0" : Integer.toString(modelObject.getManufacturer())
 			);
 		}

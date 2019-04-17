@@ -19,7 +19,12 @@ public class ComputerDao extends Dao<Computer>{
 			p.setString(2, obj.getName());
 			p.setTimestamp(3, obj.getDateIntro());
 			p.setTimestamp(4, obj.getDateDisc());
-			p.setInt(5, obj.getManufacturer());
+			// Help: https://stackoverflow.com/questions/14514589/inserting-null-to-an-integer-column-using-jdbc
+			if (obj.getManufacturer() == 0) {
+				p.setNull(5, java.sql.Types.INTEGER);
+			} else {
+				p.setInt(5, obj.getManufacturer());
+			}
 			
 			int nbRow = p.executeUpdate();
 			return nbRow == 1;

@@ -14,4 +14,7 @@ public abstract class Dto {
 	public void setId(String id) {
 		this.id = id;
 	}
+	
+	@Override
+	public abstract String toString();
 }

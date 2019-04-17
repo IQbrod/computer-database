@@ -6,6 +6,11 @@ public class ComputerDto extends Dto {
 	private String discon;
 	private String comp;
 	
+	public ComputerDto(String id) {
+		// Shall match mapper
+		this(id,"",null,null,"0");
+	}
+	
 	public ComputerDto(String id, String name, String i, String d, String c) {
 		super(id);
 		this.setName(name);
@@ -44,5 +49,10 @@ public class ComputerDto extends Dto {
 
 	public void setComp(String comp_name) {
 		this.comp = comp_name;
+	}
+	
+	@Override
+	public String toString() {
+		return "Computer ["+this.getId()+"] " + this.getName() + " " + this.getIntro() + " " + this.getDiscon() + " " + this.getComp();
 	}
 }
