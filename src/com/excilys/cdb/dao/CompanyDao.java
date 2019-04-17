@@ -12,7 +12,11 @@ public class CompanyDao extends Dao<Company>{
 	@Override
 	public boolean create(Company obj) {
 		try {
-			int nbRow = this.conn.createStatement().executeUpdate("INSERT INTO company VALUES ("+ obj.getId() +", '"+ obj.getName() +"');");
+			PreparedStatement p = this.conn.prepareStatement("INSERT INTO company VALUES (?,?);");
+			p.setInt(1,obj.getId());
+			p.setString(2, obj.getName());
+			
+			int nbRow = p.executeUpdate();
 			return nbRow == 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -23,7 +27,11 @@ public class CompanyDao extends Dao<Company>{
 	@Override
 	public boolean update(Company obj) {
 		try {
-			int nbRow = this.conn.createStatement().executeUpdate("UPDATE company SET name='"+ obj.getName()+"' WHERE id="+ obj.getId() +";");
+			PreparedStatement p = this.conn.prepareStatement("UPDATE company SET name=? WHERE id=?;");
+			p.setString(1, obj.getName());
+			p.setInt(2, obj.getId());
+			
+			int nbRow = p.executeUpdate();
 			return nbRow == 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -38,7 +46,10 @@ public class CompanyDao extends Dao<Company>{
 	
 	public boolean deleteById(int id) {
 		try {
-			int nbRow = this.conn.createStatement().executeUpdate("DELETE FROM company WHERE id="+ id +";");
+			PreparedStatement p = this.conn.prepareStatement("DELETE FROM company WHERE id=?;");
+			p.setInt(1, id);
+			
+			int nbRow = p.executeUpdate();
 			return nbRow == 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -49,7 +60,10 @@ public class CompanyDao extends Dao<Company>{
 	@Override
 	public Company read(int id) {
 		try {
-			ResultSet r = this.conn.createStatement().executeQuery("SELECT * FROM company WHERE id="+id);
+			PreparedStatement p = this.conn.prepareStatement("SELECT * FROM company WHERE id=?;");
+			p.setInt(1, id);
+			
+			ResultSet r = p.executeQuery();
 			if(r.first()) {
 				Company c = new Company(id,r.getString("name"));
 				return c;

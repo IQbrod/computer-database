@@ -4,11 +4,11 @@ import java.sql.*;
 
 public class Computer extends Model {
 	private String name;
-	private Date dateIntro;
-	private Date dateDisc;
-	private String manufacturer;
+	private Timestamp dateIntro;
+	private Timestamp dateDisc;
+	private int manufacturer;
 	
-	public Computer(int id, String name, Date dateIntro, Date dateDisc, String manufacturer) {
+	public Computer(int id, String name, Timestamp dateIntro, Timestamp dateDisc, int manufacturer) {
 		super(id);
 		this.setName(name);
 		this.setDateIntro(dateIntro);
@@ -24,27 +24,27 @@ public class Computer extends Model {
 		this.name = name;
 	}
 
-	public Date getDateIntro() {
+	public Timestamp getDateIntro() {
 		return dateIntro;
 	}
 
-	public void setDateIntro(Date dateIntro) {
+	public void setDateIntro(Timestamp dateIntro) {
 		this.dateIntro = dateIntro;
 	}
 
-	public Date getDateDisc() {
+	public Timestamp getDateDisc() {
 		return dateDisc;
 	}
 
-	public void setDateDisc(Date dateDisc) {
+	public void setDateDisc(Timestamp dateDisc) {
 		this.dateDisc = dateDisc;
 	}
 
-	public String getManufacturer() {
+	public int getManufacturer() {
 		return manufacturer;
 	}
 
-	public void setManufacturer(String manufacturer) {
+	public void setManufacturer(int manufacturer) {
 		this.manufacturer = manufacturer;
 	}
 	

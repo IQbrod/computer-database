@@ -15,7 +15,14 @@ public class ComputerDao extends Dao<Computer>{
 	@Override
 	public boolean create(Computer obj) {
 		try {
-			int nbRow = this.conn.createStatement().executeUpdate("INSERT INTO computer VALUES ("+ obj.getId() +", '"+ obj.getName() + "', "+ obj.getDateIntro() + ", "+ obj.getDateDisc() + ", "+ obj.getManufacturer() + ");");
+			PreparedStatement p = this.conn.prepareStatement("INSERT INTO computer VALUES (?,?,?,?,?);");
+			p.setInt(1,obj.getId());
+			p.setString(2, obj.getName());
+			p.setTimestamp(3, obj.getDateIntro());
+			p.setTimestamp(4, obj.getDateDisc());
+			p.setInt(5, obj.getManufacturer());
+			
+			int nbRow = p.executeUpdate();
 			return nbRow == 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -26,7 +33,14 @@ public class ComputerDao extends Dao<Computer>{
 	@Override
 	public boolean update(Computer obj) {
 		try {
-			int nbRow = this.conn.createStatement().executeUpdate("UPDATE computer SET name='"+ obj.getName()+"', introduced="+ obj.getDateIntro() +", discontinued="+ obj.getDateDisc() +", company_id="+ obj.getManufacturer() +" WHERE id="+ obj.getId() +";");
+			PreparedStatement p = this.conn.prepareStatement("UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;");
+			p.setString(1, obj.getName());
+			p.setTimestamp(2, obj.getDateIntro());
+			p.setTimestamp(3, obj.getDateDisc());
+			p.setInt(4, obj.getManufacturer());
+			p.setInt(5,obj.getId());
+			
+			int nbRow = p.executeUpdate();
 			return nbRow == 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -41,7 +55,10 @@ public class ComputerDao extends Dao<Computer>{
 	
 	public boolean deleteById(int id) {
 		try {
-			int nbRow = this.conn.createStatement().executeUpdate("DELETE FROM computer WHERE id="+ id +";");
+			PreparedStatement p = this.conn.prepareStatement("DELETE FROM computer WHERE id=?;");
+			p.setInt(1, id);
+			
+			int nbRow = p.executeUpdate();
 			return nbRow == 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -52,9 +69,12 @@ public class ComputerDao extends Dao<Computer>{
 	@Override
 	public Computer read(int id) {
 		try {
-			ResultSet r = this.conn.createStatement().executeQuery("SELECT computer.name as name, introduced, discontinued, company.name as company_name FROM computer INNER JOIN company ON computer.company_id = company.id WHERE computer.id = "+id);
+			PreparedStatement p = this.conn.prepareStatement("SELECT * FROM computer WHERE id=?;");
+			p.setInt(1, id);
+			
+			ResultSet r = p.executeQuery();
 			if(r.first()) {
-				Computer c = new Computer(id,r.getString("name"),r.getDate("introduced"),r.getDate("discontinued"), r.getString("company_name"));
+				Computer c = new Computer(id,r.getString("name"),r.getTimestamp("introduced"),r.getTimestamp("discontinued"), r.getInt("company_id"));
 				return c;
 			} else {
 				return null;
