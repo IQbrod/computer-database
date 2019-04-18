@@ -1,10 +1,9 @@
 package com.excilys.cdb.dao;
 
 import java.sql.*;
+import java.util.*;
 
-import com.excilys.cdb.exception.ForeignKeyViolationException;
-import com.excilys.cdb.exception.InvalidIdException;
-import com.excilys.cdb.exception.PrimaryKeyViolationException;
+import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 // TODO: Throw les exceptions jusqu'au controller
@@ -155,6 +154,50 @@ public class ComputerDao extends Dao<Computer>{
 			} else {
 				return null;
 			}
+		} catch (SQLException e) {
+			throw e;
+		}
+	}
+
+	@Override
+	public List<Computer> listAll() throws Exception {
+		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+			PreparedStatement p = conn.prepareStatement("SELECT * FROM computer;");
+			
+			ResultSet r = p.executeQuery();
+			List<Computer> lst = new ArrayList<Computer>();
+			while(r.next()) {
+				lst.add(new Computer(r.getInt("id"),r.getString("name"),r.getTimestamp("introduced"),r.getTimestamp("discontinued"), r.getInt("company_id")));
+			}
+			return lst;
+			
+		} catch (SQLException e) {
+			throw e;
+		}
+	}
+	
+	@Override
+	public List<Computer> list(int page, int size) throws Exception {
+		if (size <= 0) {
+			throw new InvalidPageSizeException(size);
+		}
+		if (page <= 0) {
+			throw new InvalidPageValueException(page);
+		}
+		int offset = (page-1)*size;
+		
+		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+			PreparedStatement p = conn.prepareStatement("SELECT * FROM computer LIMIT ?,?;");
+			p.setInt(1, offset);
+			p.setInt(2, size);
+			
+			ResultSet r = p.executeQuery();
+			List<Computer> lst = new ArrayList<Computer>();
+			while(r.next()) {
+				lst.add(new Computer(r.getInt("id"),r.getString("name"),r.getTimestamp("introduced"),r.getTimestamp("discontinued"), r.getInt("company_id")));
+			}
+			return lst;
+			
 		} catch (SQLException e) {
 			throw e;
 		}

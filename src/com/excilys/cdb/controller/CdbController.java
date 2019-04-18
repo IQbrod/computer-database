@@ -1,6 +1,7 @@
 package com.excilys.cdb.controller;
 
 import java.util.Arrays;
+import java.util.*;
 
 import com.excilys.cdb.dto.*;
 import com.excilys.cdb.exception.*;
@@ -39,6 +40,12 @@ public class CdbController {
 				return this.delete();
 			case "help":
 				return this.help();
+			case "listall":
+			case "la":
+				return this.listAll();
+			case "list":
+			case "l":
+				return this.list();
 			//No action
 			case "":
 				return "";
@@ -53,6 +60,8 @@ public class CdbController {
 			+ "create computer <id> <name> <intro | _> <disc | _> <company_id | _>\n"
 			+ "update computer <id> <[-n:new_name] [-i:new_intro] [-d:new_disc] [-c:new_cid]>\n"
 			+ "read|delete <table> <id>\n"
+			+ "listall <table>\n"
+			+ "list <table> <page> <size>\n"
 			+ "help";
 	}
 	
@@ -254,6 +263,58 @@ public class CdbController {
 			} else {
 				throw new InvalidTableException(splitStr[1]);
 			}
+		}
+	}
+	
+	private String listAll() throws Exception {
+		switch (splitStr.length) {
+			case 1:
+				throw new MissingArgumentException(2, splitStr.length);
+			case 2:
+				List<Dto> dtoList;
+				if (splitStr[1].toLowerCase().equals("computer")) {
+					dtoList = ComputerService.getInstance().listAllElements();
+				} else if (splitStr[1].toLowerCase().equals("company")) {
+					dtoList = CompanyService.getInstance().listAllElements();
+				} else {
+					throw new InvalidTableException(splitStr[1]);
+				}
+				
+				String ret = "";
+				for (Dto d : dtoList) {
+					ret += d.toString() + "\n";
+				}
+				return ret;
+			default:
+				throw new TooManyArgumentsException(splitStr[2]);
+		}
+	}
+	
+	private String list() throws Exception {
+		int sizeExpected = 4;
+		
+		switch (splitStr.length) {
+			case 1:
+			case 2:
+			case 3:
+				throw new MissingArgumentException(sizeExpected, splitStr.length);
+			case 4:
+				List<Dto> dtoList;
+				if (splitStr[1].toLowerCase().equals("computer")) {
+					dtoList = ComputerService.getInstance().list(splitStr[2], splitStr[3]);
+				} else if (splitStr[1].toLowerCase().equals("company")) {
+					dtoList = CompanyService.getInstance().list(splitStr[2], splitStr[3]);
+				} else {
+					throw new InvalidTableException(splitStr[1]);
+				}
+				
+				String ret = "";
+				for (Dto d : dtoList) {
+					ret += d.toString() + "\n";
+				}
+				return ret;
+			default:
+				throw new TooManyArgumentsException(splitStr[4]);
 		}
 	}
 	

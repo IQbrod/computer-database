@@ -1,6 +1,8 @@
 package com.excilys.cdb.dao;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
@@ -79,6 +81,51 @@ public class CompanyDao extends Dao<Company>{
 			} else {
 				return null;
 			}
+		} catch (SQLException e) {
+			throw e;
+		}
+	}
+	
+	@Override
+	public List<Company> listAll() throws Exception {
+		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+			PreparedStatement p = conn.prepareStatement("SELECT * FROM company;");
+			
+			ResultSet r = p.executeQuery();
+			List<Company> lst = new ArrayList<Company>();
+			while(r.next()) {
+				lst.add(new Company(r.getInt("id"),r.getString("name")));
+			}
+			return lst;
+			
+		} catch (SQLException e) {
+			throw e;
+		}
+	}
+	
+	@Override
+	public List<Company> list(int page, int size) throws Exception {
+		if (size <= 0) {
+			throw new InvalidPageSizeException(size);
+		}
+		if (page <= 0) {
+			throw new InvalidPageValueException(page);
+		}
+		int offset = (page-1)*size;
+		
+		//System.out.println(offset); Merci max pour l'absence de Company [21] :D
+		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+			PreparedStatement p = conn.prepareStatement("SELECT * FROM company LIMIT ?,?;");
+			p.setInt(1, offset);
+			p.setInt(2, size);
+			
+			ResultSet r = p.executeQuery();
+			List<Company> lst = new ArrayList<Company>();
+			while(r.next()) {
+				lst.add(new Company(r.getInt("id"),r.getString("name")));
+			}
+			return lst;
+			
 		} catch (SQLException e) {
 			throw e;
 		}
