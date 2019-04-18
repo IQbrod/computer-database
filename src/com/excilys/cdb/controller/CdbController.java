@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.*;
 
 import com.excilys.cdb.dto.*;
+import com.excilys.cdb.enums.CommandEnum;
+import com.excilys.cdb.enums.CreateOptionEnum;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.service.*;
 
@@ -25,30 +27,25 @@ public class CdbController {
 		// Parse message based on whitespace : Any amount might be placed beside and inbetween
 		this.splitStr = msg.trim().split("\\s+");
 		
-		switch(splitStr[0].toLowerCase()) {
-			case "c":
-			case "create":
+		CommandEnum cmd = CommandEnum.getCommandEnum(splitStr[0].toLowerCase());
+		switch(cmd) {
+			case Create:
 				return this.create();
-			case "r":
-			case "read":
+			case Read:
 				return this.read();
-			case "update":
-			case "u":
+			case Update:
 				return this.update();
-			case "delete":
-			case "d":
+			case Delete:
 				return this.delete();
-			case "help":
+			case Help:
 				return this.help();
-			case "listall":
-			case "la":
+			case ListAll:
 				return this.listAll();
-			case "list":
-			case "l":
+			case List:
 				return this.list();
-			//No action
-			case "":
+			case Empty:
 				return "";
+			case Unknown:
 			default:
 				throw new UnknownCommandException(splitStr[0]);
 		}
@@ -208,21 +205,21 @@ public class CdbController {
 		if (s.charAt(0) != '-' || s.charAt(2) != ':' || s.length() == 3) {
 			throw new InvalidComputerOptionException(s);
 		} else {
-			// TODO: Passer par ENUM
-			// Switch sur l'initiale de l'option
-			switch(s.charAt(1)) {
-				case 'n':
+			CreateOptionEnum opt = CreateOptionEnum.getCommandEnum(Character.toLowerCase(s.charAt(1)));
+			switch(opt) {
+				case Name:
 					c.setName(s.substring(3));
 					break;
-				case 'i':
+				case Introduction:
 					c.setIntro(this.castDate(s.substring(3)));
 					break;
-				case 'd':
+				case Discontinue:
 					c.setDiscon(this.castDate(s.substring(3)));
 					break;
-				case 'c':
+				case Company:
 					c.setComp(s.substring(3).contentEquals("_") ? "-1" : s.substring(3));
 					break;
+				case Unknown:
 				default:
 					throw new InvalidComputerOptionException(s);
 			}
