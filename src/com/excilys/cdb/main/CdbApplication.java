@@ -1,6 +1,6 @@
 package com.excilys.cdb.main;
 
-import userinterface.CdbUi;
+import com.excilys.cdb.userinterface.CdbUi;
 
 public class CdbApplication {
 

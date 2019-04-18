@@ -1,4 +1,4 @@
-package userinterface;
+package com.excilys.cdb.userinterface;
 
 import java.io.*;
 import java.util.Scanner;
@@ -6,9 +6,9 @@ import java.util.Scanner;
 import com.excilys.cdb.controller.CdbController;
 
 public class CdbUi {
-	private InputStream inputStream;
-	private PrintStream outputStream;
-	private PrintStream errorStream;
+	private InputStream in;
+	private PrintStream out;
+	private PrintStream err;
 	private Scanner sc;
 	private String cmd;
 	
@@ -17,28 +17,31 @@ public class CdbUi {
 	}
 	
 	public CdbUi(InputStream inStream, PrintStream outStream, PrintStream errStream) {
-		this.inputStream = inStream;
-		this.outputStream = outStream;
-		this.errorStream = errStream;
-		this.sc = new Scanner(this.inputStream);
+		this.in = inStream;
+		this.out = outStream;
+		this.err = errStream;
+		this.sc = new Scanner(this.in);
 		this.cmd = "";
 	}
 	
 	public void run() {
+		// Welcome
+		this.println(this.out,"Welcome\n(Try: help / quit)");
 		while (true) {
 			this.cmd = sc.nextLine();
 			switch (this.cmd) {
+				case "stop":
 				case "exit":
-					this.println(this.outputStream,"Bye !");
+					this.println(this.out,"Bye !");
 					return;
 				default:
 					try {
-						this.println(this.outputStream,CdbController.getInstance().treatMessage(cmd));
+						this.println(this.out,CdbController.getInstance().treatMessage(cmd));
 					} catch (Exception e) {
-						this.println(this.errorStream,e.getMessage());
+						this.println(this.err,e.getMessage());
 					}
 			}
-			this.outputStream.println();
+			this.out.println();
 		}
 	}
 	

@@ -6,6 +6,8 @@ import com.excilys.cdb.dto.*;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.service.*;
 
+// TODO: Sortir les display (passer les DTO)
+
 public class CdbController {
 	private String[] splitStr;
 	private final String dateFormat = "yyyy-MM-dd/HH:mm:ss";
@@ -37,6 +39,9 @@ public class CdbController {
 				return this.delete();
 			case "help":
 				return this.help();
+			//No action
+			case "":
+				return "";
 			default:
 				throw new UnknownCommandException(splitStr[0]);
 		}
@@ -67,33 +72,38 @@ public class CdbController {
 	}
 	
 	private String create() throws Exception {
-		String msgErr = "";
-		for (String s : splitStr) {
-			msgErr += s+" ";
-		}
+		int sizeComputerExpected = 7;
+		int sizeCompanyExpected = 4;
+		
 		switch (splitStr.length) {
 			case 1:
-				throw new MissingArgumentException(msgErr,"table");
+				// Requires at least <table>
+				throw new MissingArgumentException(2,splitStr.length);
 			case 2:
-				throw new MissingArgumentException(msgErr,"id");
 			case 3:
-				throw new MissingArgumentException(msgErr,"name");
+				if (splitStr[1].toLowerCase().equals("computer")) {
+					throw new MissingArgumentException(sizeComputerExpected,splitStr.length);
+				} else if (splitStr[1].toLowerCase().equals("company")) {
+					throw new MissingArgumentException(sizeCompanyExpected,splitStr.length);
+				} else {
+					throw new InvalidTableException(splitStr[1]);
+				}
 			case 4:
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					throw new MissingArgumentException(msgErr,"intro");
+					throw new MissingArgumentException(sizeComputerExpected,splitStr.length);
 				} else if (splitStr[1].toLowerCase().equals("company")) {
 					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
 					if(CompanyService.getInstance().create(c)) {
 						return "Create "+ c.toString();
 					} else {
-						return ""; //TODO
+						throw new FailedCreationException(); //Should never reach
 					}
 				} else {
 					throw new InvalidTableException(splitStr[1]);
 				}
 			case 5:
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					throw new MissingArgumentException(msgErr,"disc");
+					throw new MissingArgumentException(sizeComputerExpected,splitStr.length);
 				} else if (splitStr[1].toLowerCase().equals("company")) {
 					throw new TooManyArgumentsException(splitStr[4]);
 				} else {
@@ -101,41 +111,46 @@ public class CdbController {
 				}
 			case 6:
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					throw new MissingArgumentException(msgErr,"company_id");
+					throw new MissingArgumentException(sizeComputerExpected,splitStr.length);
 				} else if (splitStr[1].toLowerCase().equals("company")) {
 					throw new TooManyArgumentsException(splitStr[4]);
 				} else {
 					throw new InvalidTableException(splitStr[1]);
 				}
-			default:
 			case 7:
 				if (splitStr[1].toLowerCase().equals("computer")) {
 					ComputerDto c = new ComputerDto(splitStr[2],splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),(splitStr[6].contentEquals("_")) ? "0" : splitStr[6]);
 					if (ComputerService.getInstance().create(c)) {
 						return "Create "+c.toString();
 					} else {
-						return ""; //TODO
+						throw new FailedCreationException(); //Should never reach
 					}
 				} else if (splitStr[1].toLowerCase().equals("company")) {
 					throw new TooManyArgumentsException(splitStr[5]);
 				} else {
 					throw new InvalidTableException(splitStr[1]);
 				}
+			default:
+			case 8:
+				if (splitStr[1].toLowerCase().equals("computer")) {
+					throw new TooManyArgumentsException(splitStr[7]);
+				} else if (splitStr[1].toLowerCase().equals("company")) {
+					throw new TooManyArgumentsException(splitStr[5]);
+				} else {
+					throw new InvalidTableException(splitStr[1]);
+				}
+				
 		}
 	}
 	
 	private String read() throws Exception {
 		Dto c;
 		
-		String msgErr = "";
-		for (String s : splitStr) {
-			msgErr += s+" ";
-		}
+		int sizeExpected = 3;
 		switch (splitStr.length) {
 			case 1:
-				throw new MissingArgumentException(msgErr,"table");
 			case 2:
-				throw new MissingArgumentException(msgErr,"id");
+				throw new MissingArgumentException(sizeExpected,splitStr.length);
 			case 3:
 				// Load dto by id
 				if (splitStr[1].toLowerCase().equals("computer")) {
@@ -153,27 +168,24 @@ public class CdbController {
 	}
 	
 	private String delete() throws Exception {		
-		String msgErr = "";
-		for (String s : splitStr) {
-			msgErr += s+" ";
-		}
+		int sizeExpected = 3;
+		
 		switch (splitStr.length) {
 			case 1:
-				throw new MissingArgumentException(msgErr,"table");
 			case 2:
-				throw new MissingArgumentException(msgErr,"id");
+				throw new MissingArgumentException(sizeExpected,splitStr.length);
 			case 3:
 				if (splitStr[1].toLowerCase().equals("computer")) {
 					if(ComputerService.getInstance().delete(new ComputerDto(splitStr[2]))) {
-						return "Delete computer ["+splitStr[2]+"]";
+						return "Delete "+ splitStr[1] +" ["+splitStr[2]+"]";
 					} else {
-						return ""; //TODO
+						throw new IdNotFoundException(splitStr[1], splitStr[2]);
 					}
 				} else if (splitStr[1].toLowerCase().equals("company")) {
 					if(CompanyService.getInstance().delete(new CompanyDto(splitStr[2]))) {
-						return "Delete company ["+splitStr[2]+"]";
+						return "Delete "+ splitStr[1] +" ["+splitStr[2]+"]";
 					} else {
-						return ""; //TODO
+						throw new IdNotFoundException(splitStr[1], splitStr[2]);
 					}
 				} else {
 					throw new InvalidTableException(splitStr[1]);
@@ -194,10 +206,10 @@ public class CdbController {
 					c.setName(s.substring(3));
 					break;
 				case 'i':
-					c.setIntro(this.castDate(s.substring(3))); //TODO: CAST
+					c.setIntro(this.castDate(s.substring(3)));
 					break;
 				case 'd':
-					c.setDiscon(this.castDate(s.substring(3))); //TODO: CAST
+					c.setDiscon(this.castDate(s.substring(3)));
 					break;
 				case 'u':
 					c.setComp(s.substring(3));
@@ -209,23 +221,13 @@ public class CdbController {
 	}
 	
 	private String update() throws Exception {
-		String msgErr = "";
-		for (String s : splitStr) {
-			msgErr += s+" ";
-		}
+		int sizeExpected = 3;
+		
 		switch (splitStr.length) {
 		case 1:
-			throw new MissingArgumentException(msgErr,"table");
 		case 2:
-			throw new MissingArgumentException(msgErr,"id");
 		case 3:
-			if (splitStr[1].toLowerCase().equals("computer")) {
-				throw new MissingArgumentException(msgErr, "option(s)");
-			} else if (splitStr[1].toLowerCase().equals("company")) {
-				throw new MissingArgumentException(msgErr, "new_name");
-			} else {
-				throw new InvalidTableException(splitStr[1]);
-			}
+			throw new MissingArgumentException(sizeExpected,splitStr.length);
 		default:
 			if (splitStr[1].toLowerCase().equals("computer")) {
 				ComputerDto c = new ComputerDto(splitStr[1]);
@@ -236,7 +238,7 @@ public class CdbController {
 				if (ComputerService.getInstance().update(c)) {
 					return "Update " + c.toString();
 				} else {
-					return "";// TODO
+					throw new IdNotFoundException(splitStr[1], splitStr[2]);
 				}
 			} else if (splitStr[1].toLowerCase().equals("company")) {
 				if(splitStr.length == 4) {
@@ -244,7 +246,7 @@ public class CdbController {
 					if(CompanyService.getInstance().update(c)) {
 						return "Update "+c.toString();
 					} else {
-						return ""; //TODO
+						throw new IdNotFoundException(splitStr[1], splitStr[2]);
 					}
 				} else {
 					throw new TooManyArgumentsException(splitStr[4]);
