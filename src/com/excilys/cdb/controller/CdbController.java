@@ -1,7 +1,5 @@
 package com.excilys.cdb.controller;
 
-// TODO: Verifier les dates avant le cast
-
 import java.util.Arrays;
 
 import com.excilys.cdb.dto.*;
@@ -12,44 +10,45 @@ public class CdbController {
 	private String[] splitStr;
 	private final String dateFormat = "yyyy-MM-dd/HH:mm:ss";
 	
-	public CdbController() {}
+	private static CdbController instance = new CdbController();
 	
-	public void treatMessage(String msg) throws Exception {
+	private CdbController() {}
+	
+	public static CdbController getInstance() {
+		return instance;
+	}
+	
+	public String treatMessage(String msg) throws Exception {
 		// Parse message based on whitespace : Any amount might be placed beside and inbetween
 		this.splitStr = msg.trim().split("\\s+");
 		
 		switch(splitStr[0].toLowerCase()) {
 			case "c":
 			case "create":
-				this.create();
-				break;
+				return this.create();
 			case "r":
 			case "read":
-				this.read();
-				break;
+				return this.read();
 			case "update":
 			case "u":
-				this.update();
-				break;
+				return this.update();
 			case "delete":
 			case "d":
-				this.delete();
-				break;
+				return this.delete();
 			case "help":
-				this.displayHelp();
-				break;
+				return this.help();
 			default:
 				throw new UnknownCommandException(splitStr[0]);
 		}
 	}
 	
-	private void displayHelp() {
-		System.out.println("Please use custom format for dates: "+this.dateFormat+"\n");
-		System.out.println("create|update company <id> <new_name>");
-		System.out.println("create computer <id> <name> <intro | _> <disc | _> <company_id | _>");
-		System.out.println("update computer <id> <[-n:new_name] [-i:new_intro] [-d:new_disc] [-c:new_cid]>");
-		System.out.println("read|delete <table> <id>");
-		System.out.println("help");
+	private String help() {
+		return "Please use custom format for dates: "+this.dateFormat+"\n"
+			+ "create|update company <id> <new_name>\n"
+			+ "create computer <id> <name> <intro | _> <disc | _> <company_id | _>\n"
+			+ "update computer <id> <[-n:new_name] [-i:new_intro] [-d:new_disc] [-c:new_cid]>\n"
+			+ "read|delete <table> <id>\n"
+			+ "help";
 	}
 	
 	private String castDate(String s) throws InvalidDateFormatException {
@@ -67,7 +66,7 @@ public class CdbController {
 		}
 	}
 	
-	private void create() throws Exception {
+	private String create() throws Exception {
 		String msgErr = "";
 		for (String s : splitStr) {
 			msgErr += s+" ";
@@ -85,9 +84,10 @@ public class CdbController {
 				} else if (splitStr[1].toLowerCase().equals("company")) {
 					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
 					if(CompanyService.getInstance().create(c)) {
-						System.out.println("Create "+ c.toString());
-					};
-					break;
+						return "Create "+ c.toString();
+					} else {
+						return ""; //TODO
+					}
 				} else {
 					throw new InvalidTableException(splitStr[1]);
 				}
@@ -107,13 +107,15 @@ public class CdbController {
 				} else {
 					throw new InvalidTableException(splitStr[1]);
 				}
+			default:
 			case 7:
 				if (splitStr[1].toLowerCase().equals("computer")) {
 					ComputerDto c = new ComputerDto(splitStr[2],splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),(splitStr[6].contentEquals("_")) ? "0" : splitStr[6]);
 					if (ComputerService.getInstance().create(c)) {
-						System.out.println("Create "+c.toString());
+						return "Create "+c.toString();
+					} else {
+						return ""; //TODO
 					}
-					break;
 				} else if (splitStr[1].toLowerCase().equals("company")) {
 					throw new TooManyArgumentsException(splitStr[5]);
 				} else {
@@ -122,7 +124,7 @@ public class CdbController {
 		}
 	}
 	
-	private void read() throws Exception {
+	private String read() throws Exception {
 		Dto c;
 		
 		String msgErr = "";
@@ -144,14 +146,13 @@ public class CdbController {
 					throw new InvalidTableException(splitStr[1]);
 				}
 				// Display dto
-				System.out.println("Read " + c.toString());
-				break;
+				return "Read " + c.toString();
 			default:
 				throw new TooManyArgumentsException(splitStr[3]);
 		}
 	}
 	
-	private void delete() throws Exception {		
+	private String delete() throws Exception {		
 		String msgErr = "";
 		for (String s : splitStr) {
 			msgErr += s+" ";
@@ -164,16 +165,19 @@ public class CdbController {
 			case 3:
 				if (splitStr[1].toLowerCase().equals("computer")) {
 					if(ComputerService.getInstance().delete(new ComputerDto(splitStr[2]))) {
-						System.out.println("Delete computer ["+splitStr[2]+"]");
+						return "Delete computer ["+splitStr[2]+"]";
+					} else {
+						return ""; //TODO
 					}
 				} else if (splitStr[1].toLowerCase().equals("company")) {
 					if(CompanyService.getInstance().delete(new CompanyDto(splitStr[2]))) {
-						System.out.println("Delete company ["+splitStr[2]+"]");
+						return "Delete company ["+splitStr[2]+"]";
+					} else {
+						return ""; //TODO
 					}
 				} else {
 					throw new InvalidTableException(splitStr[1]);
 				}
-				break;
 			default:
 				throw new TooManyArgumentsException(splitStr[3]);
 		}
@@ -204,7 +208,7 @@ public class CdbController {
 		}
 	}
 	
-	private void update() throws Exception {
+	private String update() throws Exception {
 		String msgErr = "";
 		for (String s : splitStr) {
 			msgErr += s+" ";
@@ -229,13 +233,19 @@ public class CdbController {
 				for (String s : Arrays.copyOfRange(splitStr, 3, splitStr.length)) {
 					this.updateTreatOption(c,s);
 				}
+				if (ComputerService.getInstance().update(c)) {
+					return "Update " + c.toString();
+				} else {
+					return "";// TODO
+				}
 			} else if (splitStr[1].toLowerCase().equals("company")) {
 				if(splitStr.length == 4) {
 					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
 					if(CompanyService.getInstance().update(c)) {
-						System.out.println("Update "+c.toString());
+						return "Update "+c.toString();
+					} else {
+						return ""; //TODO
 					}
-					return;
 				} else {
 					throw new TooManyArgumentsException(splitStr[4]);
 				}
