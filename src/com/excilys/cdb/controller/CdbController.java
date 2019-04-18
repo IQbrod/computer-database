@@ -10,6 +10,7 @@ import com.excilys.cdb.service.*;
 
 public class CdbController {
 	private String[] splitStr;
+	private final String dateFormat = "yyyy-MM-dd/HH:mm:ss";
 	
 	public CdbController() {}
 	
@@ -43,7 +44,7 @@ public class CdbController {
 	}
 	
 	private void displayHelp() {
-		System.out.println("Please use custom format for dates: yyyy-MM-dd/HH:mm:ss\n");
+		System.out.println("Please use custom format for dates: "+this.dateFormat+"\n");
 		System.out.println("create|update company <id> <new_name>");
 		System.out.println("create computer <id> <name> <intro | _> <disc | _> <company_id | _>");
 		System.out.println("update computer <id> <[-n:new_name] [-i:new_intro] [-d:new_disc] [-c:new_cid]>");
@@ -51,8 +52,19 @@ public class CdbController {
 		System.out.println("help");
 	}
 	
-	private String castDate(String s) {
-		return (s.contentEquals("_")) ? null : s.replace("/", " ");
+	private String castDate(String s) throws InvalidDateFormatException {
+		if (s.length() == 19) {
+			// Check Date Format
+			if (s.charAt(4) == '-' && s.charAt(7) == '-' && s.charAt(10) == '/' && s.charAt(13) == ':' && s.charAt(16) == ':') {
+				return s.replace("/", " ");
+			} else {
+				throw new InvalidDateFormatException(this.dateFormat,s);
+			}
+		} else if (s.contentEquals("_")) {
+			return null;
+		} else {
+			throw new InvalidDateFormatException(this.dateFormat,s);
+		}
 	}
 	
 	private void create() throws Exception {
@@ -178,10 +190,10 @@ public class CdbController {
 					c.setName(s.substring(3));
 					break;
 				case 'i':
-					c.setIntro(s.substring(3)); //TODO: CAST
+					c.setIntro(this.castDate(s.substring(3))); //TODO: CAST
 					break;
 				case 'd':
-					c.setDiscon(s.substring(3)); //TODO: CAST
+					c.setDiscon(this.castDate(s.substring(3))); //TODO: CAST
 					break;
 				case 'u':
 					c.setComp(s.substring(3));

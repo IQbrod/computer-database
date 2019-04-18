@@ -15,19 +15,19 @@ public abstract class Service<T extends Dto, U extends Model> {
 		this.dao = d;
 	}
 	
-	public boolean create(T dtoObject) {
+	public boolean create(T dtoObject) throws Exception {
 		return this.dao.create(this.mapper.dtoToModel(dtoObject));
 	};
 	
-	public boolean update(T dtoObject) {
+	public boolean update(T dtoObject) throws Exception {
 		return this.dao.update(this.mapper.dtoToModel(dtoObject));
 	};
 	
-	public boolean delete(T dtoObject) {
+	public boolean delete(T dtoObject) throws Exception {
 		return this.dao.delete(this.mapper.dtoToModel(dtoObject));
 	};
 	
-	public T read(String id) {
+	public T read(String id) throws Exception {
 		return this.mapper.modelToDto(this.dao.read(this.mapper.idToInt(id)));
 	};
 	
