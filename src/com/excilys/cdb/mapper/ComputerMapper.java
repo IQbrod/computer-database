@@ -15,20 +15,23 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 		if (dtoObject == null) {
 			return null;
 		} else {
-			int id = this.idToInt(dtoObject.getId());
+			int id = Integer.parseInt(dtoObject.getId());
 			String name = dtoObject.getName();
 			Timestamp t1, t2;
 			t1 = this.castTimestamp(dtoObject.getIntro());
 			t2 = this.castTimestamp(dtoObject.getDiscon());
-			Computer c = new Computer(id,name,t1,t2,idToInt(dtoObject.getComp()));
-				return c;
+			int cid = Integer.parseInt(dtoObject.getComp());
+			
+			Computer c = new Computer(id,name,t1,t2,cid);
+			
+			return c;
 		}
 	}
 	
 	private Timestamp castTimestamp(String s) throws Exception {
 		try {
 			return (s == null) ? null : Timestamp.valueOf(s);
-		} catch (NumberFormatException e) {
+		} catch (Exception e) {
 			throw new InvalidDateValueException(s);
 		}
 	}

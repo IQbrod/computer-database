@@ -211,8 +211,8 @@ public class CdbController {
 				case 'd':
 					c.setDiscon(this.castDate(s.substring(3)));
 					break;
-				case 'u':
-					c.setComp(s.substring(3));
+				case 'c':
+					c.setComp(s.substring(3).contentEquals("_") ? "-1" : s.substring(3));
 					break;
 				default:
 					throw new InvalidComputerOptionException(s);
@@ -221,7 +221,7 @@ public class CdbController {
 	}
 	
 	private String update() throws Exception {
-		int sizeExpected = 3;
+		int sizeExpected = 4;
 		
 		switch (splitStr.length) {
 		case 1:
@@ -230,7 +230,7 @@ public class CdbController {
 			throw new MissingArgumentException(sizeExpected,splitStr.length);
 		default:
 			if (splitStr[1].toLowerCase().equals("computer")) {
-				ComputerDto c = new ComputerDto(splitStr[1]);
+				ComputerDto c = new ComputerDto(splitStr[2]);
 				// Pour chaque option passée
 				for (String s : Arrays.copyOfRange(splitStr, 3, splitStr.length)) {
 					this.updateTreatOption(c,s);

@@ -38,6 +38,7 @@ public class CdbUi {
 					try {
 						this.println(this.out,CdbController.getInstance().treatMessage(cmd));
 					} catch (Exception e) {
+						//e.printStackTrace();
 						this.println(this.err,e.getMessage());
 					}
 			}

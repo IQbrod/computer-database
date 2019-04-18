@@ -1,6 +1,8 @@
 package com.excilys.cdb.dao;
 
 import java.sql.*;
+
+import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 public class CompanyDao extends Dao<Company>{
@@ -10,7 +12,11 @@ public class CompanyDao extends Dao<Company>{
 	}
 
 	@Override
-	public boolean create(Company obj) {
+	public boolean create(Company obj) throws Exception{
+		if(obj.getId() <= 0) {
+			throw new InvalidIdException(obj.getId());
+		}
+		
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
 			PreparedStatement p = conn.prepareStatement("INSERT INTO company VALUES (?,?);");
 			p.setInt(1,obj.getId());
@@ -19,13 +25,12 @@ public class CompanyDao extends Dao<Company>{
 			int nbRow = p.executeUpdate();
 			return nbRow == 1;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new PrimaryKeyViolationException(obj.getId());
 		}
-		return false;
 	}
 
 	@Override
-	public boolean update(Company obj) {
+	public boolean update(Company obj) throws Exception {
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
 			PreparedStatement p = conn.prepareStatement("UPDATE company SET name=? WHERE id=?;");
 			p.setString(1, obj.getName());
@@ -34,17 +39,17 @@ public class CompanyDao extends Dao<Company>{
 			int nbRow = p.executeUpdate();
 			return nbRow == 1;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new PrimaryKeyViolationException(obj.getId());
 		}
-		return false;
 	}
 
 	@Override
-	public boolean delete(Company obj) {
+	public boolean delete(Company obj) throws SQLException{
 		return this.deleteById(obj.getId());
 	}
 	
-	public boolean deleteById(int id) {
+	@Override
+	public boolean deleteById(int id) throws SQLException {
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
 			PreparedStatement p = conn.prepareStatement("DELETE FROM company WHERE id=?;");
 			p.setInt(1, id);
@@ -52,13 +57,17 @@ public class CompanyDao extends Dao<Company>{
 			int nbRow = p.executeUpdate();
 			return nbRow == 1;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// Yet never seen
+			throw e;
 		}
-		return false;
 	}
 
 	@Override
-	public Company read(int id) {
+	public Company read(int id) throws Exception {
+		if(id <= 0) {
+			throw new InvalidIdException(id);
+		}
+		
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
 			PreparedStatement p = conn.prepareStatement("SELECT * FROM company WHERE id=?;");
 			p.setInt(1, id);
@@ -71,9 +80,8 @@ public class CompanyDao extends Dao<Company>{
 				return null;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw e;
 		}
-		return null;
 	}
 
 }

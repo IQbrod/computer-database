@@ -11,7 +11,7 @@ public class CompanyMapper extends Mapper<CompanyDto, Company>{
 			return null;
 		} else {
 			return new Company(
-				this.idToInt(dtoObject.getId()),
+				Integer.parseInt(dtoObject.getId()),
 				dtoObject.getName()
 			);
 		}

@@ -9,9 +9,10 @@ public abstract class Dao<T extends Model> {
 	
 	public Dao() {}
 	
-	public abstract boolean create(T obj);
-	public abstract boolean update(T obj);
-	public abstract boolean delete(T obj);
-	public abstract T read(int id);
+	public abstract boolean create(T obj) throws Exception;
+	public abstract boolean update(T obj) throws Exception;
+	public abstract boolean delete(T obj) throws Exception;
+	public abstract boolean deleteById(int i) throws Exception;
+	public abstract T read(int id) throws Exception;
 	
 }

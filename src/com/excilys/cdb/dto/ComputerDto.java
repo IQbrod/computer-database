@@ -53,6 +53,8 @@ public class ComputerDto extends Dto {
 	
 	@Override
 	public String toString() {
-		return "Computer ["+this.getId()+"] " + this.getName() + " (" + this.getIntro() + ") (" + this.getDiscon() + ") " + this.getComp();
+		return "Computer ["+this.getId()+"] " + this.getName() + " (" + this.getIntro() + ") (" + this.getDiscon() + ") "
+				// Force update with -c:_
+				+ ((this.getComp().contentEquals("-1")) ? "0" : this.getComp());
 	}
 }

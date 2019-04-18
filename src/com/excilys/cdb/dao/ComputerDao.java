@@ -1,10 +1,13 @@
 package com.excilys.cdb.dao;
 
 import java.sql.*;
+
+import com.excilys.cdb.exception.ForeignKeyViolationException;
+import com.excilys.cdb.exception.InvalidIdException;
+import com.excilys.cdb.exception.PrimaryKeyViolationException;
 import com.excilys.cdb.model.*;
 
 // TODO: Throw les exceptions jusqu'au controller
-// TODO: Check les id à 0
 
 public class ComputerDao extends Dao<Computer>{
 
@@ -13,7 +16,13 @@ public class ComputerDao extends Dao<Computer>{
 	}
 
 	@Override
-	public boolean create(Computer obj) {
+	public boolean create(Computer obj) throws Exception {
+		int nbRow = 0;
+		
+		if(obj.getId() <= 0) {
+			throw new InvalidIdException(obj.getId());
+		}
+		
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
 			PreparedStatement p = conn.prepareStatement("INSERT INTO computer VALUES (?,?,?,?,?);");
 			p.setInt(1,obj.getId());
@@ -21,36 +30,94 @@ public class ComputerDao extends Dao<Computer>{
 			p.setTimestamp(3, obj.getDateIntro());
 			p.setTimestamp(4, obj.getDateDisc());
 			// Help: https://stackoverflow.com/questions/14514589/inserting-null-to-an-integer-column-using-jdbc
-			if (obj.getManufacturer() == 0) {
-				p.setNull(5, java.sql.Types.INTEGER);
-			} else {
-				p.setInt(5, obj.getManufacturer());
-			}
+			p.setNull(5, java.sql.Types.INTEGER);
 			
-			int nbRow = p.executeUpdate();
-			return nbRow == 1;
-		} catch (SQLException e) {
-			e.printStackTrace();
+			nbRow = p.executeUpdate();
+		} catch (SQLIntegrityConstraintViolationException e) {
+			throw new PrimaryKeyViolationException(obj.getId());
 		}
-		return false;
+		
+		if (obj.getManufacturer() != 0) {
+			try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+				PreparedStatement p = conn.prepareStatement("UPDATE computer SET company_id=? WHERE id=?;");
+				p.setInt(1, obj.getManufacturer());
+				p.setInt(2, obj.getId());
+				
+				nbRow += p.executeUpdate();
+				return nbRow == 2;
+			} catch (SQLIntegrityConstraintViolationException e) {
+				throw new ForeignKeyViolationException(obj.getManufacturer(), "company");
+			}
+		} else {
+			return nbRow == 1;
+		}
 	}
 
 	@Override
-	public boolean update(Computer obj) {
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;");
-			p.setString(1, obj.getName());
-			p.setTimestamp(2, obj.getDateIntro());
-			p.setTimestamp(3, obj.getDateDisc());
-			p.setInt(4, obj.getManufacturer());
-			p.setInt(5,obj.getId());
-			
-			int nbRow = p.executeUpdate();
-			return nbRow == 1;
-		} catch (SQLException e) {
-			e.printStackTrace();
+	public boolean update(Computer obj) throws Exception {
+		// Check id
+		if (obj.getId() <= 0) {
+			throw new InvalidIdException(obj.getId());
 		}
-		return false;
+		// Count differences
+		int diff = 0;
+		int nbUpdate = 0;
+		// Update name
+		if (! obj.getName().contentEquals("")) {
+			diff += 1;
+			try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+				PreparedStatement p = conn.prepareStatement("UPDATE computer SET name=? WHERE id=?;");
+				p.setString(1, obj.getName());
+				p.setInt(2,obj.getId());
+				
+				nbUpdate += p.executeUpdate();
+			} catch (SQLException e) {
+				// Never Seen Yet
+				throw e;
+			}
+		}
+		// Update date1
+		if (obj.getDateIntro() != null) {
+			diff += 1;
+			try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+				PreparedStatement p = conn.prepareStatement("UPDATE computer SET introduced=? WHERE id=?;");
+				p.setTimestamp(1, obj.getDateIntro());
+				p.setInt(2,obj.getId());
+				
+				nbUpdate += p.executeUpdate();
+			} catch (SQLException e) {
+				// Never Seen Yet
+				throw e;
+			}
+		}
+		// Update date2
+		if (obj.getDateDisc() != null) {
+			diff += 1;
+			try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+				PreparedStatement p = conn.prepareStatement("UPDATE computer SET discontinued=? WHERE id=?;");
+				p.setTimestamp(1, obj.getDateDisc());
+				p.setInt(2,obj.getId());
+				
+				nbUpdate += p.executeUpdate();
+			} catch (SQLException e) {
+				// Never Seen Yet
+				throw e;
+			}
+		}
+		// Update cid
+		if (obj.getManufacturer() != 0) {
+			diff += 1;
+			try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+				PreparedStatement p = conn.prepareStatement("UPDATE computer SET company_id=? WHERE id=?;");
+				p.setTimestamp(1, obj.getDateDisc());
+				p.setInt(2,obj.getId());
+				
+				nbUpdate += p.executeUpdate();
+			} catch (SQLException e) {
+				throw new ForeignKeyViolationException(obj.getManufacturer(), "company");
+			}
+		}
+		return diff == nbUpdate;
 	}
 
 	@Override
@@ -72,7 +139,11 @@ public class ComputerDao extends Dao<Computer>{
 	}
 
 	@Override
-	public Computer read(int id) {
+	public Computer read(int id) throws Exception {
+		if(id <= 0) {
+			throw new InvalidIdException(id);
+		}
+		
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
 			PreparedStatement p = conn.prepareStatement("SELECT * FROM computer WHERE id=?;");
 			p.setInt(1, id);
@@ -85,9 +156,8 @@ public class ComputerDao extends Dao<Computer>{
 				return null;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw e;
 		}
-		return null;
 	}
 
 }
