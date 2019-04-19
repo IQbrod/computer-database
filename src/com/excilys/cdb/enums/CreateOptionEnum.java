@@ -13,10 +13,10 @@ public enum CreateOptionEnum {
 	
 	private char shortcut;
 	
-	public static CreateOptionEnum getCommandEnum(char ca) {
-		for (CreateOptionEnum c : CreateOptionEnum.values()) {
-			if (c.shortcut == ca) {
-				return c;
+	public static CreateOptionEnum getCommandEnum(char compareValue) {
+		for (CreateOptionEnum create : CreateOptionEnum.values()) {
+			if (create.shortcut == compareValue) {
+				return create;
 			}
 		}
 		return Unknown;

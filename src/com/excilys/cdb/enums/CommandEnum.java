@@ -20,9 +20,9 @@ public enum CommandEnum {
 	private String shortcut;
 	
 	public static CommandEnum getCommandEnum(String s) {
-		for (CommandEnum c : CommandEnum.values()) {
-			if (c.command.contentEquals(s) || c.shortcut.contentEquals(s)) {
-				return c;
+		for (CommandEnum comd : CommandEnum.values()) {
+			if (comd.command.contentEquals(s) || comd.shortcut.contentEquals(s)) {
+				return comd;
 			}
 		}
 		return Unknown;
