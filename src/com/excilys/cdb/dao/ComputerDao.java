@@ -60,7 +60,7 @@ public class ComputerDao extends Dao<Computer>{
 			return null;
 		}
 		// Update name
-		if (! obj.getName().contentEquals("")) {
+		if (obj.getName().contentEquals("")) {
 			c.setName(obj.getName());
 		}
 		// Update date1
@@ -72,7 +72,7 @@ public class ComputerDao extends Dao<Computer>{
 			c.setDateDisc(obj.getDateDisc());
 		}
 		// Update cid
-		if (obj.getManufacturer() != 0) {
+		if (obj.getManufacturer() != -1) {
 			c.setManufacturer(obj.getManufacturer());
 		}
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
@@ -80,14 +80,14 @@ public class ComputerDao extends Dao<Computer>{
 			p.setString(1, c.getName());
 			p.setTimestamp(2, c.getDateIntro());
 			p.setTimestamp(3, obj.getDateDisc());
-			p.setInt(4, c.getManufacturer());
-			if (c.getId() == 0) {
-				p.setNull(5, java.sql.Types.INTEGER);
+			if (c.getManufacturer() == 0) {
+				p.setNull(4, java.sql.Types.INTEGER);
 			} else {
-				p.setInt(5, c.getId());
+				p.setInt(4, c.getManufacturer());
 			}
+			p.setInt(5, c.getId());
 			
-			return (p.executeUpdate() > 0) ? c : null;
+			return (p.executeUpdate() == 0) ? null : c;
 		} catch (SQLException e) {
 			throw new ForeignKeyViolationException(c.getManufacturer(), "company");
 		}

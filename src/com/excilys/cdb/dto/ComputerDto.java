@@ -8,7 +8,7 @@ public class ComputerDto extends Dto {
 	
 	public ComputerDto(String id) {
 		// Shall match mapper
-		this(id,"",null,null,"0");
+		this(id,"",null,null,"-1");
 	}
 	
 	public ComputerDto(String id, String name, String i, String d, String c) {
