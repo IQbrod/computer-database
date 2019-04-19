@@ -10,7 +10,14 @@ import com.excilys.cdb.model.*;
 public class CompanyDao extends Dao<Company>{
 
 	public CompanyDao() {
-		super();
+		super(
+			"INSERT INTO company VALUES (?,?);",
+			"UPDATE company SET name=? WHERE id=?;",
+			"DELETE FROM company WHERE id=?;",
+			"SELECT * FROM company WHERE id=?;",
+			"SELECT * FROM company;",
+			"SELECT * FROM company LIMIT ?,?;"
+		);
 	}
 
 	@Override
@@ -20,7 +27,7 @@ public class CompanyDao extends Dao<Company>{
 		}
 		
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("INSERT INTO company VALUES (?,?);");
+			PreparedStatement p = conn.prepareStatement(this.SQL_CREATE);
 			p.setInt(1,obj.getId());
 			p.setString(2, obj.getName());
 			
@@ -42,7 +49,7 @@ public class CompanyDao extends Dao<Company>{
 			// Update
 			c.setName(obj.getName());
 			// Push update
-			PreparedStatement p = conn.prepareStatement("UPDATE company SET name=? WHERE id=?;");
+			PreparedStatement p = conn.prepareStatement(this.SQL_UPDATE);
 			p.setString(1, c.getName());
 			p.setInt(2, c.getId());
 			
@@ -61,7 +68,7 @@ public class CompanyDao extends Dao<Company>{
 	public Company deleteById(int id) throws Exception {
 		Company c = this.read(id);
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("DELETE FROM company WHERE id=?;");
+			PreparedStatement p = conn.prepareStatement(this.SQL_DELETE);
 			p.setInt(1, id);
 			
 			int nbRow = p.executeUpdate();
@@ -79,7 +86,7 @@ public class CompanyDao extends Dao<Company>{
 		}
 		
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("SELECT * FROM company WHERE id=?;");
+			PreparedStatement p = conn.prepareStatement(this.SQL_SELECT);
 			p.setInt(1, id);
 			
 			ResultSet r = p.executeQuery();
@@ -97,7 +104,7 @@ public class CompanyDao extends Dao<Company>{
 	@Override
 	public List<Company> listAll() throws Exception {
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("SELECT * FROM company;");
+			PreparedStatement p = conn.prepareStatement(this.SQL_LISTALL);
 			
 			ResultSet r = p.executeQuery();
 			List<Company> lst = new ArrayList<Company>();
@@ -123,7 +130,7 @@ public class CompanyDao extends Dao<Company>{
 		
 		//System.out.println(offset); Merci max pour l'absence de Company [21] :D
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("SELECT * FROM company LIMIT ?,?;");
+			PreparedStatement p = conn.prepareStatement(this.SQL_LIST);
 			p.setInt(1, offset);
 			p.setInt(2, size);
 			

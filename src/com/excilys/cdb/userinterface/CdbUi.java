@@ -9,7 +9,7 @@ public class CdbUi {
 	private InputStream in;
 	private PrintStream out;
 	private PrintStream err;
-	private Scanner sc;
+	private Scanner scanner;
 	private String cmd;
 	
 	public CdbUi (InputStream inStream, PrintStream outStream) {
@@ -20,15 +20,15 @@ public class CdbUi {
 		this.in = inStream;
 		this.out = outStream;
 		this.err = errStream;
-		this.sc = new Scanner(this.in);
+		this.scanner = new Scanner(this.in);
 		this.cmd = "";
 	}
 	
 	public void run() {
-		// Welcome
 		this.println(this.out,"Welcome\n(Try: help / quit)");
+		
 		while (true) {
-			this.cmd = sc.nextLine();
+			this.cmd = scanner.nextLine();
 			switch (this.cmd) {
 				case "stop":
 				case "exit":
@@ -38,7 +38,6 @@ public class CdbUi {
 					try {
 						this.println(this.out,CdbController.getInstance().treatMessage(cmd));
 					} catch (Exception e) {
-						//e.printStackTrace();
 						this.println(this.err,e.getMessage());
 					}
 			}
@@ -46,7 +45,7 @@ public class CdbUi {
 		}
 	}
 	
-	private void println(PrintStream p, String msg) {
-		p.println(msg);
+	private void println(PrintStream stream, String msg) {
+		stream.println(msg);
 	}
 }

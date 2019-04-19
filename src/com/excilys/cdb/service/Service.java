@@ -35,33 +35,33 @@ public abstract class Service<T extends Dto, U extends Model> {
 	};
 	
 	public List<Dto> listAllElements() throws Exception {
-		List<Dto> returnList = new ArrayList<Dto>();
-		List<U> lst = this.dao.listAll();
-		for (U u : lst) {
-			returnList.add(this.mapper.modelToDto(u));
+		List<Dto> dtoList = new ArrayList<Dto>();
+		List<U> modelList = this.dao.listAll();
+		for (U model : modelList) {
+			dtoList.add(this.mapper.modelToDto(model));
 		}
-		return returnList;
+		return dtoList;
 	};
 	
-	public List<Dto> list(String p, String s) throws Exception {
+	public List<Dto> list(String pageStr, String sizeStr) throws Exception {
 		int page,size;
 		
 		try {
-			page = Integer.parseInt(p);
+			page = Integer.parseInt(pageStr);
 		} catch (IllegalArgumentException e) {
-			throw new InvalidIntegerException(p);
+			throw new InvalidIntegerException(pageStr);
 		}
 		try {
-			size = Integer.parseInt(s);
+			size = Integer.parseInt(sizeStr);
 		} catch (IllegalArgumentException e) {
-			throw new InvalidIntegerException(s);
+			throw new InvalidIntegerException(sizeStr);
 		}
 		
-		List<Dto> returnList = new ArrayList<Dto>();
-		List<U> lst = this.dao.list(page,size);
-		for (U u : lst) {
-			returnList.add(this.mapper.modelToDto(u));
+		List<Dto> dtoList = new ArrayList<Dto>();
+		List<U> modelList = this.dao.list(page,size);
+		for (U model : modelList) {
+			dtoList.add(this.mapper.modelToDto(model));
 		}
-		return returnList;
+		return dtoList;
 	}
 }

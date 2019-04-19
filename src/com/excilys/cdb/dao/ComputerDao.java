@@ -9,9 +9,17 @@ import com.excilys.cdb.model.*;
 // TODO: Throw les exceptions jusqu'au controller
 
 public class ComputerDao extends Dao<Computer>{
-
+	private final String SQL_SELECT_UPDATE_COMPANY = "UPDATE computer SET company_id=? WHERE id=?;";
+	
 	public ComputerDao() {
-		super();
+		super(
+			"INSERT INTO computer VALUES (?,?,?,?,?);",
+			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;",
+			"DELETE FROM computer WHERE id=?;",
+			"SELECT * FROM computer WHERE id=?;",
+			"SELECT * FROM computer;",
+			"SELECT * FROM computer LIMIT ?,?;"
+		);
 	}
 
 	@Override
@@ -23,7 +31,7 @@ public class ComputerDao extends Dao<Computer>{
 		}
 		
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("INSERT INTO computer VALUES (?,?,?,?,?);");
+			PreparedStatement p = conn.prepareStatement(this.SQL_CREATE);
 			p.setInt(1,obj.getId());
 			p.setString(2, obj.getName());
 			p.setTimestamp(3, obj.getDateIntro());
@@ -38,7 +46,7 @@ public class ComputerDao extends Dao<Computer>{
 		
 		if (obj.getManufacturer() != 0) {
 			try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-				PreparedStatement p = conn.prepareStatement("UPDATE computer SET company_id=? WHERE id=?;");
+				PreparedStatement p = conn.prepareStatement(this.SQL_SELECT_UPDATE_COMPANY);
 				p.setInt(1, obj.getManufacturer());
 				p.setInt(2, obj.getId());
 				
@@ -76,7 +84,7 @@ public class ComputerDao extends Dao<Computer>{
 			c.setManufacturer(obj.getManufacturer());
 		}
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;");
+			PreparedStatement p = conn.prepareStatement(this.SQL_UPDATE);
 			p.setString(1, c.getName());
 			p.setTimestamp(2, c.getDateIntro());
 			p.setTimestamp(3, obj.getDateDisc());
@@ -101,7 +109,7 @@ public class ComputerDao extends Dao<Computer>{
 	public Computer deleteById(int id) throws Exception {
 		Computer c = this.read(id);
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("DELETE FROM computer WHERE id=?;");
+			PreparedStatement p = conn.prepareStatement(this.SQL_DELETE);
 			p.setInt(1, id);
 			
 			int nbRow = p.executeUpdate();
@@ -118,13 +126,12 @@ public class ComputerDao extends Dao<Computer>{
 		}
 		
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("SELECT * FROM computer WHERE id=?;");
+			PreparedStatement p = conn.prepareStatement(this.SQL_SELECT);
 			p.setInt(1, id);
 			
 			ResultSet r = p.executeQuery();
 			if(r.first()) {
-				Computer c = new Computer(id,r.getString("name"),r.getTimestamp("introduced"),r.getTimestamp("discontinued"), r.getInt("company_id"));
-				return c;
+				return new Computer(id,r.getString("name"),r.getTimestamp("introduced"),r.getTimestamp("discontinued"), r.getInt("company_id"));
 			} else {
 				return null;
 			}
@@ -136,7 +143,7 @@ public class ComputerDao extends Dao<Computer>{
 	@Override
 	public List<Computer> listAll() throws Exception {
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("SELECT * FROM computer;");
+			PreparedStatement p = conn.prepareStatement(this.SQL_LISTALL);
 			
 			ResultSet r = p.executeQuery();
 			List<Computer> lst = new ArrayList<Computer>();
@@ -161,7 +168,7 @@ public class ComputerDao extends Dao<Computer>{
 		int offset = (page-1)*size;
 		
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement("SELECT * FROM computer LIMIT ?,?;");
+			PreparedStatement p = conn.prepareStatement(this.SQL_LIST);
 			p.setInt(1, offset);
 			p.setInt(2, size);
 			

@@ -31,7 +31,6 @@ public class Computer extends Model {
 	}
 
 	public void setDateIntro(Timestamp dateIntro) throws InvalidDateOrderException {
-		// We consider dateDisc should be greater than dateIntro
 		if (dateIntro != null && this.dateDisc != null && dateIntro.after(this.dateDisc)) {
 			throw new InvalidDateOrderException(dateIntro, this.dateDisc);
 		}
@@ -43,7 +42,6 @@ public class Computer extends Model {
 	}
 
 	public void setDateDisc(Timestamp dateDisc) throws InvalidDateOrderException {
-		// TODO: UPDATE --> Vérifier en BD (car on ne change que les éléments proposés et donc la vérif ne passe pas CMP avec null)
 		if (dateDisc != null && this.dateIntro != null && dateDisc.before(this.dateIntro)) {
 			throw new InvalidDateOrderException(this.dateIntro, dateDisc);
 		}
@@ -56,6 +54,24 @@ public class Computer extends Model {
 
 	public void setManufacturer(int manufacturer) {
 		this.manufacturer = manufacturer;
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+        if (!(object instanceof Computer))
+            return false;
+        
+        Computer model = (Computer) object;
+        return model.getId() == this.getId();
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = 31*17 + this.getId();
+		
+		return result;
 	}
 	
 	
