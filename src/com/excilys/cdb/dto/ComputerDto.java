@@ -2,21 +2,20 @@ package com.excilys.cdb.dto;
 
 public class ComputerDto extends Dto {
 	private String name;
-	private String intro;
-	private String discon;
-	private String comp;
+	private String introduction;
+	private String discontinued;
+	private String company;
 	
 	public ComputerDto(String id) {
-		// Shall match mapper
 		this(id,"",null,null,"-1");
 	}
 	
 	public ComputerDto(String id, String name, String i, String d, String c) {
 		super(id);
 		this.setName(name);
-		this.setIntro(i);
-		this.setDiscon(d);
-		this.setComp(c);
+		this.setIntroduction(i);
+		this.setDiscontinued(d);
+		this.setCompany(c);
 	}
 
 	public String getName() {
@@ -27,32 +26,32 @@ public class ComputerDto extends Dto {
 		this.name = name;
 	}
 
-	public String getIntro() {
-		return intro;
+	public String getIntroduction() {
+		return introduction;
 	}
 
-	public void setIntro(String intro) {
-		this.intro = intro;
+	public void setIntroduction(String introduction) {
+		this.introduction = introduction;
 	}
 
-	public String getDiscon() {
-		return discon;
+	public String getDiscontinued() {
+		return discontinued;
 	}
 
-	public void setDiscon(String discon) {
-		this.discon = discon;
+	public void setDiscontinued(String discontinued) {
+		this.discontinued = discontinued;
 	}
 
-	public String getComp() {
-		return comp;
+	public String getCompany() {
+		return company;
 	}
 
-	public void setComp(String comp_name) {
-		this.comp = comp_name;
+	public void setCompany(String companyName) {
+		this.company = companyName;
 	}
 	
 	@Override
 	public String toString() {
-		return "Computer ["+this.getId()+"] " + this.getName() + " (" + this.getIntro() + ") (" + this.getDiscon() + ") " + this.getComp();
+		return "Computer ["+this.getId()+"] " + this.getName() + " (" + this.getIntroduction() + ") (" + this.getDiscontinued() + ") " + this.getCompany();
 	}
 }

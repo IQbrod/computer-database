@@ -3,7 +3,7 @@ package com.excilys.cdb.enums;
 public enum CreateOptionEnum {
 	Name('n'),
 	Introduction('i'),
-	Discontinue('d'),
+	Discontinued('d'),
 	Company('c'),
 	Unknown(' ');
 	

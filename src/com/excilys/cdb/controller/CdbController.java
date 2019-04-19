@@ -199,13 +199,13 @@ public class CdbController {
 					c.setName(s.substring(3));
 					break;
 				case Introduction:
-					c.setIntro(this.castDate(s.substring(3)));
+					c.setIntroduction(this.castDate(s.substring(3)));
 					break;
-				case Discontinue:
-					c.setDiscon(this.castDate(s.substring(3)));
+				case Discontinued:
+					c.setDiscontinued(this.castDate(s.substring(3)));
 					break;
 				case Company:
-					c.setComp(s.substring(3).contentEquals("_") ? "-1" : s.substring(3));
+					c.setCompany(s.substring(3).contentEquals("_") ? "-1" : s.substring(3));
 					break;
 				case Unknown:
 				default:

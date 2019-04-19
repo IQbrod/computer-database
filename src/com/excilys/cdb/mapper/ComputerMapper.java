@@ -18,9 +18,9 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 			int id = Integer.parseInt(dtoObject.getId());
 			String name = dtoObject.getName();
 			Timestamp t1, t2;
-			t1 = this.castTimestamp(dtoObject.getIntro());
-			t2 = this.castTimestamp(dtoObject.getDiscon());
-			int cid = Integer.parseInt(dtoObject.getComp());
+			t1 = this.castTimestamp(dtoObject.getIntroduction());
+			t2 = this.castTimestamp(dtoObject.getDiscontinued());
+			int cid = Integer.parseInt(dtoObject.getCompany());
 			
 			Computer c = new Computer(id,name,t1,t2,cid);
 			
