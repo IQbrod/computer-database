@@ -9,7 +9,7 @@ public class CompanyService extends Service<CompanyDto, Company>{
 	private static CompanyService instance = new CompanyService(); 
 	
 	private CompanyService() {
-		super(new CompanyMapper(), new CompanyDao());
+		super(CompanyMapper.getInstance(), CompanyDao.getInstance());
 	}
 	
 	public static CompanyService getInstance() {

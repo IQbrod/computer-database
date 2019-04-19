@@ -8,8 +8,9 @@ import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 public class CompanyDao extends Dao<Company>{
-
-	public CompanyDao() {
+	private static CompanyDao instance = new CompanyDao();
+	
+	private CompanyDao() {
 		super(
 			"INSERT INTO company VALUES (?,?);",
 			"UPDATE company SET name=? WHERE id=?;",
@@ -18,6 +19,10 @@ public class CompanyDao extends Dao<Company>{
 			"SELECT * FROM company;",
 			"SELECT * FROM company LIMIT ?,?;"
 		);
+	}
+	
+	public static CompanyDao getInstance() {
+		return instance;
 	}
 
 	@Override

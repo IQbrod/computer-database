@@ -16,7 +16,7 @@ public abstract class Dao<T extends Model> {
 	protected final String SQL_LISTALL;
 	protected final String SQL_LIST;
 	
-	public Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlListall, String sqlList) {
+	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlListall, String sqlList) {
 		this.SQL_CREATE = sqlCreate;
 		this.SQL_UPDATE = sqlUpdate;
 		this.SQL_DELETE = sqlDelete;

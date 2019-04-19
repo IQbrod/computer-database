@@ -9,7 +9,7 @@ public class ComputerService extends Service<ComputerDto, Computer>{
 	private static ComputerService instance = new ComputerService();
 	
 	private ComputerService() {
-		super(new ComputerMapper(), new ComputerDao());
+		super(ComputerMapper.getInstance(), ComputerDao.getInstance());
 	}
 	
 	public static ComputerService getInstance() {

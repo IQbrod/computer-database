@@ -7,8 +7,13 @@ import com.excilys.cdb.exception.InvalidDateValueException;
 import com.excilys.cdb.model.Computer;
 
 public class ComputerMapper extends Mapper<ComputerDto, Computer>{
+	private static ComputerMapper instance = new ComputerMapper();	
 	
-	public ComputerMapper() {}	
+	private ComputerMapper() {}	
+	
+	public static ComputerMapper getInstance() {
+		return instance;
+	}
 	
 	@Override
 	public Computer dtoToModel(ComputerDto dtoObject) throws Exception {

@@ -5,7 +5,7 @@ import com.excilys.cdb.model.Model;
 
 public abstract class Mapper<T extends Dto, U extends Model> {
 
-	public Mapper() {}
+	protected Mapper() {}
 	
 	public abstract U dtoToModel (T dtoObject) throws Exception;
 	public abstract T modelToDto (U modelObject) throws Exception;

@@ -11,7 +11,9 @@ import com.excilys.cdb.model.*;
 public class ComputerDao extends Dao<Computer>{
 	private final String SQL_SELECT_UPDATE_COMPANY = "UPDATE computer SET company_id=? WHERE id=?;";
 	
-	public ComputerDao() {
+	private static ComputerDao instance = new ComputerDao();
+	
+	private ComputerDao() {
 		super(
 			"INSERT INTO computer VALUES (?,?,?,?,?);",
 			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;",
@@ -20,6 +22,10 @@ public class ComputerDao extends Dao<Computer>{
 			"SELECT * FROM computer;",
 			"SELECT * FROM computer LIMIT ?,?;"
 		);
+	}
+	
+	public static ComputerDao getInstance() {
+		return instance;
 	}
 
 	@Override
