@@ -56,6 +56,9 @@ public class ComputerDao extends Dao<Computer>{
 	public Computer update(Computer obj) throws Exception {
 		// Read
 		Computer c = this.read(obj.getId());
+		if (c == null) {
+			return null;
+		}
 		// Update name
 		if (! obj.getName().contentEquals("")) {
 			c.setName(obj.getName());
@@ -78,7 +81,11 @@ public class ComputerDao extends Dao<Computer>{
 			p.setTimestamp(2, c.getDateIntro());
 			p.setTimestamp(3, obj.getDateDisc());
 			p.setInt(4, c.getManufacturer());
-			p.setInt(5, c.getId());
+			if (c.getId() == 0) {
+				p.setNull(5, java.sql.Types.INTEGER);
+			} else {
+				p.setInt(5, c.getId());
+			}
 			
 			return (p.executeUpdate() > 0) ? c : null;
 		} catch (SQLException e) {

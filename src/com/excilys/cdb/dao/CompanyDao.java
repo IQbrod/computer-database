@@ -35,6 +35,9 @@ public class CompanyDao extends Dao<Company>{
 	public Company update(Company obj) throws Exception {
 		// Read
 		Company c = this.read(obj.getId());
+		if (c == null) {
+			return null;
+		}
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
 			// Update
 			c.setName(obj.getName());
