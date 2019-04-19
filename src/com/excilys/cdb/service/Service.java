@@ -18,16 +18,16 @@ public abstract class Service<T extends Dto, U extends Model> {
 		this.dao = d;
 	}
 	
-	public boolean create(T dtoObject) throws Exception {
-		return this.dao.create(this.mapper.dtoToModel(dtoObject));
+	public T create(T dtoObject) throws Exception {
+		return this.mapper.modelToDto(this.dao.create(this.mapper.dtoToModel(dtoObject)));
 	};
 	
-	public boolean update(T dtoObject) throws Exception {
-		return this.dao.update(this.mapper.dtoToModel(dtoObject));
+	public T update(T dtoObject) throws Exception {
+		return this.mapper.modelToDto(this.dao.update(this.mapper.dtoToModel(dtoObject)));
 	};
 	
-	public boolean delete(T dtoObject) throws Exception {
-		return this.dao.delete(this.mapper.dtoToModel(dtoObject));
+	public T delete(T dtoObject) throws Exception {
+		return this.mapper.modelToDto(this.dao.delete(this.mapper.dtoToModel(dtoObject)));
 	};
 	
 	public T read(String id) throws Exception {

@@ -99,11 +99,8 @@ public class CdbController {
 					throw new MissingArgumentException(sizeComputerExpected,splitStr.length);
 				} else if (splitStr[1].toLowerCase().equals("company")) {
 					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
-					if(CompanyService.getInstance().create(c)) {
-						return "Create "+ c.toString();
-					} else {
-						throw new FailedCreationException(); //Should never reach
-					}
+					CompanyDto ret = CompanyService.getInstance().create(c);
+					return (ret == null) ? "No company has been created" : "Create "+ret.toString();
 				} else {
 					throw new InvalidTableException(splitStr[1]);
 				}
@@ -126,11 +123,8 @@ public class CdbController {
 			case 7:
 				if (splitStr[1].toLowerCase().equals("computer")) {
 					ComputerDto c = new ComputerDto(splitStr[2],splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),(splitStr[6].contentEquals("_")) ? "0" : splitStr[6]);
-					if (ComputerService.getInstance().create(c)) {
-						return "Create "+c.toString();
-					} else {
-						throw new FailedCreationException(); //Should never reach
-					}
+					ComputerDto ret = ComputerService.getInstance().create(c);
+					return (ret == null) ? "No computer has been created" : "Create "+ret.toString();
 				} else if (splitStr[1].toLowerCase().equals("company")) {
 					throw new TooManyArgumentsException(splitStr[5]);
 				} else {
@@ -167,7 +161,7 @@ public class CdbController {
 					throw new InvalidTableException(splitStr[1]);
 				}
 				// Display dto
-				return "Read " + c.toString();
+				return (c == null) ? "["+splitStr[2]+"] Not Found" : c.toString();
 			default:
 				throw new TooManyArgumentsException(splitStr[3]);
 		}
@@ -181,21 +175,15 @@ public class CdbController {
 			case 2:
 				throw new MissingArgumentException(sizeExpected,splitStr.length);
 			case 3:
+				Dto ret;
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					if(ComputerService.getInstance().delete(new ComputerDto(splitStr[2]))) {
-						return "Delete "+ splitStr[1] +" ["+splitStr[2]+"]";
-					} else {
-						throw new IdNotFoundException(splitStr[1], splitStr[2]);
-					}
+					ret = ComputerService.getInstance().delete(new ComputerDto(splitStr[2]));
 				} else if (splitStr[1].toLowerCase().equals("company")) {
-					if(CompanyService.getInstance().delete(new CompanyDto(splitStr[2]))) {
-						return "Delete "+ splitStr[1] +" ["+splitStr[2]+"]";
-					} else {
-						throw new IdNotFoundException(splitStr[1], splitStr[2]);
-					}
+					ret = CompanyService.getInstance().delete(new CompanyDto(splitStr[2]));
 				} else {
 					throw new InvalidTableException(splitStr[1]);
 				}
+				return (ret == null) ? "[" +splitStr[2]+"] Not Found" : "Delete "+ret.toString();
 			default:
 				throw new TooManyArgumentsException(splitStr[3]);
 		}
@@ -235,31 +223,25 @@ public class CdbController {
 		case 3:
 			throw new MissingArgumentException(sizeExpected,splitStr.length);
 		default:
+			Dto ret;
 			if (splitStr[1].toLowerCase().equals("computer")) {
 				ComputerDto c = new ComputerDto(splitStr[2]);
 				// Pour chaque option passée
 				for (String s : Arrays.copyOfRange(splitStr, 3, splitStr.length)) {
 					this.updateTreatOption(c,s);
 				}
-				if (ComputerService.getInstance().update(c)) {
-					return "Update " + c.toString();
-				} else {
-					throw new IdNotFoundException(splitStr[1], splitStr[2]);
-				}
+				ret = ComputerService.getInstance().update(c);;
 			} else if (splitStr[1].toLowerCase().equals("company")) {
 				if(splitStr.length == 4) {
 					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
-					if(CompanyService.getInstance().update(c)) {
-						return "Update "+c.toString();
-					} else {
-						throw new IdNotFoundException(splitStr[1], splitStr[2]);
-					}
+					ret = CompanyService.getInstance().update(c);
 				} else {
 					throw new TooManyArgumentsException(splitStr[4]);
 				}
 			} else {
 				throw new InvalidTableException(splitStr[1]);
 			}
+			return (ret == null) ? "Aucune modification" : "Update "+ret.toString();
 		}
 	}
 	

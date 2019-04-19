@@ -14,7 +14,7 @@ public class CompanyDao extends Dao<Company>{
 	}
 
 	@Override
-	public boolean create(Company obj) throws Exception{
+	public Company create(Company obj) throws Exception{
 		if(obj.getId() <= 0) {
 			throw new InvalidIdException(obj.getId());
 		}
@@ -25,39 +25,44 @@ public class CompanyDao extends Dao<Company>{
 			p.setString(2, obj.getName());
 			
 			int nbRow = p.executeUpdate();
-			return nbRow == 1;
+			return (nbRow == 1) ? obj : null;
 		} catch (SQLException e) {
 			throw new PrimaryKeyViolationException(obj.getId());
 		}
 	}
 
 	@Override
-	public boolean update(Company obj) throws Exception {
+	public Company update(Company obj) throws Exception {
+		// Read
+		Company c = this.read(obj.getId());
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+			// Update
+			c.setName(obj.getName());
+			// Push update
 			PreparedStatement p = conn.prepareStatement("UPDATE company SET name=? WHERE id=?;");
-			p.setString(1, obj.getName());
-			p.setInt(2, obj.getId());
+			p.setString(1, c.getName());
+			p.setInt(2, c.getId());
 			
-			int nbRow = p.executeUpdate();
-			return nbRow == 1;
+			return (p.executeUpdate() == 1) ? c : null;
 		} catch (SQLException e) {
 			throw new PrimaryKeyViolationException(obj.getId());
 		}
 	}
 
 	@Override
-	public boolean delete(Company obj) throws SQLException{
+	public Company delete(Company obj) throws Exception{
 		return this.deleteById(obj.getId());
 	}
 	
 	@Override
-	public boolean deleteById(int id) throws SQLException {
+	public Company deleteById(int id) throws Exception {
+		Company c = this.read(id);
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
 			PreparedStatement p = conn.prepareStatement("DELETE FROM company WHERE id=?;");
 			p.setInt(1, id);
 			
 			int nbRow = p.executeUpdate();
-			return nbRow == 1;
+			return (nbRow == 1) ? c : null;
 		} catch (SQLException e) {
 			// Yet never seen
 			throw e;

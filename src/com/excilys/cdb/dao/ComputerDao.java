@@ -15,7 +15,7 @@ public class ComputerDao extends Dao<Computer>{
 	}
 
 	@Override
-	public boolean create(Computer obj) throws Exception {
+	public Computer create(Computer obj) throws Exception {
 		int nbRow = 0;
 		
 		if(obj.getId() <= 0) {
@@ -43,98 +43,65 @@ public class ComputerDao extends Dao<Computer>{
 				p.setInt(2, obj.getId());
 				
 				nbRow += p.executeUpdate();
-				return nbRow == 2;
+				return (nbRow == 2) ? obj : null;
 			} catch (SQLIntegrityConstraintViolationException e) {
 				throw new ForeignKeyViolationException(obj.getManufacturer(), "company");
 			}
 		} else {
-			return nbRow == 1;
+			return (nbRow == 1) ? obj : null;
 		}
 	}
 
 	@Override
-	public boolean update(Computer obj) throws Exception {
-		// Check id
-		if (obj.getId() <= 0) {
-			throw new InvalidIdException(obj.getId());
-		}
-		// Count differences
-		int diff = 0;
-		int nbUpdate = 0;
+	public Computer update(Computer obj) throws Exception {
+		// Read
+		Computer c = this.read(obj.getId());
 		// Update name
 		if (! obj.getName().contentEquals("")) {
-			diff += 1;
-			try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-				PreparedStatement p = conn.prepareStatement("UPDATE computer SET name=? WHERE id=?;");
-				p.setString(1, obj.getName());
-				p.setInt(2,obj.getId());
-				
-				nbUpdate += p.executeUpdate();
-			} catch (SQLException e) {
-				// Never Seen Yet
-				throw e;
-			}
+			c.setName(obj.getName());
 		}
 		// Update date1
 		if (obj.getDateIntro() != null) {
-			diff += 1;
-			try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-				PreparedStatement p = conn.prepareStatement("UPDATE computer SET introduced=? WHERE id=?;");
-				p.setTimestamp(1, obj.getDateIntro());
-				p.setInt(2,obj.getId());
-				
-				nbUpdate += p.executeUpdate();
-			} catch (SQLException e) {
-				// Never Seen Yet
-				throw e;
-			}
+			c.setDateIntro(obj.getDateIntro());
 		}
 		// Update date2
 		if (obj.getDateDisc() != null) {
-			diff += 1;
-			try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-				PreparedStatement p = conn.prepareStatement("UPDATE computer SET discontinued=? WHERE id=?;");
-				p.setTimestamp(1, obj.getDateDisc());
-				p.setInt(2,obj.getId());
-				
-				nbUpdate += p.executeUpdate();
-			} catch (SQLException e) {
-				// Never Seen Yet
-				throw e;
-			}
+			c.setDateDisc(obj.getDateDisc());
 		}
 		// Update cid
 		if (obj.getManufacturer() != 0) {
-			diff += 1;
-			try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-				PreparedStatement p = conn.prepareStatement("UPDATE computer SET company_id=? WHERE id=?;");
-				p.setTimestamp(1, obj.getDateDisc());
-				p.setInt(2,obj.getId());
-				
-				nbUpdate += p.executeUpdate();
-			} catch (SQLException e) {
-				throw new ForeignKeyViolationException(obj.getManufacturer(), "company");
-			}
+			c.setManufacturer(obj.getManufacturer());
 		}
-		return diff == nbUpdate;
+		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+			PreparedStatement p = conn.prepareStatement("UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;");
+			p.setString(1, c.getName());
+			p.setTimestamp(2, c.getDateIntro());
+			p.setTimestamp(3, obj.getDateDisc());
+			p.setInt(4, c.getManufacturer());
+			p.setInt(5, c.getId());
+			
+			return (p.executeUpdate() > 0) ? c : null;
+		} catch (SQLException e) {
+			throw new ForeignKeyViolationException(c.getManufacturer(), "company");
+		}
 	}
 
 	@Override
-	public boolean delete(Computer obj) {
+	public Computer delete(Computer obj) throws Exception {
 		return this.deleteById(obj.getId());
 	}
 	
-	public boolean deleteById(int id) {
+	public Computer deleteById(int id) throws Exception {
+		Computer c = this.read(id);
 		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
 			PreparedStatement p = conn.prepareStatement("DELETE FROM computer WHERE id=?;");
 			p.setInt(1, id);
 			
 			int nbRow = p.executeUpdate();
-			return nbRow == 1;
+			return (nbRow == 1) ? c : null;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw e;
 		}
-		return false;
 	}
 
 	@Override
