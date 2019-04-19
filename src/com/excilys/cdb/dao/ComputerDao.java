@@ -30,13 +30,14 @@ public class ComputerDao extends Dao<Computer>{
 			throw new InvalidIdException(obj.getId());
 		}
 		
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			PreparedStatement p = conn.prepareStatement(this.SQL_CREATE);
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement p = conn.prepareStatement(this.SQL_CREATE)
+		) {
 			p.setInt(1,obj.getId());
 			p.setString(2, obj.getName());
 			p.setTimestamp(3, obj.getDateIntro());
 			p.setTimestamp(4, obj.getDateDisc());
-			// Help: https://stackoverflow.com/questions/14514589/inserting-null-to-an-integer-column-using-jdbc
 			p.setNull(5, java.sql.Types.INTEGER);
 			
 			nbRow = p.executeUpdate();
@@ -44,9 +45,13 @@ public class ComputerDao extends Dao<Computer>{
 			throw new PrimaryKeyViolationException(obj.getId());
 		}
 		
-		if (obj.getManufacturer() != 0) {
-			try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+		if (obj.getManufacturer() == 0) {
+			return (nbRow == 1) ? obj : null;
+		} else {
+			try (
+				Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 				PreparedStatement p = conn.prepareStatement(this.SQL_SELECT_UPDATE_COMPANY);
+			) {
 				p.setInt(1, obj.getManufacturer());
 				p.setInt(2, obj.getId());
 				
@@ -55,36 +60,30 @@ public class ComputerDao extends Dao<Computer>{
 			} catch (SQLIntegrityConstraintViolationException e) {
 				throw new ForeignKeyViolationException(obj.getManufacturer(), "company");
 			}
-		} else {
-			return (nbRow == 1) ? obj : null;
 		}
 	}
 
 	@Override
 	public Computer update(Computer obj) throws Exception {
-		// Read
 		Computer c = this.read(obj.getId());
-		if (c == null) {
-			return null;
-		}
-		// Update name
+
 		if (obj.getName().contentEquals("")) {
 			c.setName(obj.getName());
 		}
-		// Update date1
 		if (obj.getDateIntro() != null) {
 			c.setDateIntro(obj.getDateIntro());
 		}
-		// Update date2
 		if (obj.getDateDisc() != null) {
 			c.setDateDisc(obj.getDateDisc());
 		}
-		// Update cid
 		if (obj.getManufacturer() != -1) {
 			c.setManufacturer(obj.getManufacturer());
 		}
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+		
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_UPDATE);
+		) {
 			p.setString(1, c.getName());
 			p.setTimestamp(2, c.getDateIntro());
 			p.setTimestamp(3, obj.getDateDisc());
@@ -108,8 +107,10 @@ public class ComputerDao extends Dao<Computer>{
 	
 	public Computer deleteById(int id) throws Exception {
 		Computer c = this.read(id);
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_DELETE);
+		) {
 			p.setInt(1, id);
 			
 			int nbRow = p.executeUpdate();
@@ -125,8 +126,10 @@ public class ComputerDao extends Dao<Computer>{
 			throw new InvalidIdException(id);
 		}
 		
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_SELECT);
+		) {
 			p.setInt(1, id);
 			
 			ResultSet r = p.executeQuery();
@@ -142,8 +145,10 @@ public class ComputerDao extends Dao<Computer>{
 
 	@Override
 	public List<Computer> listAll() throws Exception {
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_LISTALL);
+		) {
 			
 			ResultSet r = p.executeQuery();
 			List<Computer> lst = new ArrayList<Computer>();
@@ -167,8 +172,10 @@ public class ComputerDao extends Dao<Computer>{
 		}
 		int offset = (page-1)*size;
 		
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_LIST);
+		) {
 			p.setInt(1, offset);
 			p.setInt(2, size);
 			

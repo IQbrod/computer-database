@@ -26,8 +26,10 @@ public class CompanyDao extends Dao<Company>{
 			throw new InvalidIdException(obj.getId());
 		}
 		
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_CREATE);
+		) {
 			p.setInt(1,obj.getId());
 			p.setString(2, obj.getName());
 			
@@ -45,11 +47,12 @@ public class CompanyDao extends Dao<Company>{
 		if (c == null) {
 			return null;
 		}
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
-			// Update
-			c.setName(obj.getName());
-			// Push update
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_UPDATE);
+		) {
+			c.setName(obj.getName());
+
 			p.setString(1, c.getName());
 			p.setInt(2, c.getId());
 			
@@ -67,8 +70,10 @@ public class CompanyDao extends Dao<Company>{
 	@Override
 	public Company deleteById(int id) throws Exception {
 		Company c = this.read(id);
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_DELETE);
+		) {
 			p.setInt(1, id);
 			
 			int nbRow = p.executeUpdate();
@@ -85,8 +90,10 @@ public class CompanyDao extends Dao<Company>{
 			throw new InvalidIdException(id);
 		}
 		
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_SELECT);
+		) {
 			p.setInt(1, id);
 			
 			ResultSet r = p.executeQuery();
@@ -103,9 +110,10 @@ public class CompanyDao extends Dao<Company>{
 	
 	@Override
 	public List<Company> listAll() throws Exception {
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_LISTALL);
-			
+		) {
 			ResultSet r = p.executeQuery();
 			List<Company> lst = new ArrayList<Company>();
 			while(r.next()) {
@@ -128,9 +136,10 @@ public class CompanyDao extends Dao<Company>{
 		}
 		int offset = (page-1)*size;
 		
-		//System.out.println(offset); Merci max pour l'absence de Company [21] :D
-		try (Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS)) {
+		try (
+			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_LIST);
+		) {
 			p.setInt(1, offset);
 			p.setInt(2, size);
 			
