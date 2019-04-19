@@ -7,8 +7,8 @@ public abstract class Mapper<T extends Dto, U extends Model> {
 
 	protected Mapper() {}
 	
-	public abstract U dtoToModel (T dtoObject) throws Exception;
-	public abstract T modelToDto (U modelObject) throws Exception;
+	public abstract U dtoToModel (T dtoObject) throws RuntimeException;
+	public abstract T modelToDto (U modelObject) throws RuntimeException;
 	
 	public int idToInt(String id) {
 		return Integer.parseInt(id);

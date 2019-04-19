@@ -16,7 +16,7 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 	}
 	
 	@Override
-	public Computer dtoToModel(ComputerDto dtoObject) throws Exception {
+	public Computer dtoToModel(ComputerDto dtoObject) throws RuntimeException {
 		if (dtoObject == null) {
 			return null;
 		} else {
@@ -33,7 +33,7 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 		}
 	}
 	
-	private Timestamp castTimestamp(String s) throws Exception {
+	private Timestamp castTimestamp(String s) throws RuntimeException {
 		try {
 			return (s == null) ? null : Timestamp.valueOf(s);
 		} catch (Exception e) {

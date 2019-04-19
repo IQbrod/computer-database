@@ -10,7 +10,7 @@ public class Computer extends Model {
 	private Timestamp dateDisc;
 	private int manufacturer;
 	
-	public Computer(int id, String name, Timestamp dateIntro, Timestamp dateDisc, int manufacturer) throws InvalidDateOrderException {
+	public Computer(int id, String name, Timestamp dateIntro, Timestamp dateDisc, int manufacturer) throws RuntimeException {
 		super(id);
 		this.setName(name);
 		this.setDateIntro(dateIntro);
@@ -30,7 +30,7 @@ public class Computer extends Model {
 		return dateIntro;
 	}
 
-	public void setDateIntro(Timestamp dateIntro) throws InvalidDateOrderException {
+	public void setDateIntro(Timestamp dateIntro) throws RuntimeException {
 		if (dateIntro != null && this.dateDisc != null && dateIntro.after(this.dateDisc)) {
 			throw new InvalidDateOrderException(dateIntro, this.dateDisc);
 		}
@@ -41,7 +41,7 @@ public class Computer extends Model {
 		return dateDisc;
 	}
 
-	public void setDateDisc(Timestamp dateDisc) throws InvalidDateOrderException {
+	public void setDateDisc(Timestamp dateDisc) throws RuntimeException {
 		if (dateDisc != null && this.dateIntro != null && dateDisc.before(this.dateIntro)) {
 			throw new InvalidDateOrderException(this.dateIntro, dateDisc);
 		}

@@ -249,7 +249,7 @@ public class CdbController {
 			case 1:
 				throw new MissingArgumentException(2, splitStr.length);
 			case 2:
-				List<Dto> dtoList;
+				List<? extends Dto> dtoList;
 				if (splitStr[1].toLowerCase().equals("computer")) {
 					dtoList = ComputerService.getInstance().listAllElements();
 				} else if (splitStr[1].toLowerCase().equals("company")) {
@@ -277,7 +277,7 @@ public class CdbController {
 			case 3:
 				throw new MissingArgumentException(sizeExpected, splitStr.length);
 			case 4:
-				List<Dto> dtoList;
+				List<? extends Dto> dtoList;
 				if (splitStr[1].toLowerCase().equals("computer")) {
 					dtoList = ComputerService.getInstance().list(splitStr[2], splitStr[3]);
 				} else if (splitStr[1].toLowerCase().equals("company")) {

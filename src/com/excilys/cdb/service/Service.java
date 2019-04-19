@@ -1,6 +1,7 @@
 package com.excilys.cdb.service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.excilys.cdb.dao.Dao;
 import com.excilys.cdb.dto.Dto;
@@ -34,16 +35,12 @@ public abstract class Service<T extends Dto, U extends Model> {
 		return this.mapper.modelToDto(this.dao.read(this.mapper.idToInt(id)));
 	};
 	
-	public List<Dto> listAllElements() throws Exception {
-		List<Dto> dtoList = new ArrayList<Dto>();
+	public List<T> listAllElements() throws Exception {
 		List<U> modelList = this.dao.listAll();
-		for (U model : modelList) {
-			dtoList.add(this.mapper.modelToDto(model));
-		}
-		return dtoList;
+		return (List<T>) modelList.stream().map(s -> mapper.modelToDto(s)).collect(Collectors.toList());
 	};
 	
-	public List<Dto> list(String pageStr, String sizeStr) throws Exception {
+	public List<T> list(String pageStr, String sizeStr) throws Exception {
 		int page,size;
 		
 		try {
@@ -57,11 +54,7 @@ public abstract class Service<T extends Dto, U extends Model> {
 			throw new InvalidIntegerException(sizeStr);
 		}
 		
-		List<Dto> dtoList = new ArrayList<Dto>();
 		List<U> modelList = this.dao.list(page,size);
-		for (U model : modelList) {
-			dtoList.add(this.mapper.modelToDto(model));
-		}
-		return dtoList;
+		return (List<T>) modelList.stream().map(s -> mapper.modelToDto(s)).collect(Collectors.toList());
 	}
 }
