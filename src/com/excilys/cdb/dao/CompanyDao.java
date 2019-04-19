@@ -34,7 +34,10 @@ public class CompanyDao extends Dao<Company>{
 			p.setString(2, obj.getName());
 			
 			int nbRow = p.executeUpdate();
-			return (nbRow == 1) ? obj : null;
+			if (nbRow == 1)
+				return obj;
+			else
+				throw new FailedSQLQueryException(this.SQL_CREATE);
 		} catch (SQLException e) {
 			throw new PrimaryKeyViolationException(obj.getId());
 		}
@@ -44,9 +47,6 @@ public class CompanyDao extends Dao<Company>{
 	public Company update(Company obj) throws Exception {
 		// Read
 		Company c = this.read(obj.getId());
-		if (c == null) {
-			return null;
-		}
 		try (
 			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement p = conn.prepareStatement(this.SQL_UPDATE);
@@ -56,7 +56,10 @@ public class CompanyDao extends Dao<Company>{
 			p.setString(1, c.getName());
 			p.setInt(2, c.getId());
 			
-			return (p.executeUpdate() == 1) ? c : null;
+			if (p.executeUpdate() == 1) 
+				return c;
+			else
+				throw new FailedSQLQueryException(this.SQL_UPDATE);
 		} catch (SQLException e) {
 			throw new PrimaryKeyViolationException(obj.getId());
 		}
@@ -76,10 +79,11 @@ public class CompanyDao extends Dao<Company>{
 		) {
 			p.setInt(1, id);
 			
-			int nbRow = p.executeUpdate();
-			return (nbRow == 1) ? c : null;
+			if (p.executeUpdate() == 1) 
+				return c;
+			else
+				throw new FailedSQLQueryException(this.SQL_DELETE);
 		} catch (SQLException e) {
-			// Yet never seen
 			throw e;
 		}
 	}
@@ -101,7 +105,7 @@ public class CompanyDao extends Dao<Company>{
 				Company c = new Company(id,r.getString("name"));
 				return c;
 			} else {
-				return null;
+				throw new FailedSQLQueryException(this.SQL_SELECT);
 			}
 		} catch (SQLException e) {
 			throw e;

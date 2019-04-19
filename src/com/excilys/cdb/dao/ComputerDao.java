@@ -41,12 +41,16 @@ public class ComputerDao extends Dao<Computer>{
 			p.setNull(5, java.sql.Types.INTEGER);
 			
 			nbRow = p.executeUpdate();
-		} catch (SQLIntegrityConstraintViolationException e) {
+		} catch (SQLException e) {
 			throw new PrimaryKeyViolationException(obj.getId());
 		}
 		
 		if (obj.getManufacturer() == 0) {
-			return (nbRow == 1) ? obj : null;
+			if (nbRow == 1) {
+				return obj;
+			} else {
+				throw new FailedSQLQueryException(this.SQL_CREATE);
+			}
 		} else {
 			try (
 				Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
@@ -56,8 +60,12 @@ public class ComputerDao extends Dao<Computer>{
 				p.setInt(2, obj.getId());
 				
 				nbRow += p.executeUpdate();
-				return (nbRow == 2) ? obj : null;
-			} catch (SQLIntegrityConstraintViolationException e) {
+				if (nbRow == 2) {
+					return obj;
+				} else {
+					throw new FailedSQLQueryException(this.SQL_SELECT_UPDATE_COMPANY);
+				}
+			} catch (SQLException e) {
 				throw new ForeignKeyViolationException(obj.getManufacturer(), "company");
 			}
 		}
@@ -92,9 +100,13 @@ public class ComputerDao extends Dao<Computer>{
 			} else {
 				p.setInt(4, c.getManufacturer());
 			}
-			p.setInt(5, c.getId());
-			
-			return (p.executeUpdate() == 0) ? null : c;
+			p.setInt(5, obj.getId());
+
+			if (p.executeUpdate() == 1) {
+				return c;
+			} else {
+				throw new FailedSQLQueryException(this.SQL_UPDATE);
+			}		
 		} catch (SQLException e) {
 			throw new ForeignKeyViolationException(c.getManufacturer(), "company");
 		}
@@ -113,8 +125,11 @@ public class ComputerDao extends Dao<Computer>{
 		) {
 			p.setInt(1, id);
 			
-			int nbRow = p.executeUpdate();
-			return (nbRow == 1) ? c : null;
+			if (p.executeUpdate() == 1) {
+				return c;
+			} else {
+				throw new FailedSQLQueryException(this.SQL_DELETE);
+			}
 		} catch (SQLException e) {
 			throw e;
 		}
@@ -136,7 +151,7 @@ public class ComputerDao extends Dao<Computer>{
 			if(r.first()) {
 				return new Computer(id,r.getString("name"),r.getTimestamp("introduced"),r.getTimestamp("discontinued"), r.getInt("company_id"));
 			} else {
-				return null;
+				throw new FailedSQLQueryException(this.SQL_SELECT);
 			}
 		} catch (SQLException e) {
 			throw e;

@@ -226,7 +226,6 @@ public class CdbController {
 			Dto ret;
 			if (splitStr[1].toLowerCase().equals("computer")) {
 				ComputerDto c = new ComputerDto(splitStr[2]);
-				// Pour chaque option passée
 				for (String s : Arrays.copyOfRange(splitStr, 3, splitStr.length)) {
 					this.updateTreatOption(c,s);
 				}
@@ -241,7 +240,7 @@ public class CdbController {
 			} else {
 				throw new InvalidTableException(splitStr[1]);
 			}
-			return (ret == null) ? "Aucune modification" : "Update "+ret.toString();
+			return "Update "+ret.toString();
 		}
 	}
 	
