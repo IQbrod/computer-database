@@ -37,16 +37,16 @@ public class ComputerDao extends Dao<Computer>{
 		}
 		
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_CREATE)
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_CREATE)
 		) {
-			p.setInt(1,obj.getId());
-			p.setString(2, obj.getName());
-			p.setTimestamp(3, obj.getDateIntro());
-			p.setTimestamp(4, obj.getDateDisc());
-			p.setNull(5, java.sql.Types.INTEGER);
+			preparedStatement.setInt(1,obj.getId());
+			preparedStatement.setString(2, obj.getName());
+			preparedStatement.setTimestamp(3, obj.getDateIntro());
+			preparedStatement.setTimestamp(4, obj.getDateDisc());
+			preparedStatement.setNull(5, java.sql.Types.INTEGER);
 			
-			nbRow = p.executeUpdate();
+			nbRow = preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new PrimaryKeyViolationException(obj.getId());
 		}
@@ -59,13 +59,13 @@ public class ComputerDao extends Dao<Computer>{
 			}
 		} else {
 			try (
-				Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-				PreparedStatement p = conn.prepareStatement(this.SQL_SELECT_UPDATE_COMPANY);
+				Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+				PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_SELECT_UPDATE_COMPANY);
 			) {
-				p.setInt(1, obj.getManufacturer());
-				p.setInt(2, obj.getId());
+				preparedStatement.setInt(1, obj.getManufacturer());
+				preparedStatement.setInt(2, obj.getId());
 				
-				nbRow += p.executeUpdate();
+				nbRow += preparedStatement.executeUpdate();
 				if (nbRow == 2) {
 					return obj;
 				} else {
@@ -79,42 +79,42 @@ public class ComputerDao extends Dao<Computer>{
 
 	@Override
 	public Computer update(Computer obj) throws Exception {
-		Computer c = this.read(obj.getId());
+		Computer returnComputer = this.read(obj.getId());
 
 		if (obj.getName().contentEquals("")) {
-			c.setName(obj.getName());
+			returnComputer.setName(obj.getName());
 		}
 		if (obj.getDateIntro() != null) {
-			c.setDateIntro(obj.getDateIntro());
+			returnComputer.setDateIntro(obj.getDateIntro());
 		}
 		if (obj.getDateDisc() != null) {
-			c.setDateDisc(obj.getDateDisc());
+			returnComputer.setDateDisc(obj.getDateDisc());
 		}
 		if (obj.getManufacturer() != -1) {
-			c.setManufacturer(obj.getManufacturer());
+			returnComputer.setManufacturer(obj.getManufacturer());
 		}
 		
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_UPDATE);
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_UPDATE);
 		) {
-			p.setString(1, c.getName());
-			p.setTimestamp(2, c.getDateIntro());
-			p.setTimestamp(3, obj.getDateDisc());
-			if (c.getManufacturer() == 0) {
-				p.setNull(4, java.sql.Types.INTEGER);
+			preparedStatement.setString(1, returnComputer.getName());
+			preparedStatement.setTimestamp(2, returnComputer.getDateIntro());
+			preparedStatement.setTimestamp(3, obj.getDateDisc());
+			if (returnComputer.getManufacturer() == 0) {
+				preparedStatement.setNull(4, java.sql.Types.INTEGER);
 			} else {
-				p.setInt(4, c.getManufacturer());
+				preparedStatement.setInt(4, returnComputer.getManufacturer());
 			}
-			p.setInt(5, obj.getId());
+			preparedStatement.setInt(5, obj.getId());
 
-			if (p.executeUpdate() == 1) {
-				return c;
+			if (preparedStatement.executeUpdate() == 1) {
+				return returnComputer;
 			} else {
 				throw new FailedSQLQueryException(this.SQL_UPDATE);
 			}		
 		} catch (SQLException e) {
-			throw new ForeignKeyViolationException(c.getManufacturer(), "company");
+			throw new ForeignKeyViolationException(returnComputer.getManufacturer(), "company");
 		}
 	}
 
@@ -124,15 +124,15 @@ public class ComputerDao extends Dao<Computer>{
 	}
 	
 	public Computer deleteById(int id) throws Exception {
-		Computer c = this.read(id);
+		Computer returnComputer = this.read(id);
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_DELETE);
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_DELETE);
 		) {
-			p.setInt(1, id);
+			preparedStatement.setInt(1, id);
 			
-			if (p.executeUpdate() == 1) {
-				return c;
+			if (preparedStatement.executeUpdate() == 1) {
+				return returnComputer;
 			} else {
 				throw new FailedSQLQueryException(this.SQL_DELETE);
 			}
@@ -148,14 +148,14 @@ public class ComputerDao extends Dao<Computer>{
 		}
 		
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_SELECT);
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_SELECT);
 		) {
-			p.setInt(1, id);
+			preparedStatement.setInt(1, id);
 			
-			ResultSet r = p.executeQuery();
-			if(r.first()) {
-				return new Computer(id,r.getString("name"),r.getTimestamp("introduced"),r.getTimestamp("discontinued"), r.getInt("company_id"));
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if(resultSet.first()) {
+				return new Computer(id,resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id"));
 			} else {
 				throw new FailedSQLQueryException(this.SQL_SELECT);
 			}
@@ -167,16 +167,16 @@ public class ComputerDao extends Dao<Computer>{
 	@Override
 	public List<Computer> listAll() throws Exception {
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_LISTALL);
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LISTALL);
 		) {
 			
-			ResultSet r = p.executeQuery();
-			List<Computer> lst = new ArrayList<Computer>();
-			while(r.next()) {
-				lst.add(new Computer(r.getInt("id"),r.getString("name"),r.getTimestamp("introduced"),r.getTimestamp("discontinued"), r.getInt("company_id")));
+			ResultSet resultSet = preparedStatement.executeQuery();
+			List<Computer> computerList = new ArrayList<Computer>();
+			while(resultSet.next()) {
+				computerList.add(new Computer(resultSet.getInt("id"),resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id")));
 			}
-			return lst;
+			return computerList;
 			
 		} catch (SQLException e) {
 			throw e;
@@ -194,18 +194,18 @@ public class ComputerDao extends Dao<Computer>{
 		int offset = (page-1)*size;
 		
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_LIST);
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LIST);
 		) {
-			p.setInt(1, offset);
-			p.setInt(2, size);
+			preparedStatement.setInt(1, offset);
+			preparedStatement.setInt(2, size);
 			
-			ResultSet r = p.executeQuery();
-			List<Computer> lst = new ArrayList<Computer>();
-			while(r.next()) {
-				lst.add(new Computer(r.getInt("id"),r.getString("name"),r.getTimestamp("introduced"),r.getTimestamp("discontinued"), r.getInt("company_id")));
+			ResultSet resultSet = preparedStatement.executeQuery();
+			List<Computer> computerList = new ArrayList<Computer>();
+			while(resultSet.next()) {
+				computerList.add(new Computer(resultSet.getInt("id"),resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id")));
 			}
-			return lst;
+			return computerList;
 			
 		} catch (SQLException e) {
 			throw e;

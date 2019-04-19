@@ -14,9 +14,9 @@ public abstract class Service<T extends Dto, U extends Model> {
 	protected Mapper<T, U> mapper;
 	protected Dao<U> dao;
 	
-	protected Service(Mapper<T, U> m, Dao<U> d) {
-		this.mapper = m;
-		this.dao = d;
+	protected Service(Mapper<T, U> map, Dao<U> dao) {
+		this.mapper = map;
+		this.dao = dao;
 	}
 	
 	public T create(T dtoObject) throws Exception {
@@ -36,8 +36,7 @@ public abstract class Service<T extends Dto, U extends Model> {
 	};
 	
 	public List<T> listAllElements() throws Exception {
-		List<U> modelList = this.dao.listAll();
-		return (List<T>) modelList.stream().map(s -> mapper.modelToDto(s)).collect(Collectors.toList());
+		return (List<T>) this.dao.listAll().stream().map(s -> mapper.modelToDto(s)).collect(Collectors.toList());
 	};
 	
 	public List<T> list(String pageStr, String sizeStr) throws Exception {
@@ -54,7 +53,6 @@ public abstract class Service<T extends Dto, U extends Model> {
 			throw new InvalidIntegerException(sizeStr);
 		}
 		
-		List<U> modelList = this.dao.list(page,size);
-		return (List<T>) modelList.stream().map(s -> mapper.modelToDto(s)).collect(Collectors.toList());
+		return (List<T>) this.dao.list(page,size).stream().map(s -> mapper.modelToDto(s)).collect(Collectors.toList());
 	}
 }

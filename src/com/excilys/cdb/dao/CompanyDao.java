@@ -32,13 +32,13 @@ public class CompanyDao extends Dao<Company>{
 		}
 		
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_CREATE);
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_CREATE);
 		) {
-			p.setInt(1,obj.getId());
-			p.setString(2, obj.getName());
+			preparedStatement.setInt(1,obj.getId());
+			preparedStatement.setString(2, obj.getName());
 			
-			int nbRow = p.executeUpdate();
+			int nbRow = preparedStatement.executeUpdate();
 			if (nbRow == 1)
 				return obj;
 			else
@@ -50,19 +50,18 @@ public class CompanyDao extends Dao<Company>{
 
 	@Override
 	public Company update(Company obj) throws Exception {
-		// Read
-		Company c = this.read(obj.getId());
+		Company company = this.read(obj.getId());
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_UPDATE);
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_UPDATE);
 		) {
-			c.setName(obj.getName());
+			company.setName(obj.getName());
 
-			p.setString(1, c.getName());
-			p.setInt(2, c.getId());
+			preparedStatement.setString(1, company.getName());
+			preparedStatement.setInt(2, company.getId());
 			
-			if (p.executeUpdate() == 1) 
-				return c;
+			if (preparedStatement.executeUpdate() == 1) 
+				return company;
 			else
 				throw new FailedSQLQueryException(this.SQL_UPDATE);
 		} catch (SQLException e) {
@@ -77,15 +76,15 @@ public class CompanyDao extends Dao<Company>{
 	
 	@Override
 	public Company deleteById(int id) throws Exception {
-		Company c = this.read(id);
+		Company company = this.read(id);
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_DELETE);
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_DELETE);
 		) {
-			p.setInt(1, id);
+			preparedStatement.setInt(1, id);
 			
-			if (p.executeUpdate() == 1) 
-				return c;
+			if (preparedStatement.executeUpdate() == 1) 
+				return company;
 			else
 				throw new FailedSQLQueryException(this.SQL_DELETE);
 		} catch (SQLException e) {
@@ -100,15 +99,15 @@ public class CompanyDao extends Dao<Company>{
 		}
 		
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_SELECT);
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_SELECT);
 		) {
-			p.setInt(1, id);
+			preparedStatement.setInt(1, id);
 			
-			ResultSet r = p.executeQuery();
-			if(r.first()) {
-				Company c = new Company(id,r.getString("name"));
-				return c;
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if(resultSet.first()) {
+				Company company = new Company(id,resultSet.getString("name"));
+				return company;
 			} else {
 				throw new FailedSQLQueryException(this.SQL_SELECT);
 			}
@@ -120,15 +119,15 @@ public class CompanyDao extends Dao<Company>{
 	@Override
 	public List<Company> listAll() throws Exception {
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_LISTALL);
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LISTALL);
 		) {
-			ResultSet r = p.executeQuery();
-			List<Company> lst = new ArrayList<Company>();
-			while(r.next()) {
-				lst.add(new Company(r.getInt("id"),r.getString("name")));
+			ResultSet resultSet = preparedStatement.executeQuery();
+			List<Company> companyList = new ArrayList<Company>();
+			while(resultSet.next()) {
+				companyList.add(new Company(resultSet.getInt("id"),resultSet.getString("name")));
 			}
-			return lst;
+			return companyList;
 			
 		} catch (SQLException e) {
 			throw e;
@@ -146,13 +145,13 @@ public class CompanyDao extends Dao<Company>{
 		int offset = (page-1)*size;
 		
 		try (
-			Connection conn = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement p = conn.prepareStatement(this.SQL_LIST);
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LIST);
 		) {
-			p.setInt(1, offset);
-			p.setInt(2, size);
+			preparedStatement.setInt(1, offset);
+			preparedStatement.setInt(2, size);
 			
-			ResultSet r = p.executeQuery();
+			ResultSet r = preparedStatement.executeQuery();
 			List<Company> lst = new ArrayList<Company>();
 			while(r.next()) {
 				lst.add(new Company(r.getInt("id"),r.getString("name")));
