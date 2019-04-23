@@ -3,15 +3,19 @@ package com.excilys.cdb.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 // TODO: Throw les exceptions jusqu'au controller
 
-public class ComputerDao extends Dao<Computer>{
+public class ComputerDao extends Dao<Computer> {
 	private final String SQL_SELECT_UPDATE_COMPANY = "UPDATE computer SET company_id=? WHERE id=?;";
 	
 	private static ComputerDao instance = null;
+	private Logger logger = (Logger) LogManager.getLogger(ComputerDao.class);	
 	
 	private ComputerDao() throws DatabaseProblemException {
 		super(
@@ -35,7 +39,9 @@ public class ComputerDao extends Dao<Computer>{
 		int nbRow = 0;
 		
 		if(obj.getId() <= 0) {
-			throw new InvalidIdException(obj.getId());
+			Exception exception = new InvalidIdException(obj.getId());
+			logger.error(exception.getMessage());
+			throw exception;
 		}
 		
 		try (
@@ -50,14 +56,18 @@ public class ComputerDao extends Dao<Computer>{
 			
 			nbRow = preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			throw new PrimaryKeyViolationException(obj.getId());
+			Exception exception = new PrimaryKeyViolationException(obj.getId());
+			logger.error(exception.getMessage()+" caused by "+e.getMessage());
+			throw exception;
 		}
 		
 		if (obj.getManufacturer() == 0) {
 			if (nbRow == 1) {
 				return obj;
 			} else {
-				throw new FailedSQLQueryException(this.SQL_CREATE);
+				Exception exception = new FailedSQLQueryException(this.SQL_CREATE);
+				logger.error(exception.getMessage());
+				throw exception;
 			}
 		} else {
 			try (
@@ -71,10 +81,14 @@ public class ComputerDao extends Dao<Computer>{
 				if (nbRow == 2) {
 					return obj;
 				} else {
-					throw new FailedSQLQueryException(this.SQL_SELECT_UPDATE_COMPANY);
+					Exception exception = new FailedSQLQueryException(this.SQL_SELECT_UPDATE_COMPANY);
+					logger.error(exception.getMessage());
+					throw exception;
 				}
 			} catch (SQLException e) {
-				throw new ForeignKeyViolationException(obj.getManufacturer(), "company");
+				Exception exception = new ForeignKeyViolationException(obj.getManufacturer(), "company");
+				logger.error(exception.getMessage());
+				throw exception;
 			}
 		}
 	}

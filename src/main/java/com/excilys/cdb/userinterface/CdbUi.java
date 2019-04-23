@@ -30,6 +30,7 @@ public class CdbUi {
 		while (true) {
 			this.cmd = scanner.nextLine();
 			switch (this.cmd) {
+				case "quit":
 				case "stop":
 				case "exit":
 					this.println(this.out,"Bye !");

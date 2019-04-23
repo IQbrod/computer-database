@@ -2,12 +2,10 @@ package com.excilys.cdb.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
 import com.excilys.cdb.exception.DatabaseProblemException;
-import com.excilys.cdb.exception.PrimaryKeyViolationException;
 import com.excilys.cdb.model.Model;
 
 public abstract class Dao<T extends Model> {

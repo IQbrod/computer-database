@@ -89,7 +89,6 @@ public class CdbController {
 		
 		switch (splitStr.length) {
 			case 1:
-				// Requires at least <table>
 				throw new MissingArgumentException(2,splitStr.length);
 			case 2:
 			case 3:
