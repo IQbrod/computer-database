@@ -1,7 +1,13 @@
 package com.excilys.cdb.dao;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
+import com.excilys.cdb.exception.DatabaseProblemException;
+import com.excilys.cdb.exception.PrimaryKeyViolationException;
 import com.excilys.cdb.model.Model;
 
 public abstract class Dao<T extends Model> {
@@ -16,13 +22,19 @@ public abstract class Dao<T extends Model> {
 	protected final String SQL_LISTALL;
 	protected final String SQL_LIST;
 	
-	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlListall, String sqlList) {
+	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlListall, String sqlList) throws DatabaseProblemException {
 		this.SQL_CREATE = sqlCreate;
 		this.SQL_UPDATE = sqlUpdate;
 		this.SQL_DELETE = sqlDelete;
 		this.SQL_SELECT = sqlSelect;
 		this.SQL_LISTALL = sqlListall;
 		this.SQL_LIST = sqlList;
+		
+		try (
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+		) {} catch (SQLException e) {
+			throw new DatabaseProblemException(this.DBACCESS, this.DBUSER, this.DBPASS);
+		}
 	}
 	
 	public abstract T create(T obj) throws Exception;

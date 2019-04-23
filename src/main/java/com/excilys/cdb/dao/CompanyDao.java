@@ -8,9 +8,9 @@ import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 public class CompanyDao extends Dao<Company>{
-	private static CompanyDao instance = new CompanyDao();
+	private static CompanyDao instance = null;
 	
-	private CompanyDao() {
+	private CompanyDao() throws DatabaseProblemException {
 		super(
 			"INSERT INTO company VALUES (?,?);",
 			"UPDATE company SET name=? WHERE id=?;",
@@ -21,7 +21,9 @@ public class CompanyDao extends Dao<Company>{
 		);
 	}
 	
-	public static CompanyDao getInstance() {
+	public static CompanyDao getInstance() throws DatabaseProblemException {
+		if (instance == null)
+			instance = new CompanyDao();
 		return instance;
 	}
 

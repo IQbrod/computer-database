@@ -161,7 +161,7 @@ public class CdbController {
 					throw new InvalidTableException(splitStr[1]);
 				}
 				// Display dto
-				return (c == null) ? "["+splitStr[2]+"] Not Found" : c.toString();
+				return c.toString();
 			default:
 				throw new TooManyArgumentsException(splitStr[3]);
 		}
