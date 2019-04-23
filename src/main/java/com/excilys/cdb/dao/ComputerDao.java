@@ -157,10 +157,10 @@ public class ComputerDao extends Dao<Computer>{
 			if(resultSet.first()) {
 				return new Computer(id,resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id"));
 			} else {
-				throw new FailedSQLQueryException(this.SQL_SELECT);
+				throw new InvalidIdException(id);
 			}
 		} catch (SQLException e) {
-			throw e;
+			throw new FailedSQLQueryException(this.SQL_SELECT);
 		}
 	}
 
@@ -179,7 +179,7 @@ public class ComputerDao extends Dao<Computer>{
 			return computerList;
 			
 		} catch (SQLException e) {
-			throw e;
+			throw new FailedSQLQueryException(this.SQL_LISTALL);
 		}
 	}
 	
@@ -208,7 +208,7 @@ public class ComputerDao extends Dao<Computer>{
 			return computerList;
 			
 		} catch (SQLException e) {
-			throw e;
+			throw new FailedSQLQueryException(this.SQL_LIST);
 		}
 	}
 

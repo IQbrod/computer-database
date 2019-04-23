@@ -109,10 +109,10 @@ public class CompanyDao extends Dao<Company>{
 				Company company = new Company(id,resultSet.getString("name"));
 				return company;
 			} else {
-				throw new FailedSQLQueryException(this.SQL_SELECT);
+				throw new InvalidIdException(id);
 			}
 		} catch (SQLException e) {
-			throw e;
+			throw new FailedSQLQueryException(this.SQL_SELECT);
 		}
 	}
 	
@@ -130,7 +130,7 @@ public class CompanyDao extends Dao<Company>{
 			return companyList;
 			
 		} catch (SQLException e) {
-			throw e;
+			throw new FailedSQLQueryException(this.SQL_LISTALL);
 		}
 	}
 	
@@ -159,7 +159,7 @@ public class CompanyDao extends Dao<Company>{
 			return lst;
 			
 		} catch (SQLException e) {
-			throw e;
+			throw new FailedSQLQueryException(this.SQL_LIST);
 		}
 	}
 
