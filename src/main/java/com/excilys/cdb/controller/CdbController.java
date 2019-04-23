@@ -1,6 +1,11 @@
 package com.excilys.cdb.controller;
 
 import java.util.Arrays;
+
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
+
 import java.util.*;
 
 import com.excilys.cdb.dto.*;
@@ -14,6 +19,7 @@ import com.excilys.cdb.service.*;
 public class CdbController {
 	private String[] splitStr;
 	private final String dateFormat = "yyyy-MM-dd/HH:mm:ss";
+	private Logger logger = (Logger) LogManager.getLogger(CdbController.class);	
 	
 	private static CdbController instance = new CdbController();
 	
@@ -24,7 +30,7 @@ public class CdbController {
 	}
 	
 	public String treatMessage(String msg) throws Exception {
-		// Parse message based on whitespace : Any amount might be placed beside and inbetween
+		logger.debug(msg);
 		this.splitStr = msg.trim().split("\\s+");
 		
 		CommandEnum cmd = CommandEnum.getCommandEnum(splitStr[0].toLowerCase());
