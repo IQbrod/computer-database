@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.cdb.exception.DatabaseProblemException;
 import com.excilys.cdb.model.Model;
 
@@ -20,6 +23,8 @@ public abstract class Dao<T extends Model> {
 	protected final String SQL_LISTALL;
 	protected final String SQL_LIST;
 	
+	protected Logger logger;
+	
 	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlListall, String sqlList) throws DatabaseProblemException {
 		this.SQL_CREATE = sqlCreate;
 		this.SQL_UPDATE = sqlUpdate;
@@ -28,10 +33,14 @@ public abstract class Dao<T extends Model> {
 		this.SQL_LISTALL = sqlListall;
 		this.SQL_LIST = sqlList;
 		
+		logger = (Logger) LogManager.getLogger(this.getClass());
+		
 		try (
 			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 		) {} catch (SQLException e) {
-			throw new DatabaseProblemException(this.DBACCESS, this.DBUSER, this.DBPASS);
+			DatabaseProblemException exception = new DatabaseProblemException(this.DBACCESS, this.DBUSER, this.DBPASS);
+			logger.error(exception.getMessage() + " caused by " + e.getMessage(),exception);
+			throw exception;
 		}
 	}
 	
@@ -42,5 +51,19 @@ public abstract class Dao<T extends Model> {
 	public abstract T read(int id) throws Exception;
 	public abstract List<T> listAll() throws Exception;
 	public abstract List<T> list(int page, int size) throws Exception;
+	
+	protected Logger getLogger() {
+		return this.logger;
+	}
+	
+	protected Exception log (Exception exception, Exception cause) throws Exception {
+		getLogger().error(exception.getMessage()+ " caused by "+cause.getMessage(),exception);
+		return exception;
+	}
+	
+	protected Exception log (Exception exception) throws Exception {
+		getLogger().error(exception.getMessage(),exception);
+		return exception;
+	}
 	
 }

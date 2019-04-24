@@ -2,12 +2,16 @@ package com.excilys.cdb.mapper;
 
 import java.sql.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.exception.InvalidDateValueException;
 import com.excilys.cdb.model.Computer;
 
 public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 	private static ComputerMapper instance = new ComputerMapper();	
+	private Logger logger = (Logger) LogManager.getLogger(this.getClass());
 	
 	private ComputerMapper() {}	
 	
@@ -17,43 +21,36 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 	
 	@Override
 	public Computer dtoToModel(ComputerDto dtoObject) throws RuntimeException {
-		if (dtoObject == null) {
-			return null;
-		} else {
-			int id = Integer.parseInt(dtoObject.getId());
-			String name = dtoObject.getName();
-			Timestamp t1, t2;
-			t1 = this.castTimestamp(dtoObject.getIntroduction());
-			t2 = this.castTimestamp(dtoObject.getDiscontinued());
-			int cid = Integer.parseInt(dtoObject.getCompany());
+		int id = Integer.parseInt(dtoObject.getId());
+		String name = dtoObject.getName();
+		Timestamp t1, t2;
+		t1 = this.castTimestamp(dtoObject.getIntroduction());
+		t2 = this.castTimestamp(dtoObject.getDiscontinued());
+		int cid = Integer.parseInt(dtoObject.getCompany());
 			
-			Computer c = new Computer(id,name,t1,t2,cid);
-			
-			return c;
-		}
+		Computer computer = new Computer(id,name,t1,t2,cid);
+		return computer;
 	}
 	
 	private Timestamp castTimestamp(String s) throws RuntimeException {
 		try {
 			return (s == null) ? null : Timestamp.valueOf(s);
 		} catch (Exception e) {
-			throw new InvalidDateValueException(s);
+			RuntimeException exception = new InvalidDateValueException(s);
+			this.logger.error(exception.getMessage()+" caused by "+e.getMessage(),e);
+			throw exception;
 		}
 	}
 
 	@Override
 	public ComputerDto modelToDto(Computer modelObject) {
-		if (modelObject == null) {
-			return null;
-		} else {
-			return new ComputerDto(
-				Integer.toString(modelObject.getId()),
-				modelObject.getName(),
-				(modelObject.getDateIntro() == null) ? "_" : modelObject.getDateIntro().toString(),
-				(modelObject.getDateDisc() == null) ? "_" : modelObject.getDateDisc().toString(),
-				(modelObject.getManufacturer() <= 0) ? "0" : Integer.toString(modelObject.getManufacturer())
-			);
-		}
+		return new ComputerDto(
+			Integer.toString(modelObject.getId()),
+			modelObject.getName(),
+			(modelObject.getDateIntro() == null) ? "_" : modelObject.getDateIntro().toString(),
+			(modelObject.getDateDisc() == null) ? "_" : modelObject.getDateDisc().toString(),
+			(modelObject.getManufacturer() <= 0) ? "0" : Integer.toString(modelObject.getManufacturer())
+		);
 	}
 	
 }

@@ -4,6 +4,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
@@ -19,6 +22,8 @@ public class CompanyDao extends Dao<Company>{
 			"SELECT * FROM company;",
 			"SELECT * FROM company LIMIT ?,?;"
 		);
+		
+		this.logger = (Logger) LogManager.getLogger(this.getClass());
 	}
 	
 	public static CompanyDao getInstance() throws DatabaseProblemException {
@@ -26,11 +31,16 @@ public class CompanyDao extends Dao<Company>{
 			instance = new CompanyDao();
 		return instance;
 	}
+	
+	@Override
+	protected Logger getLogger() {
+		return this.logger;
+	}
 
 	@Override
 	public Company create(Company obj) throws Exception{
 		if(obj.getId() <= 0) {
-			throw new InvalidIdException(obj.getId());
+			throw this.log(new InvalidIdException(obj.getId()));
 		}
 		
 		try (
@@ -43,10 +53,11 @@ public class CompanyDao extends Dao<Company>{
 			int nbRow = preparedStatement.executeUpdate();
 			if (nbRow == 1)
 				return obj;
-			else
-				throw new FailedSQLQueryException(this.SQL_CREATE);
+			else {
+				throw this.log(new FailedSQLQueryException(this.SQL_CREATE));
+			}
 		} catch (SQLException e) {
-			throw new PrimaryKeyViolationException(obj.getId());
+			throw this.log(new PrimaryKeyViolationException(obj.getId()),e);
 		}
 	}
 
@@ -64,10 +75,11 @@ public class CompanyDao extends Dao<Company>{
 			
 			if (preparedStatement.executeUpdate() == 1) 
 				return company;
-			else
-				throw new FailedSQLQueryException(this.SQL_UPDATE);
+			else {
+				throw this.log(new FailedSQLQueryException(this.SQL_UPDATE));
+			}
 		} catch (SQLException e) {
-			throw new PrimaryKeyViolationException(obj.getId());
+			throw this.log(new PrimaryKeyViolationException(obj.getId()),e);
 		}
 	}
 
@@ -87,17 +99,18 @@ public class CompanyDao extends Dao<Company>{
 			
 			if (preparedStatement.executeUpdate() == 1) 
 				return company;
-			else
-				throw new FailedSQLQueryException(this.SQL_DELETE);
+			else {
+				throw this.log(new FailedSQLQueryException(this.SQL_DELETE));
+			}
 		} catch (SQLException e) {
-			throw e;
+			throw this.log(new FailedSQLQueryException(this.SQL_DELETE),e);
 		}
 	}
 
 	@Override
 	public Company read(int id) throws Exception {
 		if(id <= 0) {
-			throw new InvalidIdException(id);
+			throw this.log(new InvalidIdException(id));
 		}
 		
 		try (
@@ -111,10 +124,10 @@ public class CompanyDao extends Dao<Company>{
 				Company company = new Company(id,resultSet.getString("name"));
 				return company;
 			} else {
-				throw new InvalidIdException(id);
+				throw this.log(new InvalidIdException(id));
 			}
 		} catch (SQLException e) {
-			throw new FailedSQLQueryException(this.SQL_SELECT);
+			throw this.log(new FailedSQLQueryException(this.SQL_SELECT),e);
 		}
 	}
 	
@@ -132,17 +145,17 @@ public class CompanyDao extends Dao<Company>{
 			return companyList;
 			
 		} catch (SQLException e) {
-			throw new FailedSQLQueryException(this.SQL_LISTALL);
+			throw this.log(new FailedSQLQueryException(this.SQL_LISTALL),e);
 		}
 	}
 	
 	@Override
 	public List<Company> list(int page, int size) throws Exception {
 		if (size <= 0) {
-			throw new InvalidPageSizeException(size);
+			throw this.log(new InvalidPageSizeException(size));
 		}
 		if (page <= 0) {
-			throw new InvalidPageValueException(page);
+			throw this.log(new InvalidPageValueException(page));
 		}
 		int offset = (page-1)*size;
 		
@@ -161,7 +174,7 @@ public class CompanyDao extends Dao<Company>{
 			return lst;
 			
 		} catch (SQLException e) {
-			throw new FailedSQLQueryException(this.SQL_LIST);
+			throw this.log(new FailedSQLQueryException(this.SQL_LIST),e);
 		}
 	}
 
