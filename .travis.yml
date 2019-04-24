@@ -1,5 +1,24 @@
 language: java
-script: "mvn exec:java"
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    sources:
+      - mysql-5.7-trusty
+    packages:
+      - mysql-server
+      - mysql-client
+services:
+  - mysql
+before_script:
+  - mysql_upgrade -u root
+  - mysql -u root < src/db/1.sql
+  - mysql -u root < src/db/2.sql
+  - mysql -u root --database=computer-database-db < src/db/3.sql	
+
+script:
+  - mvn cobertura:cobertura
 
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)

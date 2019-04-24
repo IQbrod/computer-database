@@ -103,7 +103,7 @@ public class CompanyDao extends Dao<Company>{
 				throw this.log(new FailedSQLQueryException(this.SQL_DELETE));
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.SQL_DELETE),e);
+			throw this.log(new FailedSQLQueryBySQLException(this.SQL_DELETE),e);
 		}
 	}
 
@@ -124,7 +124,7 @@ public class CompanyDao extends Dao<Company>{
 				Company company = new Company(id,resultSet.getString("name"));
 				return company;
 			} else {
-				throw this.log(new InvalidIdException(id));
+				throw this.log(new FailedSQLQueryException(this.SQL_SELECT));
 			}
 		} catch (SQLException e) {
 			throw this.log(new FailedSQLQueryException(this.SQL_SELECT),e);
