@@ -197,7 +197,7 @@ public class ComputerDao extends Dao<Computer> {
 	
 	@Override
 	public List<Computer> list(int page, int size) throws Exception {
-		if (size <= 0) {
+		if (size <= 1) {
 			throw this.log(new InvalidPageSizeException(size));
 		}
 		if (page <= 0) {

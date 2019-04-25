@@ -71,7 +71,7 @@ public class CompanyDao extends Dao<Company>{
 			company.setName(obj.getName());
 
 			preparedStatement.setString(1, company.getName());
-			preparedStatement.setInt(2, company.getId());
+			preparedStatement.setInt(2, obj.getId());
 			
 			if (preparedStatement.executeUpdate() == 1) 
 				return company;
@@ -79,7 +79,7 @@ public class CompanyDao extends Dao<Company>{
 				throw this.log(new FailedSQLQueryException(this.SQL_UPDATE));
 			}
 		} catch (SQLException e) {
-			throw this.log(new PrimaryKeyViolationException(obj.getId()),e);
+			throw this.log(new FailedSQLQueryBySQLException(this.SQL_UPDATE),e);
 		}
 	}
 
