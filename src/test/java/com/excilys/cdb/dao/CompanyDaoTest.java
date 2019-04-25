@@ -13,11 +13,32 @@ public class CompanyDaoTest {
 	}
 	
 	@Test
-	public void TestCRUD() throws Exception {
-		try {
-			CompanyDao.getInstance().read(75);
-		} catch (FailedSQLQueryException exception) {
-			CompanyDao.getInstance().create(new Company(75,"Mon Entreprise"));
-		}
+	public void TestRead() throws Exception {
+		CompanyDao.getInstance().read(7);
+	}
+	
+	@Test (expected = FailedSQLQueryException.class)
+	public void TestReadMissingId() throws Exception {
+		CompanyDao.getInstance().read(120);
+	}
+	
+	@Test (expected = InvalidIdException.class)
+	public void TestReadInvalidId() throws Exception {
+		CompanyDao.getInstance().read(-8);
+	}
+	
+	@Test
+	public void TestCreate() throws Exception {
+		CompanyDao.getInstance().create(new Company(75,"Entreprise"));
+	}
+	
+	@Test (expected = InvalidIdException.class)
+	public void TestCreateInvalidId() throws Exception {
+		CompanyDao.getInstance().create(new Company(-7,"Invalide"));
+	}
+	
+	@Test (expected = PrimaryKeyViolationException.class)
+	public void TestCreateDuplicateId() throws Exception {
+		CompanyDao.getInstance().create(new Company(4,"PrimaryKey"));
 	}
 }
