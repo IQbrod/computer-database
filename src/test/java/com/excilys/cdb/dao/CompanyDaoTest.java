@@ -128,6 +128,6 @@ public class CompanyDaoTest {
 	
 	@Test (expected = InvalidPageSizeException.class)
 	public void TestListEmptySize() throws Exception {
-		assertEquals(0,CompanyDao.getInstance().list(5,0).size());
+		CompanyDao.getInstance().list(5,0).size();
 	}
 }

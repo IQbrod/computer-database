@@ -80,9 +80,11 @@ public class ComputerDao extends Dao<Computer> {
 				if (nbRow == 2) {
 					return obj;
 				} else {
+					this.delete(obj);
 					throw this.log(new FailedSQLQueryException(this.SQL_SELECT_UPDATE_COMPANY));
 				}
 			} catch (SQLException e) {
+				this.delete(obj);
 				throw this.log(new ForeignKeyViolationException(obj.getManufacturer(), "company"),e);
 			}
 		}
@@ -111,7 +113,7 @@ public class ComputerDao extends Dao<Computer> {
 		) {
 			preparedStatement.setString(1, returnComputer.getName());
 			preparedStatement.setTimestamp(2, returnComputer.getDateIntro());
-			preparedStatement.setTimestamp(3, obj.getDateDisc());
+			preparedStatement.setTimestamp(3, returnComputer.getDateDisc());
 			if (returnComputer.getManufacturer() == 0) {
 				preparedStatement.setNull(4, java.sql.Types.INTEGER);
 			} else {
@@ -125,8 +127,7 @@ public class ComputerDao extends Dao<Computer> {
 				throw this.log(new FailedSQLQueryException(this.SQL_UPDATE));
 			}		
 		} catch (SQLException e) {
-			throw this.log(new ForeignKeyViolationException(returnComputer.getManufacturer(), "company"),e);
-
+			throw this.log(new FailedSQLQueryBySQLException(this.SQL_UPDATE),e);
 		}
 	}
 
@@ -149,7 +150,7 @@ public class ComputerDao extends Dao<Computer> {
 				throw this.log(new FailedSQLQueryException(this.SQL_DELETE));
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.SQL_DELETE),e);
+			throw this.log(new FailedSQLQueryBySQLException(this.SQL_DELETE),e);
 		}
 	}
 
@@ -169,10 +170,10 @@ public class ComputerDao extends Dao<Computer> {
 			if(resultSet.first()) {
 				return new Computer(id,resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id"));
 			} else {
-				throw this.log(new InvalidIdException(id));
+				throw this.log(new FailedSQLQueryException(this.SQL_SELECT));
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.SQL_SELECT));
+			throw this.log(new FailedSQLQueryBySQLException(this.SQL_SELECT),e);
 		}
 	}
 
@@ -197,7 +198,7 @@ public class ComputerDao extends Dao<Computer> {
 	
 	@Override
 	public List<Computer> list(int page, int size) throws Exception {
-		if (size <= 1) {
+		if (size <= 0) {
 			throw this.log(new InvalidPageSizeException(size));
 		}
 		if (page <= 0) {
