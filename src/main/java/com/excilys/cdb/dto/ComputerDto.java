@@ -54,4 +54,26 @@ public class ComputerDto extends Dto {
 	public String toString() {
 		return "Computer ["+this.getId()+"] " + this.getName() + " (" + this.getIntroduction() + ") (" + this.getDiscontinued() + ") " + this.getCompany();
 	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+        if (!(object instanceof ComputerDto))
+            return false;
+        
+        ComputerDto computerDto = (ComputerDto) object;
+        return computerDto.getId().contentEquals(this.getId());
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = 31*17 + this.getId().hashCode();
+		result = 31*result + this.getName().hashCode();
+		result = 31*result + ((this.getIntroduction() == null) ? 0 : this.getIntroduction().hashCode());
+		result = 31*result + ((this.getDiscontinued() == null) ? 0 : this.getDiscontinued().hashCode());
+		result = 31*result + this.getCompany().hashCode();
+		
+		return result;
+	}
 }

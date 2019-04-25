@@ -1,6 +1,7 @@
 package com.excilys.cdb.mapper;
 
 import com.excilys.cdb.dto.CompanyDto;
+import com.excilys.cdb.exception.InvalidIntegerException;
 import com.excilys.cdb.model.Company;
 
 public class CompanyMapper extends Mapper<CompanyDto, Company>{
@@ -13,9 +14,9 @@ public class CompanyMapper extends Mapper<CompanyDto, Company>{
 	}
 	
 	@Override
-	public Company dtoToModel(CompanyDto dtoObject) {
+	public Company dtoToModel(CompanyDto dtoObject) throws InvalidIntegerException {
 		return new Company(
-			Integer.parseInt(dtoObject.getId()),
+			this.idToInt(dtoObject.getId()),
 			dtoObject.getName()
 		);
 	}

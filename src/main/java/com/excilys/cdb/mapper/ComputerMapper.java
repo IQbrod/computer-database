@@ -21,12 +21,12 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 	
 	@Override
 	public Computer dtoToModel(ComputerDto dtoObject) throws RuntimeException {
-		int id = Integer.parseInt(dtoObject.getId());
+		int id = this.idToInt(dtoObject.getId());
 		String name = dtoObject.getName();
 		Timestamp t1, t2;
 		t1 = this.castTimestamp(dtoObject.getIntroduction());
 		t2 = this.castTimestamp(dtoObject.getDiscontinued());
-		int cid = Integer.parseInt(dtoObject.getCompany());
+		int cid = this.idToInt(dtoObject.getCompany());
 			
 		Computer computer = new Computer(id,name,t1,t2,cid);
 		return computer;

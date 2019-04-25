@@ -73,12 +73,17 @@ public class Computer extends Model {
             return false;
         
         Computer model = (Computer) object;
-        return model.getId() == this.getId();
+        return model.hashCode() == this.hashCode();
 	}
 	
 	@Override
 	public int hashCode() {
 		int result = 31*17 + this.getId();
+		result = 31*result + ((this.getName() == null) ? 0 : this.getName().hashCode());
+		result = 31*result + ((this.getDateIntro() == null) ? 0 : this.getDateIntro().hashCode());
+		result = 31*result + ((this.getDateDisc() == null) ? 0 : this.getDateDisc().hashCode());
+		result = 31*result + this.getManufacturer();
+		
 		
 		return result;
 	}
