@@ -229,6 +229,24 @@ public class ControllerTest {
 		CdbController.getInstance().treatMessage("D computer 1752");
 	}
 	
+	@Test (expected = InvalidDateFormatException.class)
+	public void createComputerInvalidDateFormat() throws Exception {
+		CdbController.getInstance().treatMessage("C computer 1752 Ordinateur unedate _ 0");
+		CdbController.getInstance().treatMessage("D computer 1752");
+	}
+	
+	@Test (expected = InvalidDateFormatException.class)
+	public void createComputerInvalidDateFormat2() throws Exception {
+		CdbController.getInstance().treatMessage("C computer 1752 Ordinateur 2019:12:27/12:32-15 _ 0");
+		CdbController.getInstance().treatMessage("D computer 1752");
+	}
+	
+	@Test 
+	public void createComputerValidDate() throws Exception {
+		CdbController.getInstance().treatMessage("C computer 1752 Ordinateur 2019:12:27/12:32:15 _ 0");
+		CdbController.getInstance().treatMessage("D computer 1752");
+	}
+	
 	@Test (expected = TooManyArgumentsException.class)
 	public void higherCreateCompany7Args() throws Exception {
 		CdbController.getInstance().treatMessage("C company 1754 Entreprise _ _ invalid");
