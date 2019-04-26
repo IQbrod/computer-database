@@ -5,11 +5,13 @@ import com.excilys.cdb.exception.InvalidIntegerException;
 import com.excilys.cdb.model.Company;
 
 public class CompanyMapper extends Mapper<CompanyDto, Company>{
-	private static CompanyMapper instance = new CompanyMapper();
+	private static CompanyMapper instance;
 	
 	private CompanyMapper() {}
 	
 	public static CompanyMapper getInstance() {
+		if (instance == null)
+			instance = new CompanyMapper();
 		return instance;
 	}
 	

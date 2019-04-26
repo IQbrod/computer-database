@@ -10,12 +10,14 @@ import com.excilys.cdb.exception.InvalidDateValueException;
 import com.excilys.cdb.model.Computer;
 
 public class ComputerMapper extends Mapper<ComputerDto, Computer>{
-	private static ComputerMapper instance = new ComputerMapper();	
+	private static ComputerMapper instance;	
 	private Logger logger = (Logger) LogManager.getLogger(this.getClass());
 	
 	private ComputerMapper() {}	
 	
 	public static ComputerMapper getInstance() {
+		if (instance == null)
+			instance = new ComputerMapper();		
 		return instance;
 	}
 	
