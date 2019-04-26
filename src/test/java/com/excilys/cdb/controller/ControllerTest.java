@@ -243,7 +243,7 @@ public class ControllerTest {
 	
 	@Test 
 	public void createComputerValidDate() throws Exception {
-		CdbController.getInstance().treatMessage("C computer 1752 Ordinateur 2019:12:27/12:32:15 _ 0");
+		CdbController.getInstance().treatMessage("C computer 1752 Ordinateur 2019-12-27/12:32:15 _ 0");
 		CdbController.getInstance().treatMessage("D computer 1752");
 	}
 	
@@ -272,4 +272,61 @@ public class ControllerTest {
 	public void higherCreateInvalidTable8Args() throws Exception {
 		CdbController.getInstance().treatMessage("C table _ _ _ _ _ invalid");
 	}
+	
+	// Update
+	@Test (expected = MissingArgumentException.class)
+	public void lowerUpdateTest() throws Exception {
+		CdbController.getInstance().treatMessage("U table");
+	}
+	
+	@Test
+	public void updateCompanyTest() throws Exception {
+		CdbController.getInstance().treatMessage("C company 943 UnNom");
+		CdbController.getInstance().treatMessage("U company 943 Name");
+		CdbController.getInstance().treatMessage("D company 943");
+	}
+	
+	@Test (expected = TooManyArgumentsException.class)
+	public void higherUpdateCompanyTest() throws Exception {
+		CdbController.getInstance().treatMessage("U company 943 Name _");
+	}
+	
+	@Test
+	public void updateComputerNameTest() throws Exception {
+		CdbController.getInstance().treatMessage("C computer 943 ordi _ _ 0");
+		CdbController.getInstance().treatMessage("U computer 943 -n:Ordinateur");
+		CdbController.getInstance().treatMessage("D computer 943");
+	}
+	
+	@Test
+	public void updateComputerIntroTest() throws Exception {
+		CdbController.getInstance().treatMessage("C computer 943 ordi _ _ 0");
+		CdbController.getInstance().treatMessage("U computer 943 -i:2017-08-27/19:12:32");
+		CdbController.getInstance().treatMessage("D computer 943");
+	}
+	
+	@Test
+	public void updateComputerDiscTest() throws Exception {
+		CdbController.getInstance().treatMessage("C computer 943 ordi _ _ 0");
+		CdbController.getInstance().treatMessage("U computer 943 -d:2017-08-27/19:12:32");
+		CdbController.getInstance().treatMessage("D computer 943");
+	}
+	
+	@Test
+	public void updateComputerCompanyidTest() throws Exception {
+		CdbController.getInstance().treatMessage("C computer 943 ordi _ _ 0");
+		CdbController.getInstance().treatMessage("U computer 943 -c:7");
+		CdbController.getInstance().treatMessage("D computer 943");
+	}
+	
+	@Test (expected = InvalidComputerOptionException.class)
+	public void updateComputerInvalidOptionTest() throws Exception {
+		CdbController.getInstance().treatMessage("U computer 3 -z:7");
+	}
+	
+	@Test (expected = InvalidComputerOptionException.class)
+	public void updateComputerInvalidOptionTest2() throws Exception {
+		CdbController.getInstance().treatMessage("U computer 3 uneoption");
+	}
+	
 }
