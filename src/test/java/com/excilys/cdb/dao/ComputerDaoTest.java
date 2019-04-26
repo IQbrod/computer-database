@@ -35,8 +35,9 @@ public class ComputerDaoTest {
 	/*-- CREATE --*/
 	// id
 	@Test
-	public void TestCreateMinimal() throws Exception {
+	public void TestCreateDeleteMinimal() throws Exception {
 		ComputerDao.getInstance().create(new Computer(750,"Ordinateur",null,null,0));
+		ComputerDao.getInstance().delete(new Computer(750,"Suppression",null,null,0));
 	}
 	
 	@Test (expected = InvalidIdException.class)
@@ -51,20 +52,23 @@ public class ComputerDaoTest {
 	
 	// dateIntro
 	@Test
-	public void TestCreateDateIntroduction() throws Exception {
+	public void TestCreateDateIntroductionANDBYID() throws Exception {
 		ComputerDao.getInstance().create(new Computer(753,"Ordinateur",Timestamp.valueOf("2017-05-21 17:23:17"),null,0));
+		ComputerDao.getInstance().deleteById(753);
 	}
 	
 	// dateDisc
 	@Test
 	public void TestCreateDateDiscontinued() throws Exception {
 		ComputerDao.getInstance().create(new Computer(754,"Ordinateur",null,Timestamp.valueOf("2017-05-21 17:23:17"),0));
+		ComputerDao.getInstance().deleteById(754);
 	}
 	
 	// dateIntro + dateDisc
 	@Test
 	public void TestCreateMixedDates() throws Exception {
 		ComputerDao.getInstance().create(new Computer(755,"Ordinateur",Timestamp.valueOf("2017-05-21 17:23:17"),Timestamp.valueOf("2019-05-21 17:23:17"),0));
+		ComputerDao.getInstance().deleteById(755);
 	}
 	
 	@Test (expected = InvalidDateOrderException.class)
@@ -76,6 +80,7 @@ public class ComputerDaoTest {
 	@Test
 	public void TestCreate() throws Exception {
 		ComputerDao.getInstance().create(new Computer(751,"Ordinateur",null,null,2));
+		ComputerDao.getInstance().deleteById(751);
 	}
 	
 	@Test (expected = ForeignKeyViolationException.class)
@@ -110,11 +115,6 @@ public class ComputerDaoTest {
 	}
 	
 	/*-- DELETE --*/
-	@Test
-	public void TestDelete() throws Exception {
-		ComputerDao.getInstance().delete(new Computer(750,"Suppression",null,null,0));
-	}
-	
 	@Test (expected = FailedSQLQueryException.class)
 	public void TestDeleteUnexistingCompany() throws Exception {
 		ComputerDao.getInstance().delete(new Computer(870,"Ordinateur",null,null,0));
@@ -123,14 +123,6 @@ public class ComputerDaoTest {
 	@Test (expected = InvalidIdException.class)
 	public void TestDeleteInvalidCompany() throws Exception {
 		ComputerDao.getInstance().delete(new Computer(-7,"Ordinateur",null,null,0));
-	}
-	
-	@Test
-	public void TestDeleteById() throws Exception {
-		ComputerDao.getInstance().deleteById(751);
-		ComputerDao.getInstance().deleteById(753);
-		ComputerDao.getInstance().deleteById(754);
-		ComputerDao.getInstance().deleteById(755);
 	}
 	
 	@Test (expected = FailedSQLQueryException.class)

@@ -14,12 +14,12 @@ public class ComputerServiceTest {
 	
 	@Test
 	public void createTest() throws Exception {
-		ComputerService.getInstance().create(new ComputerDto("800","Ordinateur",null,null,"0"));
+		ComputerService.getInstance().create(new ComputerDto("888","Ordinateur",null,null,"0"));
 	}
 	
 	@Test
 	public void readTest() throws Exception {
-		ComputerService.getInstance().read("800");
+		ComputerService.getInstance().read("8");
 	}
 	
 	@Test
@@ -29,7 +29,7 @@ public class ComputerServiceTest {
 	
 	@Test
 	public void deleteTest() throws Exception {
-		ComputerService.getInstance().delete(new ComputerDto("800","DeleteMe",null,null,"0"));
+		ComputerService.getInstance().delete(new ComputerDto("888","DeleteMe",null,null,"0"));
 	}
 	
 	@Test
