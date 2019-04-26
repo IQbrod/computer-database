@@ -329,4 +329,9 @@ public class ControllerTest {
 		CdbController.getInstance().treatMessage("U computer 3 uneoption");
 	}
 	
+	@Test (expected = InvalidTableException.class)
+	public void updateInvalidTable() throws Exception {
+		CdbController.getInstance().treatMessage("U table 3 _");
+	}
+	
 }
