@@ -24,7 +24,7 @@ public class ComputerServiceTest {
 	
 	@Test
 	public void updateTest() throws Exception {
-		ComputerService.getInstance().update(new ComputerDto("5","Updated",null,null,"0"));
+		ComputerService.getInstance().update(new ComputerDto("27","Updated",null,null,"0"));
 	}
 	
 	@Test
