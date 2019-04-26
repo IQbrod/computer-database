@@ -3,12 +3,8 @@ package com.excilys.cdb.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.excilys.cdb.dao.Dao;
 import com.excilys.cdb.dto.Dto;
-import com.excilys.cdb.exception.InvalidIntegerException;
 import com.excilys.cdb.mapper.Mapper;
 import com.excilys.cdb.model.Model;
 
@@ -16,8 +12,6 @@ import com.excilys.cdb.model.Model;
 public abstract class Service<T extends Dto, U extends Model> {
 	protected Mapper<T, U> mapper;
 	protected Dao<U> dao;
-	
-	private Logger logger = (Logger) LogManager.getLogger(this.getClass());
 	
 	protected Service(Mapper<T, U> map, Dao<U> dao) {
 		this.mapper = map;
@@ -47,20 +41,8 @@ public abstract class Service<T extends Dto, U extends Model> {
 	public List<T> list(String pageStr, String sizeStr) throws Exception {
 		int page,size;
 		
-		try {
-			page = Integer.parseInt(pageStr);
-		} catch (IllegalArgumentException e) {
-			Exception exception = new InvalidIntegerException(pageStr);
-			this.logger.error(exception.getMessage()+" caused by "+e.getMessage(),exception);
-			throw exception;			
-		}
-		try {
-			size = Integer.parseInt(sizeStr);
-		} catch (IllegalArgumentException e) {
-			Exception exception = new InvalidIntegerException(sizeStr);
-			this.logger.error(exception.getMessage()+" caused by "+e.getMessage(),exception);
-			throw exception;
-		}
+		page = this.mapper.idToInt(pageStr);
+		size = this.mapper.idToInt(sizeStr);
 		
 		return (List<T>) this.dao.list(page,size).stream().map(s -> mapper.modelToDto(s)).collect(Collectors.toList());
 	}
