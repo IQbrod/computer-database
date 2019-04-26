@@ -1,0 +1,6 @@
+ignore:
+  - "src/main/java/com/excilys/cdb/enums/*"
+  - "src/main/java/com/excilys/cdb/model/*"
+  - "src/main/java/com/excilys/cdb/userinterface/*"
+  - "src/main/java/com/excilys/cdb/main/*"
+  - "src/main/java/com/excilys/cdb/dto/*"
