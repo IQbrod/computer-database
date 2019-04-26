@@ -24,12 +24,13 @@ public class Company extends Model{
             return false;
         
         Company model = (Company) object;
-        return model.getId() == this.getId();
+        return model.hashCode() == this.hashCode();
 	}
 	
 	@Override
 	public int hashCode() {
 		int result = 31*17 + this.getId();
+		result = 31*result + this.getName().hashCode();
 		
 		return result;
 	}

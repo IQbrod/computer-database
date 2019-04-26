@@ -33,12 +33,13 @@ public class CompanyDto extends Dto {
             return false;
         
         CompanyDto companyDto = (CompanyDto) object;
-        return companyDto.getId().contentEquals(this.getId());
+        return companyDto.hashCode() == this.hashCode();
 	}
 	
 	@Override
 	public int hashCode() {
 		int result = 31*17 + this.getId().hashCode();
+		result = 31*result + this.getName().hashCode();
 		
 		return result;
 	}

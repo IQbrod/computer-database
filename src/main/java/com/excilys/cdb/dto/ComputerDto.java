@@ -63,7 +63,7 @@ public class ComputerDto extends Dto {
             return false;
         
         ComputerDto computerDto = (ComputerDto) object;
-        return computerDto.getId().contentEquals(this.getId());
+        return computerDto.hashCode() == this.hashCode();
 	}
 	
 	@Override
