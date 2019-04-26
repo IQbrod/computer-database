@@ -74,11 +74,34 @@ public class ComputerMapperTest {
 		ComputerMapper.getInstance().dtoToModel(new ComputerDto("18","Entreprise",null,null,"Entreprise"));
 	}
 	
-	
+	// modelToDto
 	@Test
 	public void TestModelToDto() {
 		assertTrue(
-			ComputerMapper.getInstance().modelToDto(new Computer(5,"Entreprise",null,null,0)).equals(new ComputerDto("5","Entreprise",null,null,"0"))
+			ComputerMapper.getInstance().modelToDto(new Computer(5,"Entreprise",null,null,0)).equals(new ComputerDto("5","Entreprise","_","_","0"))
 		);
 	}
+	
+	@Test
+	public void TestModelToDtoIntroduction() {
+		assertTrue(
+			ComputerMapper.getInstance().modelToDto(new Computer(5,"Entreprise",Timestamp.valueOf("2017-05-27 12:13:14"),null,0)).equals(new ComputerDto("5","Entreprise","2017-05-27 12:13:14","_","0"))
+		);
+	}
+	
+	@Test
+	public void TestModelToDtoDiscontinued() {
+		assertTrue(
+			ComputerMapper.getInstance().modelToDto(new Computer(5,"Entreprise",null,Timestamp.valueOf("2017-05-27 12:13:14"),0)).equals(new ComputerDto("5","Entreprise","_","2017-05-27 12:13:14","0"))
+		);
+	}
+	
+	@Test
+	public void TestModelToDtoCompanyId() {
+		assertTrue(
+			ComputerMapper.getInstance().modelToDto(new Computer(5,"Entreprise",null,null,5)).equals(new ComputerDto("5","Entreprise","_","_","5"))
+		);
+	}
+
+	
 }
