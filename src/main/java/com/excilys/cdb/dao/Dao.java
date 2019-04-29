@@ -35,6 +35,20 @@ public abstract class Dao<T extends Model> {
 		
 		logger = (Logger) LogManager.getLogger(this.getClass());
 		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			try (
+				Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			) {}
+			catch (Exception e) {
+				throw e;
+			}
+		} catch (Exception e) {
+			DatabaseProblemException exception = new DatabaseProblemException(this.DBACCESS, this.DBUSER, this.DBPASS);
+			logger.error(exception.getMessage() + " caused by " + e.getMessage(),exception);
+			throw exception;
+		}
+		
 		try (
 			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 		) {} catch (SQLException e) {
