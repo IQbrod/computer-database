@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,17 +28,20 @@
                                 <input type="text" name="computerName" class="form-control" id="computerName" placeholder="Computer name">
                             </div>
                             <div class="form-group">
-                                <label for="introduced">Introduced date YYYY-MM-dd/hh:mm:ss</label>
-                                <input type="date" class="form-control" id="introduced" placeholder="Introduced date">
+                                <label for="introduced">Introduced date</label>
+                                <input type="date" name="introduced" class="form-control" id="introduced" placeholder="YYYY-MM-dd/hh:mm:ss">
                             </div>
                             <div class="form-group">
-                                <label for="discontinued">Discontinued date YYYY-MM-dd/hh:mm:ss</label>
-                                <input type="date" class="form-control" id="discontinued" placeholder="Discontinued date">
+                                <label for="discontinued">Discontinued date</label>
+                                <input type="date" name="discontinued" class="form-control" id="discontinued" placeholder="YYYY-MM-dd/hh:mm:ss">
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>
-                                <select class="form-control" id="companyId" >
-                                    <option value="0">--</option>
+                                <select name="companyId" class="form-control" id="companyId" >
+                                	<option value="0">-</option>
+                                	<c:forEach var="company" items="${companyList}">
+                                		<option value="${company.getId()}">${company.getName()}</option>
+                                	</c:forEach>
                                 </select>
                             </div>                  
                         </fieldset>

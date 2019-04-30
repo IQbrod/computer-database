@@ -5,9 +5,11 @@ import java.sql.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.exception.InvalidDateValueException;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.service.CompanyService;
 
 public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 	private static ComputerMapper instance;	
@@ -28,7 +30,7 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 		Timestamp t1, t2;
 		t1 = this.castTimestamp(dtoObject.getIntroduction());
 		t2 = this.castTimestamp(dtoObject.getDiscontinued());
-		int cid = this.idToInt(dtoObject.getCompany());
+		int cid = this.idToInt(dtoObject.getCompany().getId());
 			
 		Computer computer = new Computer(id,name,t1,t2,cid);
 		return computer;
@@ -45,13 +47,13 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 	}
 
 	@Override
-	public ComputerDto modelToDto(Computer modelObject) {
+	public ComputerDto modelToDto(Computer modelObject) throws RuntimeException {
 		return new ComputerDto(
 			Integer.toString(modelObject.getId()),
 			modelObject.getName(),
 			(modelObject.getDateIntro() == null) ? "_" : modelObject.getDateIntro().toString().substring(0,modelObject.getDateIntro().toString().length()-2),
 			(modelObject.getDateDisc() == null) ? "_" : modelObject.getDateDisc().toString().substring(0,modelObject.getDateDisc().toString().length()-2),
-			(modelObject.getManufacturer() <= 0) ? "0" : Integer.toString(modelObject.getManufacturer())
+			(modelObject.getManufacturer() <= 0) ? new CompanyDto("0","_") : CompanyService.getInstance().read(Integer.toString(modelObject.getManufacturer()))
 		);
 	}
 	

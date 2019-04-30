@@ -4,13 +4,13 @@ public class ComputerDto extends Dto {
 	private String name;
 	private String introduction;
 	private String discontinued;
-	private String company;
+	private CompanyDto company;
 	
 	public ComputerDto(String id) {
-		this(id,"",null,null,"-1");
+		this(id,"",null,null,new CompanyDto("-1","None"));
 	}
 	
-	public ComputerDto(String id, String name, String i, String d, String c) {
+	public ComputerDto(String id, String name, String i, String d, CompanyDto c) {
 		super(id);
 		this.setName(name);
 		this.setIntroduction(i);
@@ -42,11 +42,11 @@ public class ComputerDto extends Dto {
 		this.discontinued = discontinued;
 	}
 
-	public String getCompany() {
+	public CompanyDto getCompany() {
 		return company;
 	}
 
-	public void setCompany(String companyName) {
+	public void setCompany(CompanyDto companyName) {
 		this.company = companyName;
 	}
 	
@@ -72,7 +72,7 @@ public class ComputerDto extends Dto {
 		result = 31*result + this.getName().hashCode();
 		result = 31*result + ((this.getIntroduction() == null) ? 0 : this.getIntroduction().hashCode());
 		result = 31*result + ((this.getDiscontinued() == null) ? 0 : this.getDiscontinued().hashCode());
-		result = 31*result + this.getCompany().hashCode();
+		result = 31*result + this.getCompany().getId().hashCode();
 		
 		return result;
 	}

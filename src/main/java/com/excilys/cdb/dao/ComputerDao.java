@@ -13,6 +13,7 @@ import com.excilys.cdb.model.*;
 
 public class ComputerDao extends Dao<Computer> {
 	private final String SQL_SELECT_UPDATE_COMPANY = "UPDATE computer SET company_id=? WHERE id=?;";
+	private final String SQL_INSERT_WITHOUT_ID = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
 	
 	private static ComputerDao instance = null;
 	
@@ -40,26 +41,47 @@ public class ComputerDao extends Dao<Computer> {
 	}
 
 	@Override
-	public Computer create(Computer obj) throws Exception {
+	public Computer create(Computer obj) throws RuntimeException {
 		int nbRow = 0;
 		
-		if(obj.getId() <= 0) {
+		if(obj.getId() < 0) {
 			throw this.log(new InvalidIdException(obj.getId()));
-		}
-		
-		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_CREATE)
-		) {
-			preparedStatement.setInt(1,obj.getId());
-			preparedStatement.setString(2, obj.getName());
-			preparedStatement.setTimestamp(3, obj.getDateIntro());
-			preparedStatement.setTimestamp(4, obj.getDateDisc());
-			preparedStatement.setNull(5, java.sql.Types.INTEGER);
-			
-			nbRow = preparedStatement.executeUpdate();
-		} catch (SQLException e) {
-			throw this.log(new PrimaryKeyViolationException(obj.getId()),e);
+		} else if (obj.getId() == 0) {
+			try (
+				Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+				PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_INSERT_WITHOUT_ID,Statement.RETURN_GENERATED_KEYS)
+			) {
+				preparedStatement.setString(1, obj.getName());
+				preparedStatement.setTimestamp(2, obj.getDateIntro());
+				preparedStatement.setTimestamp(3, obj.getDateDisc());
+				preparedStatement.setNull(4, java.sql.Types.INTEGER);
+				
+				nbRow = preparedStatement.executeUpdate();
+				
+				try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+					if (generatedKeys.next())
+						obj.setId((int)generatedKeys.getLong(1));
+					else
+						throw this.log(new FailedSQLQueryException(SQL_INSERT_WITHOUT_ID));
+				}
+			} catch (SQLException e) {
+				throw this.log(new PrimaryKeyViolationException(obj.getId()),e);
+			}
+		} else {
+			try (
+				Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+				PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_CREATE)
+			) {
+				preparedStatement.setInt(1,obj.getId());
+				preparedStatement.setString(2, obj.getName());
+				preparedStatement.setTimestamp(3, obj.getDateIntro());
+				preparedStatement.setTimestamp(4, obj.getDateDisc());
+				preparedStatement.setNull(5, java.sql.Types.INTEGER);
+
+				nbRow = preparedStatement.executeUpdate();
+			} catch (SQLException e) {
+				throw this.log(new PrimaryKeyViolationException(obj.getId()),e);
+			}
 		}
 		
 		if (obj.getManufacturer() == 0) {
@@ -132,11 +154,12 @@ public class ComputerDao extends Dao<Computer> {
 	}
 
 	@Override
-	public Computer delete(Computer obj) throws Exception {
+	public Computer delete(Computer obj) throws RuntimeException {
 		return this.deleteById(obj.getId());
 	}
 	
-	public Computer deleteById(int id) throws Exception {
+	@Override
+	public Computer deleteById(int id) throws RuntimeException {
 		Computer returnComputer = this.read(id);
 		try (
 			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
@@ -155,7 +178,7 @@ public class ComputerDao extends Dao<Computer> {
 	}
 
 	@Override
-	public Computer read(int id) throws Exception {
+	public Computer read(int id) throws RuntimeException {
 		if(id <= 0) {
 			throw this.log(new InvalidIdException(id));
 		}

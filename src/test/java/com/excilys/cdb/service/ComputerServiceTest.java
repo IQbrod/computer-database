@@ -2,6 +2,7 @@ package com.excilys.cdb.service;
 
 import org.junit.*;
 
+import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.exception.*;
 
@@ -14,7 +15,7 @@ public class ComputerServiceTest {
 	
 	@Test
 	public void createTest() throws Exception {
-		ComputerService.getInstance().create(new ComputerDto("888","Ordinateur",null,null,"0"));
+		ComputerService.getInstance().create(new ComputerDto("888","Ordinateur",null,null,new CompanyDto("0","None")));
 	}
 	
 	@Test
@@ -24,12 +25,12 @@ public class ComputerServiceTest {
 	
 	@Test
 	public void updateTest() throws Exception {
-		ComputerService.getInstance().update(new ComputerDto("27","Updated",null,null,"0"));
+		ComputerService.getInstance().update(new ComputerDto("27","Updated",null,null,new CompanyDto("0","None")));
 	}
 	
 	@Test
 	public void deleteTest() throws Exception {
-		ComputerService.getInstance().delete(new ComputerDto("888","DeleteMe",null,null,"0"));
+		ComputerService.getInstance().delete(new ComputerDto("888","DeleteMe",null,null,new CompanyDto("0","None")));
 	}
 	
 	@Test

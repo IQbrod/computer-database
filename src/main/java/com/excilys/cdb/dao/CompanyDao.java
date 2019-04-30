@@ -108,7 +108,7 @@ public class CompanyDao extends Dao<Company>{
 	}
 
 	@Override
-	public Company read(int id) throws Exception {
+	public Company read(int id) throws RuntimeException {
 		if(id <= 0) {
 			throw this.log(new InvalidIdException(id));
 		}
@@ -177,5 +177,4 @@ public class CompanyDao extends Dao<Company>{
 			throw this.log(new FailedSQLQueryException(this.SQL_LIST),e);
 		}
 	}
-
 }

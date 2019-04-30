@@ -62,7 +62,7 @@ public abstract class Dao<T extends Model> {
 	public abstract T update(T obj) throws Exception;
 	public abstract T delete(T obj) throws Exception;
 	public abstract T deleteById(int i) throws Exception;
-	public abstract T read(int id) throws Exception;
+	public abstract T read(int id) throws RuntimeException;
 	public abstract List<T> listAll() throws Exception;
 	public abstract List<T> list(int page, int size) throws Exception;
 	
@@ -70,12 +70,12 @@ public abstract class Dao<T extends Model> {
 		return this.logger;
 	}
 	
-	protected Exception log (Exception exception, Exception cause) throws Exception {
+	protected RuntimeException log (RuntimeException exception, Exception cause) throws RuntimeException {
 		getLogger().error(exception.getMessage()+ " caused by "+cause.getMessage(),exception);
 		return exception;
 	}
 	
-	protected Exception log (Exception exception) throws Exception {
+	protected RuntimeException log (RuntimeException exception) throws RuntimeException {
 		getLogger().error(exception.getMessage(),exception);
 		return exception;
 	}
