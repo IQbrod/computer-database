@@ -43,6 +43,8 @@ public class DashboardServlet extends HttpServlet {
   		int maxPage = nbComputer / Integer.valueOf(size) + ((nbComputer % Integer.valueOf(size) == 0) ? 0 : 1);
   		int medPage = Integer.valueOf((Integer.valueOf(page) < 3) ? "3" : ((Integer.valueOf(page) < maxPage-2) ? page : Integer.toString(maxPage-2)));
   		
+  		request.setAttribute("page", page);
+  		request.setAttribute("size", size);
   		request.setAttribute("maxPage", maxPage);
   		request.setAttribute("medianPage", medPage);
 	}

@@ -27,11 +27,6 @@ public class AddComputer extends HttpServlet {
 	
 	@Override
 	public void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
-		System.err.print(request.getParameter("computerName")+",");
-		System.err.print(request.getParameter("introduced")+",");
-		System.err.print(request.getParameter("discontinued")+",");
-		System.err.print(request.getParameter("companyId"));
-		
 		try {
 			ComputerService.getInstance().create(new ComputerDto(
 					"0",

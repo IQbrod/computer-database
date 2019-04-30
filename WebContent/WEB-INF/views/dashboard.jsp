@@ -104,27 +104,27 @@
         <div class="container text-center">
             <ul class="pagination">
                 <li>
-                    <a href="?page=1" aria-label="Begin">
+                    <a href="?page=1&size=${size}" aria-label="Begin">
                       <span aria-hidden="true">&laquo;</span>
                   	</a>
               	</li>
-	            <li><a href="?page=${medianPage-2}">${medianPage-2}</a></li>
-	            <li><a href="?page=${medianPage-1}">${medianPage-1}</a></li>
-	            <li><a href="?page=${medianPage}">${medianPage}</a></li>
-	            <li><a href="?page=${medianPage+1}">${medianPage+1}</a></li>
-	            <li><a href="?page=${medianPage+2}">${medianPage+2}</a></li>
+	            <li><a href="?page=${medianPage-2}&size=${size}">${medianPage-2}</a></li>
+	            <li><a href="?page=${medianPage-1}&size=${size}">${medianPage-1}</a></li>
+	            <li><a href="?page=${medianPage}&size=${size}">${medianPage}</a></li>
+	            <li><a href="?page=${medianPage+1}&size=${size}">${medianPage+1}</a></li>
+	            <li><a href="?page=${medianPage+2}&size=${size}">${medianPage+2}</a></li>
 	            <li>
-	              	<a href="?page=${maxPage}" aria-label="End">
+	              	<a href="?page=${maxPage}&size=${size}" aria-label="End">
 	                	<span aria-hidden="true">&raquo;</span>
 	              	</a>
 	            </li>
         	</ul>
 
-	        <div class="btn-group btn-group-sm pull-right" role="group" >
-	            <button type="button" class="btn btn-default">10</button>
-	            <button type="button" class="btn btn-default">50</button>
-	            <button type="button" class="btn btn-default">100</button>
-	        </div>
+	        <ul class="pagination pull-right" role="group" >
+	            <li><a href="?page=1&size=10">10</a></li>
+	            <li><a href="?page=1&size=50">50</a></li>
+	            <li><a href="?page=1&size=100">100</a></li>
+	        </ul>
         </div>
 
     </footer>
