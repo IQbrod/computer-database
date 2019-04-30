@@ -4,6 +4,7 @@ ignore:
   - "src/main/java/com/excilys/cdb/userinterface/*"
   - "src/main/java/com/excilys/cdb/main/*"
   - "src/main/java/com/excilys/cdb/dto/*"
+  - "src/main/java/com/excilys/cdb/servlet/*"
 
 coverage:
   range: 50..75
