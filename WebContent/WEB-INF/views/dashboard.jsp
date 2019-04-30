@@ -20,7 +20,7 @@
     <section id="main">
         <div class="container">
             <h1 id="homeTitle">
-                ${numberOfComputers} Computers found
+                ${numberOfComputers} Computers founds
             </h1>
             <div id="actions" class="form-horizontal">
                 <div class="pull-left">
@@ -91,7 +91,7 @@
                         		${computer.getDiscontinued()}
                         	</td>
                         	<td>
-                        		${computer.getCompany()}
+                        		${computer.getCompany().getName()}
                         	</td>
                 		</tr>
                 	</c:forEach>                    
@@ -104,7 +104,7 @@
         <div class="container text-center">
             <ul class="pagination">
                 <li>
-                    <a href="?page=1" aria-label="Previous">
+                    <a href="?page=1" aria-label="Begin">
                       <span aria-hidden="true">&laquo;</span>
                   	</a>
               	</li>
@@ -114,17 +114,17 @@
 	            <li><a href="?page=${medianPage+1}">${medianPage+1}</a></li>
 	            <li><a href="?page=${medianPage+2}">${medianPage+2}</a></li>
 	            <li>
-	              	<a href="?page=${maxPage}" aria-label="Next">
+	              	<a href="?page=${maxPage}" aria-label="End">
 	                	<span aria-hidden="true">&raquo;</span>
 	              	</a>
 	            </li>
         	</ul>
-        </div>
 
-        <div class="btn-group btn-group-sm pull-right" role="group" >
-            <button type="button" class="btn btn-default">10</button>
-            <button type="button" class="btn btn-default">50</button>
-            <button type="button" class="btn btn-default">100</button>
+	        <div class="btn-group btn-group-sm pull-right" role="group" >
+	            <button type="button" class="btn btn-default">10</button>
+	            <button type="button" class="btn btn-default">50</button>
+	            <button type="button" class="btn btn-default">100</button>
+	        </div>
         </div>
 
     </footer>

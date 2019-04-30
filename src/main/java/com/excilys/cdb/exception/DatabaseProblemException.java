@@ -1,6 +1,6 @@
 package com.excilys.cdb.exception;
 
-public class DatabaseProblemException extends Exception {
+public class DatabaseProblemException extends RuntimeException {
 	private static final long serialVersionUID = 18042019L;
 
 	public DatabaseProblemException(String db, String user, String pass) {

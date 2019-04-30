@@ -1,6 +1,6 @@
 package com.excilys.cdb.exception;
 
-public class PrimaryKeyViolationException extends Exception {
+public class PrimaryKeyViolationException extends RuntimeException {
 	private static final long serialVersionUID = 18042019L;
 
 	public PrimaryKeyViolationException(int id) {

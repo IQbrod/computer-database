@@ -30,7 +30,7 @@ public abstract class Service<T extends Dto, U extends Model> {
 		return this.mapper.modelToDto(this.dao.delete(this.mapper.dtoToModel(dtoObject)));
 	};
 	
-	public T read(String id) throws Exception {
+	public T read(String id) throws RuntimeException {
 		return this.mapper.modelToDto(this.dao.read(this.mapper.idToInt(id)));
 	};
 	
