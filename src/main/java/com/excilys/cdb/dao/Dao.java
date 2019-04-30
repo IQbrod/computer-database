@@ -22,16 +22,18 @@ public abstract class Dao<T extends Model> {
 	protected final String SQL_SELECT;
 	protected final String SQL_LISTALL;
 	protected final String SQL_LIST;
+	protected final String SQL_COUNT;
 	
 	protected Logger logger;
 	
-	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlListall, String sqlList) throws DatabaseProblemException {
+	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlListall, String sqlList, String sqlCount) throws DatabaseProblemException {
 		this.SQL_CREATE = sqlCreate;
 		this.SQL_UPDATE = sqlUpdate;
 		this.SQL_DELETE = sqlDelete;
 		this.SQL_SELECT = sqlSelect;
 		this.SQL_LISTALL = sqlListall;
 		this.SQL_LIST = sqlList;
+		this.SQL_COUNT = sqlCount;
 		
 		logger = (Logger) LogManager.getLogger(this.getClass());
 		
@@ -65,6 +67,7 @@ public abstract class Dao<T extends Model> {
 	public abstract T read(int id) throws RuntimeException;
 	public abstract List<T> listAll() throws Exception;
 	public abstract List<T> list(int page, int size) throws Exception;
+	public abstract int count() throws RuntimeException;
 	
 	protected Logger getLogger() {
 		return this.logger;

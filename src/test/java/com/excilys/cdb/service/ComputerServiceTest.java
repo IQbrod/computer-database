@@ -1,5 +1,7 @@
 package com.excilys.cdb.service;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.*;
 
 import com.excilys.cdb.dto.CompanyDto;
@@ -41,5 +43,10 @@ public class ComputerServiceTest {
 	@Test
 	public void listTest() throws Exception {
 		ComputerService.getInstance().list("1", "20");
+	}
+	
+	@Test
+	public void countTest() throws Exception {
+		assertEquals(ComputerService.getInstance().listAllElements().size(),ComputerService.getInstance().count());
 	}
 }

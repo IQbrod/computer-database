@@ -24,7 +24,8 @@ public class ComputerDao extends Dao<Computer> {
 			"DELETE FROM computer WHERE id=?;",
 			"SELECT * FROM computer WHERE id=?;",
 			"SELECT * FROM computer;",
-			"SELECT * FROM computer LIMIT ?,?;"
+			"SELECT * FROM computer LIMIT ?,?;",
+			"SELECT count(*) AS count FROM computer"
 		);
 		this.logger = (Logger) LogManager.getLogger(this.getClass());
 	}
@@ -246,6 +247,21 @@ public class ComputerDao extends Dao<Computer> {
 			
 		} catch (SQLException e) {
 			throw this.log(new FailedSQLQueryException(this.SQL_LIST),e);
+		}
+	}
+	
+	@Override
+	public int count() throws RuntimeException {
+		try (
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_COUNT);
+		) {
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			return (resultSet.next()) ? resultSet.getInt("count") : 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw this.log(new FailedSQLQueryException(this.SQL_COUNT),e);
 		}
 	}
 

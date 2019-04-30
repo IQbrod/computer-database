@@ -30,7 +30,7 @@ public class DashboardServlet extends HttpServlet {
 	}
 	
 	private int setComputerNumber(HttpServletRequest request) throws Exception {
-		int nbComputer = ComputerService.getInstance().listAllElements().size();
+		int nbComputer = ComputerService.getInstance().count();
 		request.setAttribute("numberOfComputers", nbComputer);
 		return nbComputer;
 	}

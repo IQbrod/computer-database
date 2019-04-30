@@ -46,4 +46,8 @@ public abstract class Service<T extends Dto, U extends Model> {
 		
 		return (List<T>) this.dao.list(page,size).stream().map(s -> mapper.modelToDto(s)).collect(Collectors.toList());
 	}
+	
+	public int count() throws RuntimeException {
+		return this.dao.count();
+	}
 }

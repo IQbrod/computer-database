@@ -31,8 +31,8 @@ public class AddComputer extends HttpServlet {
 			ComputerService.getInstance().create(new ComputerDto(
 					"0",
 					request.getParameter("computerName"),
-					(request.getParameter("introduced").equals("")) ? null : request.getParameter("introduced"),
-					(request.getParameter("discontinued").equals("")) ? null : request.getParameter("discontinued"),
+					(request.getParameter("introduced").equals("")) ? null : this.treatDate(request.getParameter("introduced")),
+					(request.getParameter("discontinued").equals("")) ? null : this.treatDate(request.getParameter("discontinued")),
 					new CompanyDto(request.getParameter("companyId"),"None")
 			));
 		} catch (Exception e) {
@@ -41,6 +41,14 @@ public class AddComputer extends HttpServlet {
 		
 		
 		response.sendRedirect(this.getServletContext().getContextPath()+"/");
+	}
+	
+	private String treatDate(String dateIn) {
+		if (dateIn.length() == 10) {
+			return dateIn.replace("/", "-") +" 12:00:00";
+		} else {
+			return dateIn;
+		}
 	}
 	
 	private void setCompanyIdList(HttpServletRequest request) throws Exception {

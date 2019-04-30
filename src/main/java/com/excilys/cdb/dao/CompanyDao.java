@@ -20,7 +20,8 @@ public class CompanyDao extends Dao<Company>{
 			"DELETE FROM company WHERE id=?;",
 			"SELECT * FROM company WHERE id=?;",
 			"SELECT * FROM company;",
-			"SELECT * FROM company LIMIT ?,?;"
+			"SELECT * FROM company LIMIT ?,?;",
+			"SELECT count(*) AS count FROM company"
 		);
 		
 		this.logger = (Logger) LogManager.getLogger(this.getClass());
@@ -175,6 +176,20 @@ public class CompanyDao extends Dao<Company>{
 			
 		} catch (SQLException e) {
 			throw this.log(new FailedSQLQueryException(this.SQL_LIST),e);
+		}
+	}
+	
+	@Override
+	public int count() throws RuntimeException {
+		try (
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_COUNT);
+		) {
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			return (resultSet.next()) ? resultSet.getInt("count") : 0;			
+		} catch (SQLException e) {
+			throw this.log(new FailedSQLQueryException(this.SQL_COUNT),e);
 		}
 	}
 }
