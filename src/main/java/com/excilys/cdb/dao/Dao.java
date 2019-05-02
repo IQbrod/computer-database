@@ -1,20 +1,19 @@
 package com.excilys.cdb.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.List;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.excilys.cdb.exception.DatabaseProblemException;
+import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.Model;
 
 public abstract class Dao<T extends Model> {
-	protected final String DBACCESS = "jdbc:mysql://localhost:3306/computer-database-db?serverTimezone=UTC";
-	protected final String DBUSER = "admincdb";
-	protected final String DBPASS = "qwerty1234";
+	protected final String DBACCESS;
+	protected final String DBUSER;
+	protected final String DBPASS;
 	
 	protected final String SQL_CREATE;
 	protected final String SQL_UPDATE;
@@ -26,7 +25,7 @@ public abstract class Dao<T extends Model> {
 	
 	protected Logger logger;
 	
-	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlListall, String sqlList, String sqlCount) throws DatabaseProblemException {
+	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlListall, String sqlList, String sqlCount) throws RuntimeException {
 		this.SQL_CREATE = sqlCreate;
 		this.SQL_UPDATE = sqlUpdate;
 		this.SQL_DELETE = sqlDelete;
@@ -34,6 +33,17 @@ public abstract class Dao<T extends Model> {
 		this.SQL_LISTALL = sqlListall;
 		this.SQL_LIST = sqlList;
 		this.SQL_COUNT = sqlCount;
+		
+		try (InputStream input = new FileInputStream("dbconfig.properties")) {
+			Properties properties = new Properties();
+			properties.load(input);
+			
+			this.DBACCESS = properties.getProperty("url");
+			this.DBUSER = properties.getProperty("username");
+			this.DBPASS = properties.getProperty("password");
+		} catch (IOException e) {
+			throw new NoPropertyFileFoundException("dbconfig.properties");
+		}
 		
 		logger = (Logger) LogManager.getLogger(this.getClass());
 		
