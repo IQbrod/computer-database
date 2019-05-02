@@ -2,18 +2,11 @@ package com.excilys.cdb.model;
 
 import java.sql.*;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.excilys.cdb.exception.InvalidDateOrderException;
-
 public class Computer extends Model {
 	private String name;
 	private Timestamp dateIntro;
 	private Timestamp dateDisc;
 	private int manufacturer;
-	
-	private Logger logger = (Logger) LogManager.getLogger(this.getClass());
 	
 	public Computer(int id, String name, Timestamp dateIntro, Timestamp dateDisc, int manufacturer) throws RuntimeException {
 		super(id);
@@ -35,12 +28,7 @@ public class Computer extends Model {
 		return dateIntro;
 	}
 
-	public void setDateIntro(Timestamp dateIntro) throws RuntimeException {
-		if (dateIntro != null && this.dateDisc != null && dateIntro.after(this.dateDisc)) {
-			RuntimeException exception = new InvalidDateOrderException(dateIntro, this.dateDisc);
-			this.logger.error(exception.getMessage());
-			throw exception;
-		}
+	public void setDateIntro(Timestamp dateIntro) {
 		this.dateIntro = dateIntro;
 	}
 
@@ -48,12 +36,7 @@ public class Computer extends Model {
 		return dateDisc;
 	}
 
-	public void setDateDisc(Timestamp dateDisc) throws RuntimeException {
-		if (dateDisc != null && this.dateIntro != null && dateDisc.before(this.dateIntro)) {
-			RuntimeException exception = new InvalidDateOrderException(dateIntro, this.dateDisc);
-			this.logger.error(exception.getMessage());
-			throw exception;
-		}
+	public void setDateDisc(Timestamp dateDisc) {
 		this.dateDisc = dateDisc;
 	}
 

@@ -2,20 +2,18 @@ package com.excilys.cdb.mapper;
 
 import java.sql.*;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.dto.ComputerDto;
-import com.excilys.cdb.exception.InvalidDateValueException;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.CompanyService;
+import com.excilys.cdb.validator.ComputerValidator;
 
 public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 	private static ComputerMapper instance;	
-	private Logger logger = (Logger) LogManager.getLogger(this.getClass());
 	
-	private ComputerMapper() {}	
+	private ComputerMapper() {
+		super(ComputerValidator.getInstance());
+	}	
 	
 	public static ComputerMapper getInstance() {
 		if (instance == null)
@@ -25,25 +23,17 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 	
 	@Override
 	public Computer dtoToModel(ComputerDto dtoObject) throws RuntimeException {
+		this.validator.validate(dtoObject);
+		
 		int id = this.idToInt(dtoObject.getId());
 		String name = dtoObject.getName();
 		Timestamp t1, t2;
-		t1 = this.castTimestamp(dtoObject.getIntroduction());
-		t2 = this.castTimestamp(dtoObject.getDiscontinued());
+		t1 = Timestamp.valueOf(dtoObject.getIntroduction());
+		t2 = Timestamp.valueOf(dtoObject.getDiscontinued());
 		int cid = this.idToInt(dtoObject.getCompanyId());
 			
 		Computer computer = new Computer(id,name,t1,t2,cid);
 		return computer;
-	}
-	
-	private Timestamp castTimestamp(String s) throws RuntimeException {
-		try {
-			return (s == null) ? null : Timestamp.valueOf(s);
-		} catch (Exception e) {
-			RuntimeException exception = new InvalidDateValueException(s);
-			this.logger.error(exception.getMessage()+" caused by "+e.getMessage(),e);
-			throw exception;
-		}
 	}
 
 	@Override
