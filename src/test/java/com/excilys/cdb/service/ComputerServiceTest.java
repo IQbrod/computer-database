@@ -17,7 +17,7 @@ public class ComputerServiceTest {
 	
 	@Test
 	public void createTest() throws Exception {
-		ComputerService.getInstance().create(new ComputerDto("888","Ordinateur",null,null,new CompanyDto("0","None")));
+		ComputerService.getInstance().create(new ComputerDto("888","Ordinateur",null,null,"0","None"));
 	}
 	
 	@Test
@@ -27,12 +27,12 @@ public class ComputerServiceTest {
 	
 	@Test
 	public void updateTest() throws Exception {
-		ComputerService.getInstance().update(new ComputerDto("27","Updated",null,null,new CompanyDto("0","None")));
+		ComputerService.getInstance().update(new ComputerDto("27","Updated",null,null,"0","None"));
 	}
 	
 	@Test
 	public void deleteTest() throws Exception {
-		ComputerService.getInstance().delete(new ComputerDto("888","DeleteMe",null,null,new CompanyDto("0","None")));
+		ComputerService.getInstance().delete(new ComputerDto("888","DeleteMe",null,null,"0","None"));
 	}
 	
 	@Test

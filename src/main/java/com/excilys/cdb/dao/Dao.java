@@ -34,16 +34,11 @@ public abstract class Dao<T extends Model> {
 		this.SQL_LIST = sqlList;
 		this.SQL_COUNT = sqlCount;
 		
-		try (InputStream input = new FileInputStream("dbconfig.properties")) {
-			Properties properties = new Properties();
-			properties.load(input);
+		ResourceBundle bundle = ResourceBundle.getBundle("dbconfig");
 			
-			this.DBACCESS = properties.getProperty("url");
-			this.DBUSER = properties.getProperty("username");
-			this.DBPASS = properties.getProperty("password");
-		} catch (IOException e) {
-			throw new NoPropertyFileFoundException("dbconfig.properties");
-		}
+		this.DBACCESS = bundle.getString("url");
+		this.DBUSER = bundle.getString("username");
+		this.DBPASS = bundle.getString("password");
 		
 		logger = (Logger) LogManager.getLogger(this.getClass());
 		

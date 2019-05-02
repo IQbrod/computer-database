@@ -33,7 +33,8 @@ public class AddComputer extends HttpServlet {
 					request.getParameter("computerName"),
 					(request.getParameter("introduced").equals("")) ? null : this.treatDate(request.getParameter("introduced")),
 					(request.getParameter("discontinued").equals("")) ? null : this.treatDate(request.getParameter("discontinued")),
-					new CompanyDto(request.getParameter("companyId"),"None")
+					request.getParameter("companyId"),
+					"None"
 			));
 		} catch (Exception e) {
 			e.printStackTrace();

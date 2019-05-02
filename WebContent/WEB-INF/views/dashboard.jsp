@@ -91,7 +91,7 @@
                         		${computer.getDiscontinued()}
                         	</td>
                         	<td>
-                        		${computer.getCompany().getName()}
+                        		${computer.getCompanyName()}
                         	</td>
                 		</tr>
                 	</c:forEach>                    

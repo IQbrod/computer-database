@@ -30,7 +30,7 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 		Timestamp t1, t2;
 		t1 = this.castTimestamp(dtoObject.getIntroduction());
 		t2 = this.castTimestamp(dtoObject.getDiscontinued());
-		int cid = this.idToInt(dtoObject.getCompany().getId());
+		int cid = this.idToInt(dtoObject.getCompanyId());
 			
 		Computer computer = new Computer(id,name,t1,t2,cid);
 		return computer;
@@ -48,12 +48,15 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 
 	@Override
 	public ComputerDto modelToDto(Computer modelObject) throws RuntimeException {
+		CompanyDto companyDto = (modelObject.getManufacturer() <= 0) ? new CompanyDto("0","_") : CompanyService.getInstance().read(Integer.toString(modelObject.getManufacturer()));
+		
 		return new ComputerDto(
 			Integer.toString(modelObject.getId()),
 			modelObject.getName(),
 			(modelObject.getDateIntro() == null) ? "_" : modelObject.getDateIntro().toString().substring(0,modelObject.getDateIntro().toString().length()-2),
 			(modelObject.getDateDisc() == null) ? "_" : modelObject.getDateDisc().toString().substring(0,modelObject.getDateDisc().toString().length()-2),
-			(modelObject.getManufacturer() <= 0) ? new CompanyDto("0","_") : CompanyService.getInstance().read(Integer.toString(modelObject.getManufacturer()))
+			companyDto.getId(),
+			companyDto.getName()
 		);
 	}
 	

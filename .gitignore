@@ -3,4 +3,4 @@
 .settings/
 target/
 log/
-dbconfig.properties
+src/main/resources/dbconfig.properties

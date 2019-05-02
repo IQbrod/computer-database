@@ -132,7 +132,7 @@ public class CdbController {
 				}
 			case 7:
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					ComputerDto c = new ComputerDto(splitStr[2],splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),new CompanyDto((splitStr[6].contentEquals("_")) ? "0" : splitStr[6],"None"));
+					ComputerDto c = new ComputerDto(splitStr[2],splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),(splitStr[6].contentEquals("_")) ? "0" : splitStr[6],"None");
 					ComputerDto ret = ComputerService.getInstance().create(c);
 					return "Create "+ret.toString();
 				} else if (splitStr[1].toLowerCase().equals("company")) {
@@ -215,7 +215,7 @@ public class CdbController {
 					c.setDiscontinued(this.castDate(s.substring(3)));
 					break;
 				case Company:
-					c.setCompany(new CompanyDto(s.substring(3).contentEquals("_") ? "-1" : s.substring(3),"None"));
+					c.setCompanyId(s.substring(3).contentEquals("_") ? "-1" : s.substring(3));
 					break;
 				case Unknown:
 				default:

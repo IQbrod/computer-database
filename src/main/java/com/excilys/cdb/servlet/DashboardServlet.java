@@ -23,7 +23,7 @@ public class DashboardServlet extends HttpServlet {
 			this.setPagination(request, page, size, nbComputer);
 			
 		} catch (Exception e) {
-			System.err.println(e.getStackTrace());
+			e.printStackTrace();
 		}
 		
 		this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward( request, response );
