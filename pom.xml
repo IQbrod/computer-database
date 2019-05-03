@@ -21,7 +21,8 @@
 		<cobertura.version>2.7</cobertura.version>
 		<compiler.version>3.8.0</compiler.version>
 		<maven.plugins.version>3.7.1</maven.plugins.version>
-		<maven.project.info>3.0.0</maven.project.info>
+		<maven.project.info.version>3.0.0</maven.project.info.version>
+		<war.version>3.2.2</war.version>
 	</properties>
     
     <dependencies>
@@ -74,6 +75,7 @@
 			    	<mainClass>com.excilys.cdb.main.CdbApplication</mainClass>
 				</configuration>
 			</plugin>
+			
 			<plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
@@ -87,6 +89,7 @@
                     <check />
                 </configuration>
 			</plugin>
+			
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -97,16 +100,27 @@
                     <encoding>${encoding}</encoding>
                 </configuration>
             </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>${maven.plugins.version}</version>
-            </plugin>
+            </plugin>  
+         
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${maven.project.info}</version>
+                <version>${maven.project.info.version}</version>
             </plugin>
+            
+            <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-war-plugin</artifactId>
+		        <version>${war.version}</version>
+		        <configuration>
+		        	<webXml>WebContent/WEB-INF/web.xml</webXml>
+		        </configuration>
+      		</plugin>
         </plugins>
     </build>
 </project>
