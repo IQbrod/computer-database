@@ -8,7 +8,7 @@ public class ComputerDto extends Dto {
 	private String companyName;
 	
 	public ComputerDto(String id) {
-		this(id,"",null,null,"-1","None");
+		this(id,"",null,null,"0","None");
 	}
 	
 	public ComputerDto(String id, String name, String intro, String disc, String cId, String cName) {

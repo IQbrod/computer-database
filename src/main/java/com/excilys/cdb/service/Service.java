@@ -41,6 +41,9 @@ public abstract class Service<T extends Dto, U extends Model> {
 	public List<T> list(String pageStr, String sizeStr) throws Exception {
 		int page,size;
 		
+		this.mapper.validator.validateId(pageStr);
+		this.mapper.validator.validateId(sizeStr);
+		
 		page = this.mapper.idToInt(pageStr);
 		size = this.mapper.idToInt(sizeStr);
 		

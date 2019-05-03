@@ -15,7 +15,7 @@ public abstract class Validator<T extends Dto> {
 		validateId(dtoObject.getId());
 	};
 	
-	protected void validateId(String id) {
+	public void validateId(String id) {
 		try {
 			int localId = Integer.parseInt(id);
 			if (localId < 0)
@@ -28,7 +28,7 @@ public abstract class Validator<T extends Dto> {
 	}
 	
 	protected void required(String name, String element) {
-		if (element == null || element.equals("")) {
+		if (element == null) {
 			RuntimeException exception = new RequiredElementException(name);
 			this.logger.error(exception.getMessage());
 			throw exception;
