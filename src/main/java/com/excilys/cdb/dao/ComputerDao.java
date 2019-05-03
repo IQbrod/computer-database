@@ -115,37 +115,26 @@ public class ComputerDao extends Dao<Computer> {
 
 	@Override
 	public Computer update(Computer obj) throws Exception {
-		Computer returnComputer = this.read(obj.getId());
-
-		if (obj.getName().contentEquals("")) {
-			returnComputer.setName(obj.getName());
-		}
-		if (obj.getDateIntro() != null) {
-			returnComputer.setDateIntro(obj.getDateIntro());
-		}
-		if (obj.getDateDisc() != null) {
-			returnComputer.setDateDisc(obj.getDateDisc());
-		}
-		if (obj.getManufacturer() != -1) {
-			returnComputer.setManufacturer(obj.getManufacturer());
+		if(obj.getId() <= 0) {
+			throw this.log(new InvalidIdException(obj.getId()));
 		}
 		
 		try (
 			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_UPDATE);
 		) {
-			preparedStatement.setString(1, returnComputer.getName());
-			preparedStatement.setTimestamp(2, returnComputer.getDateIntro());
-			preparedStatement.setTimestamp(3, returnComputer.getDateDisc());
-			if (returnComputer.getManufacturer() == 0) {
+			preparedStatement.setString(1, obj.getName());
+			preparedStatement.setTimestamp(2, obj.getDateIntro());
+			preparedStatement.setTimestamp(3, obj.getDateDisc());
+			if (obj.getManufacturer() == 0) {
 				preparedStatement.setNull(4, java.sql.Types.INTEGER);
 			} else {
-				preparedStatement.setInt(4, returnComputer.getManufacturer());
+				preparedStatement.setInt(4, obj.getManufacturer());
 			}
 			preparedStatement.setInt(5, obj.getId());
 
 			if (preparedStatement.executeUpdate() == 1) {
-				return returnComputer;
+				return this.read(obj.getId());
 			} else {
 				throw this.log(new FailedSQLQueryException(this.SQL_UPDATE));
 			}		
@@ -202,7 +191,7 @@ public class ComputerDao extends Dao<Computer> {
 	}
 
 	@Override
-	public List<Computer> listAll() throws Exception {
+	public List<Computer> listAll() throws RuntimeException {
 		try (
 			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LISTALL);

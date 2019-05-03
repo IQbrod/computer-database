@@ -1,6 +1,5 @@
 package com.excilys.cdb.dao;
 
-import java.io.*;
 import java.sql.*;
 import java.util.*;
 
@@ -74,7 +73,7 @@ public abstract class Dao<T extends Model> {
 	public abstract T delete(T obj) throws Exception;
 	public abstract T deleteById(int i) throws Exception;
 	public abstract T read(int id) throws RuntimeException;
-	public abstract List<T> listAll() throws Exception;
+	public abstract List<T> listAll() throws RuntimeException;
 	public abstract List<T> list(int page, int size) throws Exception;
 	public abstract int count() throws RuntimeException;
 	

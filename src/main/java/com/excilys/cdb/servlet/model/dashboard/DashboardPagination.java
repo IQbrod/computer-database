@@ -1,6 +1,8 @@
-package com.excilys.cdb.servletmodel;
+package com.excilys.cdb.servlet.model.dashboard;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.excilys.cdb.servlet.model.ServletModel;
 
 public class DashboardPagination extends ServletModel {
 	private int page, maxPage, medianPage, size;

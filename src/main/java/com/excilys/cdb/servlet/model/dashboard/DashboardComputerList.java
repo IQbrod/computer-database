@@ -1,10 +1,11 @@
-package com.excilys.cdb.servletmodel;
+package com.excilys.cdb.servlet.model.dashboard;
 
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.excilys.cdb.dto.ComputerDto;
+import com.excilys.cdb.servlet.model.ServletModel;
 
 public class DashboardComputerList extends ServletModel {
 	private List<ComputerDto> list;

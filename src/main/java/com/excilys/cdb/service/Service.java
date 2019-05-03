@@ -34,7 +34,7 @@ public abstract class Service<T extends Dto, U extends Model> {
 		return this.mapper.modelToDto(this.dao.read(this.mapper.idToInt(id)));
 	};
 	
-	public List<T> listAllElements() throws Exception {
+	public List<T> listAllElements() throws RuntimeException {
 		return (List<T>) this.dao.listAll().stream().map(s -> mapper.modelToDto(s)).collect(Collectors.toList());
 	};
 	

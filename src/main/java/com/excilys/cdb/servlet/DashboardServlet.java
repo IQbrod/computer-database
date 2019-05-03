@@ -1,23 +1,21 @@
 package com.excilys.cdb.servlet;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 import com.excilys.cdb.service.ComputerService;
-import com.excilys.cdb.servletmodel.*;
+import com.excilys.cdb.servlet.model.dashboard.DashboardComputerList;
+import com.excilys.cdb.servlet.model.dashboard.DashboardPagination;
 
-public class DashboardServlet extends HttpServlet {	
-	private HashMap<String,ServletModel> modelMap = new HashMap<String,ServletModel>();
-	
+public class DashboardServlet extends Servlet {	
+	private static final long serialVersionUID = 3052019L;
+
 	public DashboardServlet() {
-		modelMap.put("pagination", DashboardPagination.getInstance());
-		modelMap.put("computerList", DashboardComputerList.getInstance());
+		this.modelMap.put("pagination", DashboardPagination.getInstance());
+		this.modelMap.put("computerList", DashboardComputerList.getInstance());
 	}
-	
-	private static final long serialVersionUID = 29042019L;
 	
 	@Override
 	public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
@@ -33,8 +31,8 @@ public class DashboardServlet extends HttpServlet {
 		
 		this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward( request, response );
 	}
-	
-	private void setupDashboard(String page, String size) throws Exception {
+
+	protected void setupDashboard(String page, String size) throws Exception {
 		((DashboardPagination)this.modelMap.get("pagination")).setPage(Integer.valueOf(page));
 		((DashboardPagination)this.modelMap.get("pagination")).setSize(Integer.valueOf(size));
 		
@@ -48,9 +46,5 @@ public class DashboardServlet extends HttpServlet {
 		((DashboardPagination)this.modelMap.get("pagination")).setMedianPage(medPage);
 		
 		((DashboardComputerList)this.modelMap.get("computerList")).setList(ComputerService.getInstance().list(page, size));
-	}
-	
-	private void flushSetup(HttpServletRequest request) {
-		this.modelMap.values().stream().forEach(x -> x.flush(request));
 	}
 }

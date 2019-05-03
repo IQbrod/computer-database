@@ -133,7 +133,7 @@ public class CompanyDao extends Dao<Company>{
 	}
 	
 	@Override
-	public List<Company> listAll() throws Exception {
+	public List<Company> listAll() throws RuntimeException {
 		try (
 			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
 			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LISTALL);

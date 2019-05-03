@@ -13,11 +13,11 @@
 	</servlet>	
 	<servlet>
 		<servlet-name>EditComputer</servlet-name>
-		<servlet-class>com.excilys.cdb.servlet.EditComputer</servlet-class>
+		<servlet-class>com.excilys.cdb.servlet.EditComputerServlet</servlet-class>
 	</servlet>	
 	<servlet>
 		<servlet-name>AddComputer</servlet-name>
-		<servlet-class>com.excilys.cdb.servlet.AddComputer</servlet-class>
+		<servlet-class>com.excilys.cdb.servlet.AddComputerServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>

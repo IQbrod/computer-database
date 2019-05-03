@@ -1,4 +1,4 @@
-package com.excilys.cdb.servletmodel;
+package com.excilys.cdb.servlet.model;
 
 import javax.servlet.http.HttpServletRequest;
 
