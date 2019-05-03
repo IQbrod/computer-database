@@ -34,8 +34,12 @@ public abstract class Dao<T extends Model> {
 		this.SQL_LIST = sqlList;
 		this.SQL_COUNT = sqlCount;
 		
-		ResourceBundle bundle = ResourceBundle.getBundle("dbconfig");
-			
+		ResourceBundle bundle;
+		try {
+			bundle = ResourceBundle.getBundle("dbconfig");
+		} catch (MissingResourceException ex) {
+			bundle = ResourceBundle.getBundle("dbconfig_travis");
+		}
 		this.DBACCESS = bundle.getString("url");
 		this.DBUSER = bundle.getString("username");
 		this.DBPASS = bundle.getString("password");

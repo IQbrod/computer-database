@@ -13,15 +13,6 @@ import com.excilys.cdb.exception.*;
 
 public class ComputerMapperTest {
 
-	@Test
-	public void idToIntTest() {
-		assertEquals(6,ComputerMapper.getInstance().idToInt("6"));
-	}
-	
-	@Test (expected = InvalidIntegerException.class)
-	public void idToIntTestInvalid() {
-		ComputerMapper.getInstance().idToInt("B");
-	}
 	/*-- dtoToModel --*/
 	// id
 	@Test

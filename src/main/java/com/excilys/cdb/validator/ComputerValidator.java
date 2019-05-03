@@ -44,10 +44,12 @@ public class ComputerValidator extends Validator<ComputerDto> {
 	}
 	
 	private void validateDateOrder(String before, String after) {
-		if (Timestamp.valueOf(before).after(Timestamp.valueOf(after))) {
-			RuntimeException exception = new InvalidDateOrderException(before, after);
-			this.logger.error(exception.getMessage());
-			throw exception;
+		if (before != null && after != null) {
+			if (Timestamp.valueOf(before).after(Timestamp.valueOf(after))) {
+				RuntimeException exception = new InvalidDateOrderException(before, after);
+				this.logger.error(exception.getMessage());
+				throw exception;
+			}
 		}
 	}
 }

@@ -10,16 +10,6 @@ import com.excilys.cdb.exception.*;
 public class CompanyMapperTest {
 
 	@Test
-	public void idToIntTest() {
-		assertEquals(5,CompanyMapper.getInstance().idToInt("5"));
-	}
-	
-	@Test (expected = InvalidIntegerException.class)
-	public void idToIntTestInvalid() {
-		CompanyMapper.getInstance().idToInt("A");
-	}
-	
-	@Test
 	public void TestDtoToModel() {
 		assertTrue(
 			CompanyMapper.getInstance().dtoToModel(new CompanyDto("5","Entreprise")).equals(new Company(5,"Entreprise"))

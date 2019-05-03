@@ -71,11 +71,6 @@ public class ComputerDaoTest {
 		ComputerDao.getInstance().deleteById(755);
 	}
 	
-	@Test (expected = InvalidDateOrderException.class)
-	public void TestCreateInvalidMixedDates() throws Exception {
-		ComputerDao.getInstance().create(new Computer(752,"Ordinateur",Timestamp.valueOf("2017-05-21 17:23:17"),Timestamp.valueOf("2015-05-21 17:23:17"),0));
-	}
-	
 	// Company id
 	@Test
 	public void TestCreate() throws Exception {

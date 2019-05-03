@@ -28,8 +28,8 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 		int id = this.idToInt(dtoObject.getId());
 		String name = dtoObject.getName();
 		Timestamp t1, t2;
-		t1 = Timestamp.valueOf(dtoObject.getIntroduction());
-		t2 = Timestamp.valueOf(dtoObject.getDiscontinued());
+		t1 = (dtoObject.getIntroduction() == null) ? null : Timestamp.valueOf(dtoObject.getIntroduction());
+		t2 = (dtoObject.getDiscontinued() == null) ? null : Timestamp.valueOf(dtoObject.getDiscontinued());
 		int cid = this.idToInt(dtoObject.getCompanyId());
 			
 		Computer computer = new Computer(id,name,t1,t2,cid);
