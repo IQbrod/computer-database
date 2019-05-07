@@ -27,6 +27,7 @@
 		<sl4j-simple.version>1.6.1</sl4j-simple.version>
 		<selenium.version>3.141.59</selenium.version>
 		<webdrivermanager.version>3.4.0</webdrivermanager.version>
+		<sonar.version>3.6.0.1398</sonar.version>
 	</properties>
     
     <dependencies>
@@ -153,6 +154,13 @@
 		        	<webXml>WebContent/WEB-INF/web.xml</webXml>
 		        </configuration>
       		</plugin>
+
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>${sonar.version}</version>
+			</plugin>
+
         </plugins>
     </build>
 </project>
