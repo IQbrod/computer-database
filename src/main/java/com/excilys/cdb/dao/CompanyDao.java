@@ -12,6 +12,7 @@ import com.excilys.cdb.model.*;
 
 public class CompanyDao extends Dao<Company>{
 	private static CompanyDao instance = null;
+	private final String SQL_DELETE_LINKED_COMPUTER = "DELETE FROM computer WHERE company_id=?;";
 	
 	private CompanyDao() throws DatabaseProblemException {
 		super(
@@ -92,19 +93,30 @@ public class CompanyDao extends Dao<Company>{
 	@Override
 	public Company deleteById(int id) throws Exception {
 		Company company = this.read(id);
-		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_DELETE);
-		) {
-			preparedStatement.setInt(1, id);
+		try (Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);) {
+			connection.setAutoCommit(false);
 			
-			if (preparedStatement.executeUpdate() == 1) 
+			try (
+				PreparedStatement deleteComputer = connection.prepareStatement(this.SQL_DELETE_LINKED_COMPUTER);
+				PreparedStatement deleteCompany = connection.prepareStatement(this.SQL_DELETE);
+			) {
+				deleteComputer.setInt(1, id);
+				deleteComputer.executeUpdate();
+				
+				deleteCompany.setInt(1, id);
+				if (deleteCompany.executeUpdate() == 0)
+					throw this.log(new FailedSQLQueryException(this.SQL_DELETE));
+				
+				connection.commit();
 				return company;
-			else {
-				throw this.log(new FailedSQLQueryException(this.SQL_DELETE));
+			} catch (SQLException e) {
+				if (connection != null) {
+					connection.rollback();
+				}
+				throw e;
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryBySQLException(this.SQL_DELETE),e);
+			throw this.log(new FailedSQLQueryBySQLException(this.SQL_DELETE_LINKED_COMPUTER+" or "+this.SQL_DELETE),e);
 		}
 	}
 
