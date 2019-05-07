@@ -25,7 +25,7 @@ public class CompanyDao extends Dao<Company>{
 			"SELECT count(*) AS count FROM company"
 		);
 		
-		this.logger = (Logger) LogManager.getLogger(this.getClass());
+		this.logger = LogManager.getLogger(this.getClass());
 	}
 	
 	public static CompanyDao getInstance() throws DatabaseProblemException {
@@ -132,12 +132,13 @@ public class CompanyDao extends Dao<Company>{
 		) {
 			preparedStatement.setInt(1, id);
 			
-			ResultSet resultSet = preparedStatement.executeQuery();
-			if(resultSet.first()) {
-				Company company = new Company(id,resultSet.getString("name"));
-				return company;
-			} else {
-				throw this.log(new FailedSQLQueryException(this.SQL_SELECT));
+			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				if(resultSet.first()) {
+					Company company = new Company(id,resultSet.getString("name"));
+					return company;
+				} else {
+					throw this.log(new FailedSQLQueryException(this.SQL_SELECT));
+				}			
 			}
 		} catch (SQLException e) {
 			throw this.log(new FailedSQLQueryException(this.SQL_SELECT),e);
@@ -166,13 +167,13 @@ public class CompanyDao extends Dao<Company>{
 			preparedStatement.setInt(1, offset);
 			preparedStatement.setInt(2, size);
 			
-			ResultSet r = preparedStatement.executeQuery();
-			List<Company> lst = new ArrayList<Company>();
-			while(r.next()) {
-				lst.add(new Company(r.getInt("id"),r.getString("name")));
+			try(ResultSet r = preparedStatement.executeQuery()) {
+				List<Company> lst = new ArrayList<Company>();
+				while(r.next()) {
+					lst.add(new Company(r.getInt("id"),r.getString("name")));
+				}
+				return lst;
 			}
-			return lst;
-			
 		} catch (SQLException e) {
 			throw this.log(new FailedSQLQueryException(this.SQL_LIST),e);
 		}
@@ -185,8 +186,9 @@ public class CompanyDao extends Dao<Company>{
 			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_COUNT);
 		) {
 			
-			ResultSet resultSet = preparedStatement.executeQuery();
-			return (resultSet.next()) ? resultSet.getInt("count") : 0;			
+			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				return (resultSet.next()) ? resultSet.getInt("count") : 0;
+			}
 		} catch (SQLException e) {
 			throw this.log(new FailedSQLQueryException(this.SQL_COUNT),e);
 		}
