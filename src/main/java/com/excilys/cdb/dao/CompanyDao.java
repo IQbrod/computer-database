@@ -19,8 +19,8 @@ public class CompanyDao extends Dao<Company>{
 			"UPDATE company SET name=? WHERE id=?;",
 			"DELETE FROM company WHERE id=?;",
 			"SELECT * FROM company WHERE id=?;",
-			"SELECT * FROM company;",
-			"SELECT * FROM company LIMIT ?,?;",
+			"SELECT * FROM company",
+			" LIMIT ?,?;",
 			"SELECT count(*) AS count FROM company"
 		);
 		
@@ -134,24 +134,11 @@ public class CompanyDao extends Dao<Company>{
 	
 	@Override
 	public List<Company> listAll() throws RuntimeException {
-		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LISTALL);
-		) {
-			ResultSet resultSet = preparedStatement.executeQuery();
-			List<Company> companyList = new ArrayList<Company>();
-			while(resultSet.next()) {
-				companyList.add(new Company(resultSet.getInt("id"),resultSet.getString("name")));
-			}
-			return companyList;
-			
-		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.SQL_LISTALL),e);
-		}
+		return this.list(1, this.count());
 	}
 	
 	@Override
-	public List<Company> list(int page, int size) throws Exception {
+	public List<Company> list(int page, int size) throws RuntimeException {
 		if (size <= 0) {
 			throw this.log(new InvalidPageSizeException(size));
 		}
@@ -162,7 +149,7 @@ public class CompanyDao extends Dao<Company>{
 		
 		try (
 			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LIST);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LIST+this.SQL_LIMIT);
 		) {
 			preparedStatement.setInt(1, offset);
 			preparedStatement.setInt(2, size);

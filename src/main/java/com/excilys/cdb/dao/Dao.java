@@ -18,19 +18,19 @@ public abstract class Dao<T extends Model> {
 	protected final String SQL_UPDATE;
 	protected final String SQL_DELETE;
 	protected final String SQL_SELECT;
-	protected final String SQL_LISTALL;
 	protected final String SQL_LIST;
+	protected final String SQL_LIMIT;
 	protected final String SQL_COUNT;
 	
 	protected Logger logger;
 	
-	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlListall, String sqlList, String sqlCount) throws RuntimeException {
+	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlList, String sqlLimit, String sqlCount) throws RuntimeException {
 		this.SQL_CREATE = sqlCreate;
 		this.SQL_UPDATE = sqlUpdate;
 		this.SQL_DELETE = sqlDelete;
 		this.SQL_SELECT = sqlSelect;
-		this.SQL_LISTALL = sqlListall;
 		this.SQL_LIST = sqlList;
+		this.SQL_LIMIT = sqlLimit;
 		this.SQL_COUNT = sqlCount;
 		
 		ResourceBundle bundle;

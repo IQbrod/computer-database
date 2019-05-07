@@ -5,3 +5,4 @@ target/
 log/
 src/main/resources/dbconfig.properties
 src/db/2.sql
+.factorypath

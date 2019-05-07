@@ -1,13 +1,12 @@
 package com.excilys.cdb.validator;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.excilys.cdb.dto.Dto;
 import com.excilys.cdb.exception.*;
 
 public abstract class Validator<T extends Dto> {
-	protected Logger logger = (Logger) LogManager.getLogger(this.getClass());
+	protected Logger logger;
 	
 	protected Validator() {}
 	
@@ -21,17 +20,13 @@ public abstract class Validator<T extends Dto> {
 			if (localId < 0)
 				throw new Exception();
 		} catch (Exception e) {
-			RuntimeException exception = new InvalidIntegerException(id);
-			this.logger.error(exception.getMessage()+" caused by "+e.getMessage(),e);
-			throw exception;
+			throw new InvalidIntegerException(id);
 		}
 	}
 	
 	protected void required(String name, String element) {
 		if (element == null) {
-			RuntimeException exception = new RequiredElementException(name);
-			this.logger.error(exception.getMessage());
-			throw exception;
+			throw new RequiredElementException(name);
 		}
 	}
 }

@@ -23,6 +23,7 @@
 		<maven.plugins.version>3.7.1</maven.plugins.version>
 		<maven.project.info.version>3.0.0</maven.project.info.version>
 		<war.version>3.2.2</war.version>
+		<hikari.version>2.7.8</hikari.version>
 	</properties>
     
     <dependencies>
@@ -62,6 +63,13 @@
 		    <groupId>jstl</groupId>
 		    <artifactId>jstl</artifactId>
 		    <version>${jstl.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.zaxxer</groupId>
+		    <artifactId>HikariCP</artifactId>
+		    <version>${hikari.version}</version>
+		    <scope>compile</scope>
 		</dependency>
     </dependencies>
 

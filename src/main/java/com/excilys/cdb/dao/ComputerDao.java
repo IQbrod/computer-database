@@ -6,6 +6,7 @@ import java.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.excilys.cdb.enums.ComputerFields;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
@@ -14,6 +15,7 @@ import com.excilys.cdb.model.*;
 public class ComputerDao extends Dao<Computer> {
 	private final String SQL_SELECT_UPDATE_COMPANY = "UPDATE computer SET company_id=? WHERE id=?;";
 	private final String SQL_INSERT_WITHOUT_ID = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
+	private final String SQL_COUNT_BY_NAME = "SELECT count(*) FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) LIMIT ?,?";
 	
 	private static ComputerDao instance = null;
 	
@@ -23,8 +25,8 @@ public class ComputerDao extends Dao<Computer> {
 			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;",
 			"DELETE FROM computer WHERE id=?;",
 			"SELECT * FROM computer WHERE id=?;",
-			"SELECT * FROM computer;",
-			"SELECT * FROM computer LIMIT ?,?;",
+			"SELECT C.id as id, C.name as name, introduced, discontinued, company_id  FROM computer C LEFT OUTER JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) ORDER BY ",
+			" LIMIT ?,?",
 			"SELECT count(*) AS count FROM computer"
 		);
 		this.logger = (Logger) LogManager.getLogger(this.getClass());
@@ -189,55 +191,6 @@ public class ComputerDao extends Dao<Computer> {
 			throw this.log(new FailedSQLQueryBySQLException(this.SQL_SELECT),e);
 		}
 	}
-
-	@Override
-	public List<Computer> listAll() throws RuntimeException {
-		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LISTALL);
-		) {
-			
-			ResultSet resultSet = preparedStatement.executeQuery();
-			List<Computer> computerList = new ArrayList<Computer>();
-			while(resultSet.next()) {
-				computerList.add(new Computer(resultSet.getInt("id"),resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id")));
-			}
-			return computerList;
-			
-		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.SQL_LISTALL),e);
-		}
-	}
-	
-	@Override
-	public List<Computer> list(int page, int size) throws Exception {
-		if (size <= 0) {
-			throw this.log(new InvalidPageSizeException(size));
-		}
-		if (page <= 0) {
-			throw this.log(new InvalidPageValueException(page));
-			
-		}
-		int offset = (page-1)*size;
-		
-		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LIST);
-		) {
-			preparedStatement.setInt(1, offset);
-			preparedStatement.setInt(2, size);
-			
-			ResultSet resultSet = preparedStatement.executeQuery();
-			List<Computer> computerList = new ArrayList<Computer>();
-			while(resultSet.next()) {
-				computerList.add(new Computer(resultSet.getInt("id"),resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id")));
-			}
-			return computerList;
-			
-		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.SQL_LIST),e);
-		}
-	}
 	
 	@Override
 	public int count() throws RuntimeException {
@@ -251,6 +204,70 @@ public class ComputerDao extends Dao<Computer> {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw this.log(new FailedSQLQueryException(this.SQL_COUNT),e);
+		}
+	}	
+
+	@Override
+	public List<Computer> listAll() throws RuntimeException {
+		return this.listAll("id");
+	}	
+	public List<Computer> listAll(String orderBy) throws RuntimeException {
+		return this.list(1, this.count(), orderBy);
+	}
+	
+	@Override
+	public List<Computer> list(int page, int size) throws RuntimeException {
+		return this.list(page, size, "id");
+	}	
+	public List<Computer> list(int page, int size, String orderBy) throws RuntimeException {
+		return this.listByName("", page, size, orderBy);
+	}
+	
+	public List<Computer> listByName(String name, int page, int size, String orderBy) throws RuntimeException {
+		if (size <= 0) {
+			throw this.log(new InvalidPageSizeException(size));
+		}
+		if (page <= 0) {
+			throw this.log(new InvalidPageValueException(page));
+			
+		}
+		int offset = (page-1)*size;
+		
+		try (
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LIST+ ComputerFields.getOrderByField(orderBy).field + SQL_LIMIT);
+		) {
+			preparedStatement.setString(1, "%"+name+"%");
+			preparedStatement.setString(2, "%"+name+"%");
+			preparedStatement.setInt(3, offset);
+			preparedStatement.setInt(4, size);
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			List<Computer> computerList = new ArrayList<Computer>();
+			while(resultSet.next()) {
+				computerList.add(new Computer(resultSet.getInt("id"),resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id")));
+			}
+			return computerList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw this.log(new FailedSQLQueryException(this.SQL_LIST),e);
+		}
+	}
+	
+	public int countByName(String name) throws RuntimeException {
+		try (
+			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_COUNT_BY_NAME);
+		) {
+			preparedStatement.setString(1, "%"+name+"%");
+			preparedStatement.setString(2, "%"+name+"%");
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			return (resultSet.next()) ? resultSet.getInt("count") : 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw this.log(new FailedSQLQueryException(this.SQL_COUNT_BY_NAME),e);
 		}
 	}
 

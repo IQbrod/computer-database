@@ -13,7 +13,7 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" href=""> Application - Computer Database </a>
+            <a class="navbar-brand" href="dashboard"> Application - Computer Database </a>
         </div>
     </header>
 
@@ -24,9 +24,9 @@
             </h1>
             <div id="actions" class="form-horizontal">
                 <div class="pull-left">
-                    <form id="searchForm" action="#" method="GET" class="form-inline">
+                    <form id="searchForm" action="" method="GET" class="form-inline">
 
-                        <input type="search" id="searchbox" name="search" class="form-control" placeholder="Search name" />
+                        <input type="search" id="searchbox" name="search" class="form-control" placeholder="Search name" value='${search.equals(" ") ? "" : search}' />
                         <input type="submit" id="searchsubmit" value="Filter by name"
                         class="btn btn-primary" />
                     </form>
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <form id="deleteForm" action="#" method="POST">
+        <form id="deleteForm" action="" method="POST">
             <input type="hidden" name="selection" value="">
         </form>
 
@@ -52,24 +52,24 @@
                         <th class="editMode" style="width: 60px; height: 22px;">
                             <input type="checkbox" id="selectall" /> 
                             <span style="vertical-align: top;">
-                                 -  <a href="#" id="deleteSelected" onclick="$.fn.deleteSelected();">
+                                 -  <a id="deleteSelected" onclick="$.fn.deleteSelected();">
                                         <i class="fa fa-trash-o fa-lg"></i>
                                     </a>
                             </span>
                         </th>
                         <th>
-                            Computer name
+                            Computer name <a href="dashboard?orderBy=name">&#x2193</a> <a href="dashboard?orderBy=name_rev">&#x2191</a>
                         </th>
                         <th>
-                            Introduced date
+                            Introduced date <a href="dashboard?orderBy=introduced">&#x2193</a> <a href="dashboard?orderBy=introduced_rev">&#x2191</a>
                         </th>
                         <!-- Table header for Discontinued Date -->
                         <th>
-                            Discontinued date
+                            Discontinued date <a href="dashboard?orderBy=discontinued">&#x2193</a> <a href="dashboard?orderBy=discontinued_rev">&#x2191</a>
                         </th>
                         <!-- Table header for Company -->
                         <th>
-                            Company
+                            Company <a href="dashboard?orderBy=company">&#x2193</a> <a href="dashboard?orderBy=company_rev">&#x2191</a>
                         </th>
 
                     </tr>
@@ -104,17 +104,17 @@
         <div class="container text-center">
             <ul class="pagination">
                 <li>
-                    <a href="?page=1&size=${size}" aria-label="Begin">
+                    <a href="?page=1" aria-label="Begin">
                       <span aria-hidden="true">&laquo;</span>
                   	</a>
               	</li>
-	            <li><a href="?page=${medianPage-2}&size=${size}">${medianPage-2}</a></li>
-	            <li><a href="?page=${medianPage-1}&size=${size}">${medianPage-1}</a></li>
-	            <li><a href="?page=${medianPage}&size=${size}">${medianPage}</a></li>
-	            <li><a href="?page=${medianPage+1}&size=${size}">${medianPage+1}</a></li>
-	            <li><a href="?page=${medianPage+2}&size=${size}">${medianPage+2}</a></li>
+	            <li><a href="?page=${medianPage-2}">${medianPage-2}</a></li>
+	            <li><a href="?page=${medianPage-1}">${medianPage-1}</a></li>
+	            <li><a href="?page=${medianPage}">${medianPage}</a></li>
+	            <li><a href="?page=${medianPage+1}">${medianPage+1}</a></li>
+	            <li><a href="?page=${medianPage+2}">${medianPage+2}</a></li>
 	            <li>
-	              	<a href="?page=${maxPage}&size=${size}" aria-label="End">
+	              	<a href="?page=${maxPage}" aria-label="End">
 	                	<span aria-hidden="true">&raquo;</span>
 	              	</a>
 	            </li>

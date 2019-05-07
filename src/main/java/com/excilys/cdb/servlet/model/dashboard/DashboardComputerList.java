@@ -15,6 +15,14 @@ public class DashboardComputerList extends ServletModel {
 	
 	private DashboardComputerList() {}
 
+	public List<ComputerDto> getList() {
+		return list;
+	}
+
+	public int getNbComputer() {
+		return nbComputer;
+	}
+
 	public static DashboardComputerList getInstance() {
 		if (instance == null)
 			instance = new DashboardComputerList();

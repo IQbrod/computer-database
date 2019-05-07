@@ -6,10 +6,21 @@ import com.excilys.cdb.servlet.model.ServletModel;
 
 public class DashboardPagination extends ServletModel {
 	private int page, maxPage, medianPage, size;
+	private String search, orderBy;
 	
 	private static DashboardPagination instance = null;
 	
-	private DashboardPagination() {}
+	private DashboardPagination() {
+		this.setDefault();
+	}
+
+	public String getOrderBy() {
+		return orderBy;
+	}
+
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+	}
 
 	public static DashboardPagination getInstance() {
 		if (instance == null)
@@ -17,8 +28,39 @@ public class DashboardPagination extends ServletModel {
 		return instance;
 	}
 
+	public void setDefault() {
+		this.page = 1;
+		this.size = 10;
+		this.search = " ";
+		this.orderBy = "id";
+	}
+	
 	public void setPage(int page) {
 		this.page = page;
+	}
+
+	public String getSearch() {
+		return search;
+	}
+
+	public void setSearch(String search) {
+		this.search = search;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public int getMaxPage() {
+		return maxPage;
+	}
+
+	public int getMedianPage() {
+		return medianPage;
+	}
+
+	public int getSize() {
+		return size;
 	}
 
 	public void setMaxPage(int maxPage) {
@@ -39,5 +81,6 @@ public class DashboardPagination extends ServletModel {
   		request.setAttribute("size", this.size);
   		request.setAttribute("maxPage", this.maxPage);
   		request.setAttribute("medianPage", this.medianPage);
+  		request.setAttribute("search", this.search);
 	}	
 }

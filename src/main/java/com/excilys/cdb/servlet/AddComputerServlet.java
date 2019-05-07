@@ -35,7 +35,6 @@ public class AddComputerServlet extends Servlet {
 			e.printStackTrace();
 		}
 		
-		
 		response.sendRedirect(this.getServletContext().getContextPath()+"/");
 	}
 }
