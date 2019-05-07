@@ -25,6 +25,8 @@
 		<war.version>3.2.2</war.version>
 		<hikari.version>2.7.8</hikari.version>
 		<sl4j-simple.version>1.6.1</sl4j-simple.version>
+		<selenium.version>3.141.59</selenium.version>
+		<webdrivermanager.version>3.4.0</webdrivermanager.version>
 	</properties>
     
     <dependencies>
@@ -77,6 +79,20 @@
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-simple</artifactId>
 		    <version>${sl4j-simple.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.seleniumhq.selenium</groupId>
+		    <artifactId>selenium-java</artifactId>
+		    <version>${selenium.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>io.github.bonigarcia</groupId>
+		    <artifactId>webdrivermanager</artifactId>
+		    <version>${webdrivermanager.version}</version>
+		    <scope>test</scope>
 		</dependency>
 		
     </dependencies>
