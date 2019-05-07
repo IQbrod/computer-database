@@ -10,12 +10,10 @@ import com.excilys.cdb.enums.ComputerFields;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
-// TODO: Throw les exceptions jusqu'au controller
-
 public class ComputerDao extends Dao<Computer> {
-	private final String SQL_SELECT_UPDATE_COMPANY = "UPDATE computer SET company_id=? WHERE id=?;";
-	private final String SQL_INSERT_WITHOUT_ID = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
-	private final String SQL_COUNT_BY_NAME = "SELECT count(*) FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) LIMIT ?,?";
+	private final String sqlSelectUpdate = "UPDATE computer SET company_id=? WHERE id=?;";
+	private final String sqlInsertNoId = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
+	private final String sqlCountByName = "SELECT count(*) FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) LIMIT ?,?";
 	
 	private static ComputerDao instance = null;
 	
@@ -29,10 +27,10 @@ public class ComputerDao extends Dao<Computer> {
 			" LIMIT ?,?",
 			"SELECT count(*) AS count FROM computer"
 		);
-		this.logger = (Logger) LogManager.getLogger(this.getClass());
+		this.logger = LogManager.getLogger(this.getClass());
 	}
 	
-	public static ComputerDao getInstance() throws DatabaseProblemException {
+	public static ComputerDao getInstance() throws RuntimeException {
 		if (instance == null)
 			instance = new ComputerDao();
 		return instance;
@@ -52,7 +50,7 @@ public class ComputerDao extends Dao<Computer> {
 		} else if (obj.getId() == 0) {
 			try (
 				Connection connection = this.dataSource.getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_INSERT_WITHOUT_ID,Statement.RETURN_GENERATED_KEYS)
+				PreparedStatement preparedStatement = connection.prepareStatement(this.sqlInsertNoId,Statement.RETURN_GENERATED_KEYS)
 			) {
 				preparedStatement.setString(1, obj.getName());
 				preparedStatement.setTimestamp(2, obj.getDateIntro());
@@ -65,7 +63,7 @@ public class ComputerDao extends Dao<Computer> {
 					if (generatedKeys.next())
 						obj.setId((int)generatedKeys.getLong(1));
 					else
-						throw this.log(new FailedSQLQueryException(SQL_INSERT_WITHOUT_ID));
+						throw this.log(new FailedSQLQueryException(sqlInsertNoId));
 				}
 			} catch (SQLException e) {
 				throw this.log(new PrimaryKeyViolationException(obj.getId()),e);
@@ -96,7 +94,7 @@ public class ComputerDao extends Dao<Computer> {
 		} else {
 			try (
 				Connection connection = this.dataSource.getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_SELECT_UPDATE_COMPANY);
+				PreparedStatement preparedStatement = connection.prepareStatement(this.sqlSelectUpdate);
 			) {
 				preparedStatement.setInt(1, obj.getManufacturer());
 				preparedStatement.setInt(2, obj.getId());
@@ -106,7 +104,7 @@ public class ComputerDao extends Dao<Computer> {
 					return obj;
 				} else {
 					this.delete(obj);
-					throw this.log(new FailedSQLQueryException(this.SQL_SELECT_UPDATE_COMPANY));
+					throw this.log(new FailedSQLQueryException(this.sqlSelectUpdate));
 				}
 			} catch (SQLException e) {
 				this.delete(obj);
@@ -181,11 +179,12 @@ public class ComputerDao extends Dao<Computer> {
 		) {
 			preparedStatement.setInt(1, id);
 			
-			ResultSet resultSet = preparedStatement.executeQuery();
-			if(resultSet.first()) {
-				return new Computer(id,resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id"));
-			} else {
-				throw this.log(new FailedSQLQueryException(this.SQL_SELECT));
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				if(resultSet.first()) {
+					return new Computer(id,resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id"));
+				} else {
+					throw this.log(new FailedSQLQueryException(this.SQL_SELECT));
+				}
 			}
 		} catch (SQLException e) {
 			throw this.log(new FailedSQLQueryBySQLException(this.SQL_SELECT),e);
@@ -199,8 +198,9 @@ public class ComputerDao extends Dao<Computer> {
 			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_COUNT);
 		) {
 			
-			ResultSet resultSet = preparedStatement.executeQuery();
-			return (resultSet.next()) ? resultSet.getInt("count") : 0;
+			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				return (resultSet.next()) ? resultSet.getInt("count") : 0;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw this.log(new FailedSQLQueryException(this.SQL_COUNT),e);
@@ -242,13 +242,13 @@ public class ComputerDao extends Dao<Computer> {
 			preparedStatement.setInt(3, offset);
 			preparedStatement.setInt(4, size);
 			
-			ResultSet resultSet = preparedStatement.executeQuery();
-			List<Computer> computerList = new ArrayList<Computer>();
-			while(resultSet.next()) {
-				computerList.add(new Computer(resultSet.getInt("id"),resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id")));
-			}
-			return computerList;
-			
+			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				List<Computer> computerList = new ArrayList<Computer>();
+				while(resultSet.next()) {
+					computerList.add(new Computer(resultSet.getInt("id"),resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id")));
+				}
+				return computerList;
+			}			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw this.log(new FailedSQLQueryException(this.SQL_LIST),e);
@@ -258,16 +258,17 @@ public class ComputerDao extends Dao<Computer> {
 	public int countByName(String name) throws RuntimeException {
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_COUNT_BY_NAME);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCountByName);
 		) {
 			preparedStatement.setString(1, "%"+name+"%");
 			preparedStatement.setString(2, "%"+name+"%");
 			
-			ResultSet resultSet = preparedStatement.executeQuery();
-			return (resultSet.next()) ? resultSet.getInt("count") : 0;
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				return (resultSet.next()) ? resultSet.getInt("count") : 0;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw this.log(new FailedSQLQueryException(this.SQL_COUNT_BY_NAME),e);
+			throw this.log(new FailedSQLQueryException(this.sqlCountByName),e);
 		}
 	}
 
