@@ -9,3 +9,6 @@ ignore:
 coverage:
   range: 50..75
   round: up
+  status:
+    project: off
+    patch: off
