@@ -8,11 +8,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.Model;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public abstract class Dao<T extends Model> {
-	protected final String DBACCESS;
-	protected final String DBUSER;
-	protected final String DBPASS;
+	protected HikariDataSource dataSource;
 	
 	protected final String SQL_CREATE;
 	protected final String SQL_UPDATE;
@@ -39,31 +39,31 @@ public abstract class Dao<T extends Model> {
 		} catch (MissingResourceException ex) {
 			bundle = ResourceBundle.getBundle("dbconfig_travis");
 		}
-		this.DBACCESS = bundle.getString("url");
-		this.DBUSER = bundle.getString("username");
-		this.DBPASS = bundle.getString("password");
-		
-		logger = (Logger) LogManager.getLogger(this.getClass());
 		
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			try (
-				Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
-			) {}
-			catch (Exception e) {
-				throw e;
-			}
-		} catch (Exception e) {
-			DatabaseProblemException exception = new DatabaseProblemException(this.DBACCESS, this.DBUSER, this.DBPASS);
+		} catch (ClassNotFoundException e) {
+			DriverNotFoundException exception = new DriverNotFoundException("com.mysql.cj.jdbc.Driver");
 			logger.error(exception.getMessage() + " caused by " + e.getMessage(),exception);
 			throw exception;
 		}
 		
+		HikariConfig config = new HikariConfig();
+		
+		config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		config.setJdbcUrl(bundle.getString("url"));
+		config.setUsername(bundle.getString("username"));
+		config.setPassword(bundle.getString("password"));
+		
+		dataSource = new HikariDataSource(config);
+		
+		logger = (Logger) LogManager.getLogger(this.getClass());
+		
 		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			Connection connection = this.dataSource.getConnection();
 		) {} catch (SQLException e) {
-			DatabaseProblemException exception = new DatabaseProblemException(this.DBACCESS, this.DBUSER, this.DBPASS);
-			logger.error(exception.getMessage() + " caused by " + e.getMessage(),exception);
+			DatabaseProblemException exception = new DatabaseProblemException(dataSource.getJdbcUrl(), dataSource.getUsername(), dataSource.getPassword());
+			logger.error(exception.getMessage() + " caused by " + e.getMessage(),e);
 			throw exception;
 		}
 	}

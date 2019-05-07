@@ -51,7 +51,7 @@ public class ComputerDao extends Dao<Computer> {
 			throw this.log(new InvalidIdException(obj.getId()));
 		} else if (obj.getId() == 0) {
 			try (
-				Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+				Connection connection = this.dataSource.getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_INSERT_WITHOUT_ID,Statement.RETURN_GENERATED_KEYS)
 			) {
 				preparedStatement.setString(1, obj.getName());
@@ -72,7 +72,7 @@ public class ComputerDao extends Dao<Computer> {
 			}
 		} else {
 			try (
-				Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+				Connection connection = this.dataSource.getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_CREATE)
 			) {
 				preparedStatement.setInt(1,obj.getId());
@@ -95,7 +95,7 @@ public class ComputerDao extends Dao<Computer> {
 			}
 		} else {
 			try (
-				Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+				Connection connection = this.dataSource.getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_SELECT_UPDATE_COMPANY);
 			) {
 				preparedStatement.setInt(1, obj.getManufacturer());
@@ -122,7 +122,7 @@ public class ComputerDao extends Dao<Computer> {
 		}
 		
 		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			Connection connection = this.dataSource.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_UPDATE);
 		) {
 			preparedStatement.setString(1, obj.getName());
@@ -154,7 +154,7 @@ public class ComputerDao extends Dao<Computer> {
 	public Computer deleteById(int id) throws RuntimeException {
 		Computer returnComputer = this.read(id);
 		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			Connection connection = this.dataSource.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_DELETE);
 		) {
 			preparedStatement.setInt(1, id);
@@ -176,7 +176,7 @@ public class ComputerDao extends Dao<Computer> {
 		}
 		
 		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			Connection connection = this.dataSource.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_SELECT);
 		) {
 			preparedStatement.setInt(1, id);
@@ -195,7 +195,7 @@ public class ComputerDao extends Dao<Computer> {
 	@Override
 	public int count() throws RuntimeException {
 		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			Connection connection = this.dataSource.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_COUNT);
 		) {
 			
@@ -234,7 +234,7 @@ public class ComputerDao extends Dao<Computer> {
 		int offset = (page-1)*size;
 		
 		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			Connection connection = this.dataSource.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LIST+ ComputerFields.getOrderByField(orderBy).field + SQL_LIMIT);
 		) {
 			preparedStatement.setString(1, "%"+name+"%");
@@ -257,7 +257,7 @@ public class ComputerDao extends Dao<Computer> {
 	
 	public int countByName(String name) throws RuntimeException {
 		try (
-			Connection connection = DriverManager.getConnection(this.DBACCESS, this.DBUSER, this.DBPASS);
+			Connection connection = this.dataSource.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_COUNT_BY_NAME);
 		) {
 			preparedStatement.setString(1, "%"+name+"%");

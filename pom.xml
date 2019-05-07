@@ -24,6 +24,7 @@
 		<maven.project.info.version>3.0.0</maven.project.info.version>
 		<war.version>3.2.2</war.version>
 		<hikari.version>2.7.8</hikari.version>
+		<sl4j-simple.version>1.6.1</sl4j-simple.version>
 	</properties>
     
     <dependencies>
@@ -71,6 +72,13 @@
 		    <version>${hikari.version}</version>
 		    <scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-simple</artifactId>
+		    <version>${sl4j-simple.version}</version>
+		</dependency>
+		
     </dependencies>
 
     <build>
