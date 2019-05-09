@@ -6,11 +6,7 @@ import java.util.List;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.excilys.cdb.dto.ComputerDto;
-import com.excilys.cdb.exception.UnableToSendErrorCodeException;
 import com.excilys.cdb.exception.UnexpectedServletException;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.servlet.model.dashboard.DashboardComputerList;
@@ -18,7 +14,6 @@ import com.excilys.cdb.servlet.model.dashboard.DashboardPagination;
 
 public class DashboardServlet extends Servlet {	
 	private static final long serialVersionUID = 3052019L;
-	private final Logger logger = LogManager.getLogger(this.getClass());
 
 	public DashboardServlet() {
 		this.modelMap.put("pagination", DashboardPagination.getInstance());
@@ -28,23 +23,17 @@ public class DashboardServlet extends Servlet {
 	@Override
 	public void doGet( HttpServletRequest request, HttpServletResponse response ) {	
 		try {
-			try {
-				
-				this.setupDashboard(request);
-				this.flushSetup(request);
-				this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward( request, response );
-				
-			} catch (ServletException | IOException cause) {
-				UnexpectedServletException except = new UnexpectedServletException(this.getServletName(),"GET");
-				this.logger.error(except.getMessage()+" thrown by "+cause.getMessage(),cause);
-				response.sendError(500);
-			} catch (Exception e) {
-				this.logger.error(e.getMessage());
-				response.sendError(500);
-			}
-		} catch (IOException cause) {
-			UnableToSendErrorCodeException e = new UnableToSendErrorCodeException(this.getServletName(),"POST");
-			this.logger.error(e.getMessage()+" thrown by "+cause.getMessage(),cause);
+			
+			this.setupDashboard(request);
+			this.flushSetup(request);
+			this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward( request, response );
+			
+		} catch (ServletException | IOException cause) {
+			this.log(new UnexpectedServletException(this.getServletName(),"GET"), cause);
+			this.sendError(response, 500);
+		} catch (Exception e) {
+			this.log(e);
+			this.sendError(response, 500);
 		}
 	}
 	
@@ -53,24 +42,18 @@ public class DashboardServlet extends Servlet {
 		String listId[] = request.getParameter("selection").split(",");
 		
 		try {
-			try {
-				
-				for (String id : listId) {
-					ComputerService.getInstance().delete(new ComputerDto(id));
-				}
-				response.sendRedirect(this.getServletContext().getContextPath()+"/?page="+ ((DashboardPagination)this.modelMap.get("pagination")).getPage() +"&size="+ ((DashboardPagination)this.modelMap.get("pagination")).getSize());
-				
-			} catch (ServletException | IOException cause) {
-				UnexpectedServletException except = new UnexpectedServletException(this.getServletName(),"POST");
-				this.logger.error(except.getMessage()+" thrown by "+cause.getMessage(),cause);
-				response.sendError(500);
-			} catch (Exception e) {
-				this.logger.error(e.getMessage());
-				response.sendError(500);
+			
+			for (String id : listId) {
+				ComputerService.getInstance().delete(new ComputerDto(id));
 			}
-		} catch (IOException cause) {
-			UnableToSendErrorCodeException e = new UnableToSendErrorCodeException(this.getServletName(),"POST");
-			this.logger.error(e.getMessage()+" thrown by "+cause.getMessage(),cause);
+			response.sendRedirect(this.getServletContext().getContextPath()+"/?page="+ ((DashboardPagination)this.modelMap.get("pagination")).getPage() +"&size="+ ((DashboardPagination)this.modelMap.get("pagination")).getSize());
+			
+		} catch (ServletException | IOException cause) {
+			this.log(new UnexpectedServletException(this.getServletName(),"POST"), cause);
+			this.sendError(response, 500);
+		} catch (Exception e) {
+			this.log(e);
+			this.sendError(response, 500);
 		}
 	}
 
