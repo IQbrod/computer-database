@@ -14,14 +14,14 @@ import com.excilys.cdb.enums.CreateOptionEnum;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.service.*;
 
-// TODO: Sortir les display (passer les DTO)
-
 public class CdbController {
 	private String[] splitStr;
 	private final String dateFormat = "yyyy-MM-dd/HH:mm:ss";
+	private final String computerTable = "computer";
+	private final String companyTable = "company";
 	
 	private static CdbController instance = new CdbController();
-	private Logger logger = (Logger) LogManager.getLogger(this.getClass());	
+	private Logger logger = LogManager.getLogger(this.getClass());	
 	
 	private CdbController() {}
 	
@@ -73,81 +73,74 @@ public class CdbController {
 			+ "help";
 	}
 	
-	private String castDate(String s) throws Exception {
+	private String castDate(String s) throws InvalidDateFormatException {
 		if (s.length() == 19) {
 			// Check Date Format
 			if (s.charAt(4) == '-' && s.charAt(7) == '-' && s.charAt(10) == '/' && s.charAt(13) == ':' && s.charAt(16) == ':') {
 				return s.replace("/", " ");
 			} else {
-				throw this.log(new InvalidDateFormatException(this.dateFormat,s));
+				throw (InvalidDateFormatException) this.log(new InvalidDateFormatException(this.dateFormat,s));
 			}
 		} else if (s.contentEquals("_")) {
 			return null;
 		} else {
-			throw this.log(new InvalidDateFormatException(this.dateFormat,s));
+			throw (InvalidDateFormatException) this.log(new InvalidDateFormatException(this.dateFormat,s));
 		}
 	}
 	
-	private String create() throws Exception {
+	private String create() throws InvalidTableException, MissingArgumentException, TooManyArgumentsException, Exception {
 		int sizeComputerExpected = 7;
 		int sizeCompanyExpected = 4;
 		
 		switch (splitStr.length) {
 			case 1:
-				throw this.log(new MissingArgumentException(2,splitStr.length));
+				throw (MissingArgumentException) this.log(new MissingArgumentException(2,splitStr.length));
 			case 2:
 			case 3:
-				if (splitStr[1].toLowerCase().equals("computer")) {
-					throw this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
-				} else if (splitStr[1].toLowerCase().equals("company")) {
-					throw this.log(new MissingArgumentException(sizeCompanyExpected,splitStr.length));
+				if (splitStr[1].equalsIgnoreCase(this.computerTable)) {
+					throw (MissingArgumentException) this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
+				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
+					throw (MissingArgumentException) this.log(new MissingArgumentException(sizeCompanyExpected,splitStr.length));
 				} else {
-					throw this.log(new InvalidTableException(splitStr[1]));
+					throw (InvalidTableException)this.log(new InvalidTableException(splitStr[1]));
 				}
 			case 4:
-				if (splitStr[1].toLowerCase().equals("computer")) {
-					throw this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
-				} else if (splitStr[1].toLowerCase().equals("company")) {
+				if (splitStr[1].equalsIgnoreCase(this.computerTable)) {
+					throw (MissingArgumentException) this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
+				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
 					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
 					CompanyDto ret = CompanyService.getInstance().create(c);
 					return "Create "+ret.toString();
 				} else {
-					throw this.log(new InvalidTableException(splitStr[1]));
+					throw (InvalidTableException) this.log(new InvalidTableException(splitStr[1]));
 				}
 			case 5:
-				if (splitStr[1].toLowerCase().equals("computer")) {
-					throw this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
-				} else if (splitStr[1].toLowerCase().equals("company")) {
-					throw this.log(new TooManyArgumentsException(splitStr[4]));
-				} else {
-					throw this.log(new InvalidTableException(splitStr[1]));
-				}
 			case 6:
-				if (splitStr[1].toLowerCase().equals("computer")) {
-					throw this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
-				} else if (splitStr[1].toLowerCase().equals("company")) {
-					throw this.log(new TooManyArgumentsException(splitStr[4]));
+				if (splitStr[1].equalsIgnoreCase(this.computerTable)) {
+					throw (MissingArgumentException) this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
+				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
+					throw (TooManyArgumentsException) this.log(new TooManyArgumentsException(splitStr[4]));
 				} else {
-					throw this.log(new InvalidTableException(splitStr[1]));
+					throw (InvalidTableException) this.log(new InvalidTableException(splitStr[1]));
 				}
 			case 7:
-				if (splitStr[1].toLowerCase().equals("computer")) {
+				if (splitStr[1].equalsIgnoreCase(this.computerTable)) {
 					ComputerDto c = new ComputerDto(splitStr[2],splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),(splitStr[6].contentEquals("_")) ? "0" : splitStr[6],"None");
 					ComputerDto ret = ComputerService.getInstance().create(c);
 					return "Create "+ret.toString();
-				} else if (splitStr[1].toLowerCase().equals("company")) {
-					throw this.log(new TooManyArgumentsException(splitStr[5]));
+				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
+					throw (TooManyArgumentsException) this.log(new TooManyArgumentsException(splitStr[5]));
 				} else {
-					throw this.log(new InvalidTableException(splitStr[1]));
+					throw (InvalidTableException) this.log(new InvalidTableException(splitStr[1]));
 				}
 			default:
 			case 8:
-				if (splitStr[1].toLowerCase().equals("computer")) {
-					throw this.log(new TooManyArgumentsException(splitStr[7]));
-				} else if (splitStr[1].toLowerCase().equals("company")) {
-					throw this.log(new TooManyArgumentsException(splitStr[5]));
+				if (splitStr[1].equalsIgnoreCase(this.computerTable)) {
+					throw (TooManyArgumentsException) this.log(new TooManyArgumentsException(splitStr[7]));
+				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
+					throw (TooManyArgumentsException) this.log(new TooManyArgumentsException(splitStr[5]));
 				} else {
-					throw this.log(new InvalidTableException(splitStr[1]));
+					throw (InvalidTableException) this.log(new InvalidTableException(splitStr[1]));
 				}
 				
 		}
