@@ -6,13 +6,18 @@ import java.util.List;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.cdb.dto.ComputerDto;
+import com.excilys.cdb.exception.UnexpectedServletException;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.servlet.model.dashboard.DashboardComputerList;
 import com.excilys.cdb.servlet.model.dashboard.DashboardPagination;
 
 public class DashboardServlet extends Servlet {	
 	private static final long serialVersionUID = 3052019L;
+	private final Logger logger = LogManager.getLogger(this.getClass());
 
 	public DashboardServlet() {
 		this.modelMap.put("pagination", DashboardPagination.getInstance());
@@ -24,8 +29,13 @@ public class DashboardServlet extends Servlet {
 		try {
 			this.setupDashboard(request);
 			this.flushSetup(request);		
+		} catch (ServletException | IOException cause) {
+			UnexpectedServletException except = new UnexpectedServletException(this.getServletName(),"GET");
+			this.logger.error(except.getMessage()+" thrown by "+cause.getMessage(),cause);
+			response.setStatus(500);
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.error(e.getMessage());
+			response.setStatus(500);
 		}
 		
 		this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward( request, response );
@@ -39,8 +49,13 @@ public class DashboardServlet extends Servlet {
 			for (String id : listId) {
 				ComputerService.getInstance().delete(new ComputerDto(id));
 			}
+		} catch (ServletException | IOException cause) {
+			UnexpectedServletException except = new UnexpectedServletException(this.getServletName(),"POST");
+			this.logger.error(except.getMessage()+" thrown by "+cause.getMessage(),cause);
+			response.setStatus(500);
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.error(e.getMessage());
+			response.setStatus(500);
 		}
 		
 		response.sendRedirect(this.getServletContext().getContextPath()+"/?page="+ ((DashboardPagination)this.modelMap.get("pagination")).getPage() +"&size="+ ((DashboardPagination)this.modelMap.get("pagination")).getSize() );

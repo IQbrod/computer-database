@@ -5,8 +5,12 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.exception.InvalidIdException;
+import com.excilys.cdb.exception.UnexpectedServletException;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.servlet.mapper.ServletToDtoComputerMapper;
 import com.excilys.cdb.servlet.model.SharedCompanyList;
@@ -15,6 +19,7 @@ import com.excilys.cdb.validator.ComputerValidator;
 
 public class EditComputerServlet extends Servlet {
 	private static final long serialVersionUID = 3052019L;
+	private Logger logger = LogManager.getLogger(this.getClass());
 	
 	public EditComputerServlet() {
 		this.modelMap.put("values", EditComputerValues.getInstance());
@@ -26,18 +31,20 @@ public class EditComputerServlet extends Servlet {
 		String id = request.getParameter("id");
 		
 		try {
-			this.setupDashboard(id);			
+			this.setupDashboard(id);
+			this.flushSetup(request);
+			this.getServletContext().getRequestDispatcher("/WEB-INF/views/editComputer.jsp").forward( request, response );
+		} catch (ServletException | IOException cause) {
+			UnexpectedServletException except = new UnexpectedServletException(this.getServletName(),"GET");
+			this.logger.error(except.getMessage()+" thrown by "+cause.getMessage(),cause);
+			response.setStatus(500);
 		} catch (InvalidIdException e) {
-			//TODO: LOG ICI
-			response.sendError(403); //Bad Request
+			this.logger.error(e.getMessage());
+			response.sendError(403);
 		} catch (Exception e) {
-			//TODO: LOG ICI
-			e.printStackTrace();
+			this.logger.error(e.getMessage());
+			response.sendError(500);
 		}
-		
-		
-		this.flushSetup(request);
-		this.getServletContext().getRequestDispatcher("/WEB-INF/views/editComputer.jsp").forward( request, response );
 	}
 
 	protected void setupDashboard(String id) throws Exception {
@@ -52,10 +59,14 @@ public class EditComputerServlet extends Servlet {
 			ComputerDto computerToUpdate = ServletToDtoComputerMapper.getInstance().convertFields(computerFromFields);
 			ComputerValidator.getInstance().validate(computerToUpdate);
 			ComputerService.getInstance().update(computerToUpdate);
+			response.sendRedirect(this.getServletContext().getContextPath()+"/");
+		} catch (ServletException | IOException cause) {
+			UnexpectedServletException except = new UnexpectedServletException(this.getServletName(),"POST");
+			this.logger.error(except.getMessage()+" thrown by "+cause.getMessage(),cause);
+			response.setStatus(500);
 		} catch (Exception e) {
-			// TODO: LOG ICI
-			e.printStackTrace();
+			this.logger.error(e.getMessage());
+			response.sendError(500);
 		}
-		response.sendRedirect(this.getServletContext().getContextPath()+"/");
 	}
 }
