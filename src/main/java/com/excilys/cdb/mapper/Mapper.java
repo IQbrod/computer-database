@@ -5,7 +5,7 @@ import com.excilys.cdb.model.Model;
 import com.excilys.cdb.validator.Validator;
 
 public abstract class Mapper<T extends Dto, U extends Model> {
-	public Validator<T> validator;
+	public final Validator<T> validator;
 	
 	
 	protected Mapper(Validator<T> validator) {

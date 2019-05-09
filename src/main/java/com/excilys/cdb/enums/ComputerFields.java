@@ -16,8 +16,8 @@ public enum ComputerFields {
 		this.field = field;
 	}
 	
-	private String input;
-	public String field;
+	private final String input;
+	private final String field;
 	
 	public static ComputerFields getOrderByField(String s) {
 		for (ComputerFields comd : ComputerFields.values()) {
@@ -27,4 +27,8 @@ public enum ComputerFields {
 		}
 		return ID;
 	}
+
+	public String getField() {
+		return field;
+	}	
 }

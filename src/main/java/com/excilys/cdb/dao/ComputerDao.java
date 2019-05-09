@@ -202,7 +202,6 @@ public class ComputerDao extends Dao<Computer> {
 				return (resultSet.next()) ? resultSet.getInt("count") : 0;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
 			throw this.log(new FailedSQLQueryException(this.SQL_COUNT),e);
 		}
 	}	
@@ -235,7 +234,7 @@ public class ComputerDao extends Dao<Computer> {
 		
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LIST+ ComputerFields.getOrderByField(orderBy).field + SQL_LIMIT);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LIST+ ComputerFields.getOrderByField(orderBy).getField() + SQL_LIMIT);
 		) {
 			preparedStatement.setString(1, "%"+name+"%");
 			preparedStatement.setString(2, "%"+name+"%");
@@ -250,7 +249,6 @@ public class ComputerDao extends Dao<Computer> {
 				return computerList;
 			}			
 		} catch (SQLException e) {
-			e.printStackTrace();
 			throw this.log(new FailedSQLQueryException(this.SQL_LIST),e);
 		}
 	}
@@ -267,7 +265,6 @@ public class ComputerDao extends Dao<Computer> {
 				return (resultSet.next()) ? resultSet.getInt("count") : 0;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
 			throw this.log(new FailedSQLQueryException(this.sqlCountByName),e);
 		}
 	}
