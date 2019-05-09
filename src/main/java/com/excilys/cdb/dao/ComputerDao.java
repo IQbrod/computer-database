@@ -17,7 +17,7 @@ public class ComputerDao extends Dao<Computer> {
 	
 	private static ComputerDao instance = null;
 	
-	private ComputerDao() throws DatabaseProblemException {
+	private ComputerDao() {
 		super(
 			"INSERT INTO computer VALUES (?,?,?,?,?);",
 			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;",
@@ -30,7 +30,7 @@ public class ComputerDao extends Dao<Computer> {
 		this.logger = LogManager.getLogger(this.getClass());
 	}
 	
-	public static ComputerDao getInstance() throws RuntimeException {
+	public static ComputerDao getInstance() {
 		if (instance == null)
 			instance = new ComputerDao();
 		return instance;
@@ -42,7 +42,7 @@ public class ComputerDao extends Dao<Computer> {
 	}
 
 	@Override
-	public Computer create(Computer obj) throws RuntimeException {
+	public Computer create(Computer obj) {
 		int nbRow = 0;
 		
 		if(obj.getId() < 0) {
@@ -71,7 +71,7 @@ public class ComputerDao extends Dao<Computer> {
 		} else {
 			try (
 				Connection connection = this.dataSource.getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_CREATE)
+				PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCreate)
 			) {
 				preparedStatement.setInt(1,obj.getId());
 				preparedStatement.setString(2, obj.getName());
@@ -89,7 +89,7 @@ public class ComputerDao extends Dao<Computer> {
 			if (nbRow == 1) {
 				return obj;
 			} else {
-				throw this.log(new FailedSQLQueryException(this.SQL_CREATE));
+				throw this.log(new FailedSQLQueryException(this.sqlCreate));
 			}
 		} else {
 			try (
@@ -114,14 +114,14 @@ public class ComputerDao extends Dao<Computer> {
 	}
 
 	@Override
-	public Computer update(Computer obj) throws Exception {
+	public Computer update(Computer obj) {
 		if(obj.getId() <= 0) {
 			throw this.log(new InvalidIdException(obj.getId()));
 		}
 		
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_UPDATE);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlUpdate);
 		) {
 			preparedStatement.setString(1, obj.getName());
 			preparedStatement.setTimestamp(2, obj.getDateIntro());
@@ -136,46 +136,46 @@ public class ComputerDao extends Dao<Computer> {
 			if (preparedStatement.executeUpdate() == 1) {
 				return this.read(obj.getId());
 			} else {
-				throw this.log(new FailedSQLQueryException(this.SQL_UPDATE));
+				throw this.log(new FailedSQLQueryException(this.sqlUpdate));
 			}		
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryBySQLException(this.SQL_UPDATE),e);
+			throw this.log(new FailedSQLQueryBySQLException(this.sqlUpdate),e);
 		}
 	}
 
 	@Override
-	public Computer delete(Computer obj) throws RuntimeException {
+	public Computer delete(Computer obj) {
 		return this.deleteById(obj.getId());
 	}
 	
 	@Override
-	public Computer deleteById(int id) throws RuntimeException {
+	public Computer deleteById(int id) {
 		Computer returnComputer = this.read(id);
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_DELETE);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlDelete);
 		) {
 			preparedStatement.setInt(1, id);
 			
 			if (preparedStatement.executeUpdate() == 1) {
 				return returnComputer;
 			} else {
-				throw this.log(new FailedSQLQueryException(this.SQL_DELETE));
+				throw this.log(new FailedSQLQueryException(this.sqlDelete));
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryBySQLException(this.SQL_DELETE),e);
+			throw this.log(new FailedSQLQueryBySQLException(this.sqlDelete),e);
 		}
 	}
 
 	@Override
-	public Computer read(int id) throws RuntimeException {
+	public Computer read(int id) {
 		if(id <= 0) {
 			throw this.log(new InvalidIdException(id));
 		}
 		
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_SELECT);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlSelect);
 		) {
 			preparedStatement.setInt(1, id);
 			
@@ -183,46 +183,46 @@ public class ComputerDao extends Dao<Computer> {
 				if(resultSet.first()) {
 					return new Computer(id,resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id"));
 				} else {
-					throw this.log(new FailedSQLQueryException(this.SQL_SELECT));
+					throw this.log(new FailedSQLQueryException(this.sqlSelect));
 				}
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryBySQLException(this.SQL_SELECT),e);
+			throw this.log(new FailedSQLQueryBySQLException(this.sqlSelect),e);
 		}
 	}
 	
 	@Override
-	public int count() throws RuntimeException {
+	public int count() {
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_COUNT);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCount);
 		) {
 			
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
 				return (resultSet.next()) ? resultSet.getInt("count") : 0;
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.SQL_COUNT),e);
+			throw this.log(new FailedSQLQueryException(this.sqlCount),e);
 		}
 	}	
 
 	@Override
-	public List<Computer> listAll() throws RuntimeException {
+	public List<Computer> listAll() {
 		return this.listAll("id");
 	}	
-	public List<Computer> listAll(String orderBy) throws RuntimeException {
+	public List<Computer> listAll(String orderBy) {
 		return this.list(1, this.count(), orderBy);
 	}
 	
 	@Override
-	public List<Computer> list(int page, int size) throws RuntimeException {
+	public List<Computer> list(int page, int size) {
 		return this.list(page, size, "id");
 	}	
-	public List<Computer> list(int page, int size, String orderBy) throws RuntimeException {
+	public List<Computer> list(int page, int size, String orderBy) {
 		return this.listByName("", page, size, orderBy);
 	}
 	
-	public List<Computer> listByName(String name, int page, int size, String orderBy) throws RuntimeException {
+	public List<Computer> listByName(String name, int page, int size, String orderBy) {
 		if (size <= 0) {
 			throw this.log(new InvalidPageSizeException(size));
 		}
@@ -234,7 +234,7 @@ public class ComputerDao extends Dao<Computer> {
 		
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LIST+ ComputerFields.getOrderByField(orderBy).getField() + SQL_LIMIT);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlList+ ComputerFields.getOrderByField(orderBy).getField() + sqlLimit);
 		) {
 			preparedStatement.setString(1, "%"+name+"%");
 			preparedStatement.setString(2, "%"+name+"%");
@@ -249,11 +249,11 @@ public class ComputerDao extends Dao<Computer> {
 				return computerList;
 			}			
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.SQL_LIST),e);
+			throw this.log(new FailedSQLQueryException(this.sqlList),e);
 		}
 	}
 	
-	public int countByName(String name) throws RuntimeException {
+	public int countByName(String name) {
 		try (
 			Connection connection = this.dataSource.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCountByName);

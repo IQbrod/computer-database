@@ -14,24 +14,24 @@ import com.zaxxer.hikari.HikariDataSource;
 public abstract class Dao<T extends Model> {
 	protected HikariDataSource dataSource;
 	
-	protected final String SQL_CREATE;
-	protected final String SQL_UPDATE;
-	protected final String SQL_DELETE;
-	protected final String SQL_SELECT;
-	protected final String SQL_LIST;
-	protected final String SQL_LIMIT;
-	protected final String SQL_COUNT;
+	protected final String sqlCreate;
+	protected final String sqlUpdate;
+	protected final String sqlDelete;
+	protected final String sqlSelect;
+	protected final String sqlList;
+	protected final String sqlLimit;
+	protected final String sqlCount;
 	
 	protected Logger logger;
 	
-	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlList, String sqlLimit, String sqlCount) throws RuntimeException {
-		this.SQL_CREATE = sqlCreate;
-		this.SQL_UPDATE = sqlUpdate;
-		this.SQL_DELETE = sqlDelete;
-		this.SQL_SELECT = sqlSelect;
-		this.SQL_LIST = sqlList;
-		this.SQL_LIMIT = sqlLimit;
-		this.SQL_COUNT = sqlCount;
+	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlList, String sqlLimit, String sqlCount) {
+		this.sqlCreate = sqlCreate;
+		this.sqlUpdate = sqlUpdate;
+		this.sqlDelete = sqlDelete;
+		this.sqlSelect = sqlSelect;
+		this.sqlList = sqlList;
+		this.sqlLimit = sqlLimit;
+		this.sqlCount = sqlCount;
 		
 		ResourceBundle bundle;
 		try {
@@ -68,25 +68,25 @@ public abstract class Dao<T extends Model> {
 		}
 	}
 	
-	public abstract T create(T obj) throws Exception;
-	public abstract T update(T obj) throws Exception;
-	public abstract T delete(T obj) throws Exception;
-	public abstract T deleteById(int i) throws Exception;
-	public abstract T read(int id) throws RuntimeException;
-	public abstract List<T> listAll() throws RuntimeException;
-	public abstract List<T> list(int page, int size) throws Exception;
-	public abstract int count() throws RuntimeException;
+	public abstract T create(T obj);
+	public abstract T update(T obj);
+	public abstract T delete(T obj);
+	public abstract T deleteById(int i);
+	public abstract T read(int id);
+	public abstract List<T> listAll();
+	public abstract List<T> list(int page, int size);
+	public abstract int count();
 	
 	protected Logger getLogger() {
 		return this.logger;
 	}
 	
-	protected RuntimeException log (RuntimeException exception, Exception cause) throws RuntimeException {
+	protected RuntimeException log (RuntimeException exception, Exception cause) {
 		getLogger().error(exception.getMessage()+ " caused by "+cause.getMessage(),exception);
 		return exception;
 	}
 	
-	protected RuntimeException log (RuntimeException exception) throws RuntimeException {
+	protected RuntimeException log (RuntimeException exception) {
 		getLogger().error(exception.getMessage(),exception);
 		return exception;
 	}

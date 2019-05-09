@@ -12,7 +12,7 @@ import com.excilys.cdb.model.*;
 
 public class CompanyDao extends Dao<Company>{
 	private static CompanyDao instance = null;
-	private final String SQL_DELETE_LINKED_COMPUTER = "DELETE FROM computer WHERE company_id=?;";
+	private final String sqlDeleteLinkedComputer = "DELETE FROM computer WHERE company_id=?;";
 	
 	private CompanyDao() throws DatabaseProblemException {
 		super(
@@ -28,7 +28,7 @@ public class CompanyDao extends Dao<Company>{
 		this.logger = LogManager.getLogger(this.getClass());
 	}
 	
-	public static CompanyDao getInstance() throws DatabaseProblemException {
+	public static CompanyDao getInstance() {
 		if (instance == null)
 			instance = new CompanyDao();
 		return instance;
@@ -40,14 +40,14 @@ public class CompanyDao extends Dao<Company>{
 	}
 
 	@Override
-	public Company create(Company obj) throws Exception{
+	public Company create(Company obj) {
 		if(obj.getId() <= 0) {
 			throw this.log(new InvalidIdException(obj.getId()));
 		}
 		
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_CREATE);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCreate);
 		) {
 			preparedStatement.setInt(1,obj.getId());
 			preparedStatement.setString(2, obj.getName());
@@ -56,7 +56,7 @@ public class CompanyDao extends Dao<Company>{
 			if (nbRow == 1)
 				return obj;
 			else {
-				throw this.log(new FailedSQLQueryException(this.SQL_CREATE));
+				throw this.log(new FailedSQLQueryException(this.sqlCreate));
 			}
 		} catch (SQLException e) {
 			throw this.log(new PrimaryKeyViolationException(obj.getId()),e);
@@ -64,11 +64,11 @@ public class CompanyDao extends Dao<Company>{
 	}
 
 	@Override
-	public Company update(Company obj) throws Exception {
+	public Company update(Company obj) {
 		Company company = this.read(obj.getId());
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_UPDATE);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlUpdate);
 		) {
 			company.setName(obj.getName());
 
@@ -78,34 +78,34 @@ public class CompanyDao extends Dao<Company>{
 			if (preparedStatement.executeUpdate() == 1) 
 				return company;
 			else {
-				throw this.log(new FailedSQLQueryException(this.SQL_UPDATE));
+				throw this.log(new FailedSQLQueryException(this.sqlUpdate));
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryBySQLException(this.SQL_UPDATE),e);
+			throw this.log(new FailedSQLQueryBySQLException(this.sqlUpdate),e);
 		}
 	}
 
 	@Override
-	public Company delete(Company obj) throws Exception{
+	public Company delete(Company obj) {
 		return this.deleteById(obj.getId());
 	}
 	
 	@Override
-	public Company deleteById(int id) throws Exception {
+	public Company deleteById(int id) {
 		Company company = this.read(id);
 		try (Connection connection = this.dataSource.getConnection();) {
 			connection.setAutoCommit(false);
 			
 			try (
-				PreparedStatement deleteComputer = connection.prepareStatement(this.SQL_DELETE_LINKED_COMPUTER);
-				PreparedStatement deleteCompany = connection.prepareStatement(this.SQL_DELETE);
+				PreparedStatement deleteComputer = connection.prepareStatement(this.sqlDeleteLinkedComputer);
+				PreparedStatement deleteCompany = connection.prepareStatement(this.sqlDelete);
 			) {
 				deleteComputer.setInt(1, id);
 				deleteComputer.executeUpdate();
 				
 				deleteCompany.setInt(1, id);
 				if (deleteCompany.executeUpdate() == 0)
-					throw this.log(new FailedSQLQueryException(this.SQL_DELETE));
+					throw this.log(new FailedSQLQueryException(this.sqlDelete));
 				
 				connection.commit();
 				return company;
@@ -116,19 +116,19 @@ public class CompanyDao extends Dao<Company>{
 				throw e;
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryBySQLException(this.SQL_DELETE_LINKED_COMPUTER+" or "+this.SQL_DELETE),e);
+			throw this.log(new FailedSQLQueryBySQLException(this.sqlDeleteLinkedComputer+" or "+this.sqlDelete),e);
 		}
 	}
 
 	@Override
-	public Company read(int id) throws RuntimeException {
+	public Company read(int id) {
 		if(id <= 0) {
 			throw this.log(new InvalidIdException(id));
 		}
 		
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_SELECT);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlSelect);
 		) {
 			preparedStatement.setInt(1, id);
 			
@@ -137,21 +137,21 @@ public class CompanyDao extends Dao<Company>{
 					Company company = new Company(id,resultSet.getString("name"));
 					return company;
 				} else {
-					throw this.log(new FailedSQLQueryException(this.SQL_SELECT));
+					throw this.log(new FailedSQLQueryException(this.sqlSelect));
 				}			
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.SQL_SELECT),e);
+			throw this.log(new FailedSQLQueryException(this.sqlSelect),e);
 		}
 	}
 	
 	@Override
-	public List<Company> listAll() throws RuntimeException {
+	public List<Company> listAll() {
 		return this.list(1, this.count());
 	}
 	
 	@Override
-	public List<Company> list(int page, int size) throws RuntimeException {
+	public List<Company> list(int page, int size) {
 		if (size <= 0) {
 			throw this.log(new InvalidPageSizeException(size));
 		}
@@ -162,7 +162,7 @@ public class CompanyDao extends Dao<Company>{
 		
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_LIST+this.SQL_LIMIT);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlList+this.sqlLimit);
 		) {
 			preparedStatement.setInt(1, offset);
 			preparedStatement.setInt(2, size);
@@ -175,22 +175,22 @@ public class CompanyDao extends Dao<Company>{
 				return lst;
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.SQL_LIST),e);
+			throw this.log(new FailedSQLQueryException(this.sqlList),e);
 		}
 	}
 	
 	@Override
-	public int count() throws RuntimeException {
+	public int count() {
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.SQL_COUNT);
+			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCount);
 		) {
 			
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
 				return (resultSet.next()) ? resultSet.getInt("count") : 0;
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.SQL_COUNT),e);
+			throw this.log(new FailedSQLQueryException(this.sqlCount),e);
 		}
 	}
 }
