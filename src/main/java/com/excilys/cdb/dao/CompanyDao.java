@@ -19,10 +19,10 @@ public class CompanyDao extends Dao<Company>{
 			"INSERT INTO company VALUES (?,?);",
 			"UPDATE company SET name=? WHERE id=?;",
 			"DELETE FROM company WHERE id=?;",
-			"SELECT * FROM company WHERE id=?;",
-			"SELECT * FROM company",
+			"SELECT id, name FROM company WHERE id=?;",
+			"SELECT id, name FROM company",
 			" LIMIT ?,?;",
-			"SELECT count(*) AS count FROM company"
+			"SELECT count(id) AS count FROM company"
 		);
 		
 		this.logger = LogManager.getLogger(this.getClass());
@@ -40,40 +40,40 @@ public class CompanyDao extends Dao<Company>{
 	}
 
 	@Override
-	public Company create(Company obj) {
-		if(obj.getId() <= 0) {
-			throw this.log(new InvalidIdException(obj.getId()));
+	public Company create(Company aCompany) {
+		if(aCompany.getId() <= 0) {
+			throw this.log(new InvalidIdException(aCompany.getId()));
 		}
 		
 		try (
 			Connection connection = this.dataSource.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCreate);
 		) {
-			preparedStatement.setInt(1,obj.getId());
-			preparedStatement.setString(2, obj.getName());
+			preparedStatement.setInt(1,aCompany.getId());
+			preparedStatement.setString(2, aCompany.getName());
 			
 			int nbRow = preparedStatement.executeUpdate();
 			if (nbRow == 1)
-				return obj;
+				return aCompany;
 			else {
 				throw this.log(new FailedSQLQueryException(this.sqlCreate));
 			}
 		} catch (SQLException e) {
-			throw this.log(new PrimaryKeyViolationException(obj.getId()),e);
+			throw this.log(new PrimaryKeyViolationException(aCompany.getId()),e);
 		}
 	}
 
 	@Override
-	public Company update(Company obj) {
-		Company company = this.read(obj.getId());
+	public Company update(Company aCompany) {
+		Company company = this.read(aCompany.getId());
 		try (
 			Connection connection = this.dataSource.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlUpdate);
 		) {
-			company.setName(obj.getName());
+			company.setName(aCompany.getName());
 
 			preparedStatement.setString(1, company.getName());
-			preparedStatement.setInt(2, obj.getId());
+			preparedStatement.setInt(2, aCompany.getId());
 			
 			if (preparedStatement.executeUpdate() == 1) 
 				return company;
@@ -86,8 +86,8 @@ public class CompanyDao extends Dao<Company>{
 	}
 
 	@Override
-	public Company delete(Company obj) {
-		return this.deleteById(obj.getId());
+	public Company delete(Company aCompany) {
+		return this.deleteById(aCompany.getId());
 	}
 	
 	@Override

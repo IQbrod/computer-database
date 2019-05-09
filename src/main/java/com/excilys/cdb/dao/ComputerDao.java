@@ -13,7 +13,7 @@ import com.excilys.cdb.model.*;
 public class ComputerDao extends Dao<Computer> {
 	private final String sqlSelectUpdate = "UPDATE computer SET company_id=? WHERE id=?;";
 	private final String sqlInsertNoId = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
-	private final String sqlCountByName = "SELECT count(*) FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) LIMIT ?,?";
+	private final String sqlCountByName = "SELECT count(id) FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) LIMIT ?,?";
 	
 	private static ComputerDao instance = null;
 	
@@ -22,10 +22,10 @@ public class ComputerDao extends Dao<Computer> {
 			"INSERT INTO computer VALUES (?,?,?,?,?);",
 			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;",
 			"DELETE FROM computer WHERE id=?;",
-			"SELECT * FROM computer WHERE id=?;",
+			"SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id=?;",
 			"SELECT C.id as id, C.name as name, introduced, discontinued, company_id  FROM computer C LEFT OUTER JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) ORDER BY ",
 			" LIMIT ?,?",
-			"SELECT count(*) AS count FROM computer"
+			"SELECT count(id) AS count FROM computer"
 		);
 		this.logger = LogManager.getLogger(this.getClass());
 	}
@@ -42,52 +42,52 @@ public class ComputerDao extends Dao<Computer> {
 	}
 
 	@Override
-	public Computer create(Computer obj) {
+	public Computer create(Computer aComputer) {
 		int nbRow = 0;
 		
-		if(obj.getId() < 0) {
-			throw this.log(new InvalidIdException(obj.getId()));
-		} else if (obj.getId() == 0) {
+		if(aComputer.getId() < 0) {
+			throw this.log(new InvalidIdException(aComputer.getId()));
+		} else if (aComputer.getId() == 0) {
 			try (
 				Connection connection = this.dataSource.getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(this.sqlInsertNoId,Statement.RETURN_GENERATED_KEYS)
 			) {
-				preparedStatement.setString(1, obj.getName());
-				preparedStatement.setTimestamp(2, obj.getDateIntro());
-				preparedStatement.setTimestamp(3, obj.getDateDisc());
+				preparedStatement.setString(1, aComputer.getName());
+				preparedStatement.setTimestamp(2, aComputer.getDateIntro());
+				preparedStatement.setTimestamp(3, aComputer.getDateDisc());
 				preparedStatement.setNull(4, java.sql.Types.INTEGER);
 				
 				nbRow = preparedStatement.executeUpdate();
 				
 				try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
 					if (generatedKeys.next())
-						obj.setId((int)generatedKeys.getLong(1));
+						aComputer.setId((int)generatedKeys.getLong(1));
 					else
 						throw this.log(new FailedSQLQueryException(sqlInsertNoId));
 				}
 			} catch (SQLException e) {
-				throw this.log(new PrimaryKeyViolationException(obj.getId()),e);
+				throw this.log(new PrimaryKeyViolationException(aComputer.getId()),e);
 			}
 		} else {
 			try (
 				Connection connection = this.dataSource.getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCreate)
 			) {
-				preparedStatement.setInt(1,obj.getId());
-				preparedStatement.setString(2, obj.getName());
-				preparedStatement.setTimestamp(3, obj.getDateIntro());
-				preparedStatement.setTimestamp(4, obj.getDateDisc());
+				preparedStatement.setInt(1,aComputer.getId());
+				preparedStatement.setString(2, aComputer.getName());
+				preparedStatement.setTimestamp(3, aComputer.getDateIntro());
+				preparedStatement.setTimestamp(4, aComputer.getDateDisc());
 				preparedStatement.setNull(5, java.sql.Types.INTEGER);
 
 				nbRow = preparedStatement.executeUpdate();
 			} catch (SQLException e) {
-				throw this.log(new PrimaryKeyViolationException(obj.getId()),e);
+				throw this.log(new PrimaryKeyViolationException(aComputer.getId()),e);
 			}
 		}
 		
-		if (obj.getManufacturer() == 0) {
+		if (aComputer.getManufacturer() == 0) {
 			if (nbRow == 1) {
-				return obj;
+				return aComputer;
 			} else {
 				throw this.log(new FailedSQLQueryException(this.sqlCreate));
 			}
@@ -96,45 +96,45 @@ public class ComputerDao extends Dao<Computer> {
 				Connection connection = this.dataSource.getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(this.sqlSelectUpdate);
 			) {
-				preparedStatement.setInt(1, obj.getManufacturer());
-				preparedStatement.setInt(2, obj.getId());
+				preparedStatement.setInt(1, aComputer.getManufacturer());
+				preparedStatement.setInt(2, aComputer.getId());
 				
 				nbRow += preparedStatement.executeUpdate();
 				if (nbRow == 2) {
-					return obj;
+					return aComputer;
 				} else {
-					this.delete(obj);
+					this.delete(aComputer);
 					throw this.log(new FailedSQLQueryException(this.sqlSelectUpdate));
 				}
 			} catch (SQLException e) {
-				this.delete(obj);
-				throw this.log(new ForeignKeyViolationException(obj.getManufacturer(), "company"),e);
+				this.delete(aComputer);
+				throw this.log(new ForeignKeyViolationException(aComputer.getManufacturer(), "company"),e);
 			}
 		}
 	}
 
 	@Override
-	public Computer update(Computer obj) {
-		if(obj.getId() <= 0) {
-			throw this.log(new InvalidIdException(obj.getId()));
+	public Computer update(Computer aComputer) {
+		if(aComputer.getId() <= 0) {
+			throw this.log(new InvalidIdException(aComputer.getId()));
 		}
 		
 		try (
 			Connection connection = this.dataSource.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlUpdate);
 		) {
-			preparedStatement.setString(1, obj.getName());
-			preparedStatement.setTimestamp(2, obj.getDateIntro());
-			preparedStatement.setTimestamp(3, obj.getDateDisc());
-			if (obj.getManufacturer() == 0) {
+			preparedStatement.setString(1, aComputer.getName());
+			preparedStatement.setTimestamp(2, aComputer.getDateIntro());
+			preparedStatement.setTimestamp(3, aComputer.getDateDisc());
+			if (aComputer.getManufacturer() == 0) {
 				preparedStatement.setNull(4, java.sql.Types.INTEGER);
 			} else {
-				preparedStatement.setInt(4, obj.getManufacturer());
+				preparedStatement.setInt(4, aComputer.getManufacturer());
 			}
-			preparedStatement.setInt(5, obj.getId());
+			preparedStatement.setInt(5, aComputer.getId());
 
 			if (preparedStatement.executeUpdate() == 1) {
-				return this.read(obj.getId());
+				return this.read(aComputer.getId());
 			} else {
 				throw this.log(new FailedSQLQueryException(this.sqlUpdate));
 			}		
@@ -144,8 +144,8 @@ public class ComputerDao extends Dao<Computer> {
 	}
 
 	@Override
-	public Computer delete(Computer obj) {
-		return this.deleteById(obj.getId());
+	public Computer delete(Computer aComputer) {
+		return this.deleteById(aComputer.getId());
 	}
 	
 	@Override

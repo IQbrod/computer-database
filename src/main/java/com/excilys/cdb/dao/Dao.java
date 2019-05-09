@@ -6,9 +6,9 @@ import java.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.excilys.cdb.dbConnector.HikariConnectionProvider;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.Model;
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public abstract class Dao<T extends Model> {
@@ -33,28 +33,6 @@ public abstract class Dao<T extends Model> {
 		this.sqlLimit = sqlLimit;
 		this.sqlCount = sqlCount;
 		
-		ResourceBundle bundle;
-		try {
-			bundle = ResourceBundle.getBundle("dbconfig");
-		} catch (MissingResourceException ex) {
-			bundle = ResourceBundle.getBundle("dbconfig_travis");
-		}
-		
-		try {
-			Class.forName(bundle.getString("driver"));
-		} catch (ClassNotFoundException e) {
-			throw this.log(new DriverNotFoundException(bundle.getString("driver")));
-		}
-		
-		HikariConfig config = new HikariConfig();
-		
-		config.setDriverClassName(bundle.getString("driver"));
-		config.setJdbcUrl(bundle.getString("url"));
-		config.setUsername(bundle.getString("username"));
-		config.setPassword(bundle.getString("password"));
-		
-		dataSource = new HikariDataSource(config);
-		
 		logger = LogManager.getLogger(this.getClass());
 		
 		try (
@@ -64,6 +42,8 @@ public abstract class Dao<T extends Model> {
 		} catch (SQLException e) {
 			throw this.log(new DatabaseProblemException(dataSource.getJdbcUrl(), dataSource.getUsername(), dataSource.getPassword()), e);
 		}
+		
+		dataSource = HikariConnectionProvider.getDataSource();
 	}
 	
 	public abstract T create(T obj);
