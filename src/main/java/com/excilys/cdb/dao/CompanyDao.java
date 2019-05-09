@@ -14,7 +14,7 @@ public class CompanyDao extends Dao<Company>{
 	private static CompanyDao instance = null;
 	private final String sqlDeleteLinkedComputer = "DELETE FROM computer WHERE company_id=?;";
 	
-	private CompanyDao() throws DatabaseProblemException {
+	private CompanyDao() {
 		super(
 			"INSERT INTO company VALUES (?,?);",
 			"UPDATE company SET name=? WHERE id=?;",

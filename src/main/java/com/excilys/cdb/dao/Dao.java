@@ -41,30 +41,28 @@ public abstract class Dao<T extends Model> {
 		}
 		
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
+			Class.forName(bundle.getString("driver"));
 		} catch (ClassNotFoundException e) {
-			DriverNotFoundException exception = new DriverNotFoundException("com.mysql.cj.jdbc.Driver");
-			logger.error(exception.getMessage() + " caused by " + e.getMessage(),exception);
-			throw exception;
+			throw this.log(new DriverNotFoundException(bundle.getString("driver")));
 		}
 		
 		HikariConfig config = new HikariConfig();
 		
-		config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		config.setDriverClassName(bundle.getString("driver"));
 		config.setJdbcUrl(bundle.getString("url"));
 		config.setUsername(bundle.getString("username"));
 		config.setPassword(bundle.getString("password"));
 		
 		dataSource = new HikariDataSource(config);
 		
-		logger = (Logger) LogManager.getLogger(this.getClass());
+		logger = LogManager.getLogger(this.getClass());
 		
 		try (
 			Connection connection = this.dataSource.getConnection();
-		) {} catch (SQLException e) {
-			DatabaseProblemException exception = new DatabaseProblemException(dataSource.getJdbcUrl(), dataSource.getUsername(), dataSource.getPassword());
-			logger.error(exception.getMessage() + " caused by " + e.getMessage(),e);
-			throw exception;
+		) {
+			;
+		} catch (SQLException e) {
+			throw this.log(new DatabaseProblemException(dataSource.getJdbcUrl(), dataSource.getUsername(), dataSource.getPassword()), e);
 		}
 	}
 	
