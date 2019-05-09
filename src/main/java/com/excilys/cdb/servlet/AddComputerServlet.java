@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.excilys.cdb.dto.ComputerDto;
+import com.excilys.cdb.exception.UnableToSendErrorCodeException;
 import com.excilys.cdb.exception.UnexpectedServletException;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.servlet.mapper.ServletToDtoComputerMapper;
@@ -17,7 +18,7 @@ import com.excilys.cdb.validator.ComputerValidator;
 
 public class AddComputerServlet extends Servlet {
 	private static final long serialVersionUID = 29042019L;
-	private Logger logger = LogManager.getLogger(this.getClass());	
+	private final Logger logger = LogManager.getLogger(this.getClass());	
 	
 	public AddComputerServlet() {
 		this.modelMap.put("companyList", SharedCompanyList.getInstance());
@@ -26,31 +27,44 @@ public class AddComputerServlet extends Servlet {
 	@Override
 	public void doGet( HttpServletRequest request, HttpServletResponse response ) {
 		try {
-			this.getServletContext().getRequestDispatcher("/WEB-INF/views/addComputer.jsp").forward( request, response );
-			this.flushSetup(request);
-		} catch (ServletException | IOException cause) {
-			UnexpectedServletException except = new UnexpectedServletException(this.getServletName(),"GET");
-			this.logger.error(except.getMessage()+" thrown by "+cause.getMessage(),cause);
-			response.setStatus(500);
+			try {
+				
+				this.getServletContext().getRequestDispatcher("/WEB-INF/views/addComputer.jsp").forward( request, response );
+				this.flushSetup(request);
+				
+			} catch (ServletException | IOException cause) {
+				UnexpectedServletException except = new UnexpectedServletException(this.getServletName(),"GET");
+				this.logger.error(except.getMessage()+" thrown by "+cause.getMessage(),cause);
+				response.sendError(500);
+			}
+		} catch (IOException cause) {
+			UnableToSendErrorCodeException e = new UnableToSendErrorCodeException(this.getServletName(),"GET");
+			this.logger.error(e.getMessage()+" thrown by "+cause.getMessage(),cause);
 		}
 	}
 	
 	@Override
-	public void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
+	public void doPost( HttpServletRequest request, HttpServletResponse response ) {
 		try {
-			ComputerDto computerFromFields = new ComputerDto("0",request.getParameter("computerName"),request.getParameter("introduced"),request.getParameter("discontinued"),request.getParameter("companyId"),"None");
-			ComputerDto computerToCreate = ServletToDtoComputerMapper.getInstance().convertFields(computerFromFields);
-			ComputerValidator.getInstance().validate(computerToCreate);
-			ComputerService.getInstance().create(computerToCreate);
-		} catch (ServletException | IOException cause) {
-			UnexpectedServletException except = new UnexpectedServletException(this.getServletName(),"POST");
-			this.logger.error(except.getMessage()+" thrown by "+cause.getMessage(),cause);
-			response.setStatus(500);
-		} catch (Exception e) {
-			this.logger.error(e.getMessage());
-			response.setStatus(500);
+			try {
+				
+				ComputerDto computerFromFields = new ComputerDto("0",request.getParameter("computerName"),request.getParameter("introduced"),request.getParameter("discontinued"),request.getParameter("companyId"),"None");
+				ComputerDto computerToCreate = ServletToDtoComputerMapper.getInstance().convertFields(computerFromFields);
+				ComputerValidator.getInstance().validate(computerToCreate);
+				ComputerService.getInstance().create(computerToCreate);
+				response.sendRedirect(this.getServletContext().getContextPath()+"/");
+				
+			} catch (ServletException | IOException cause) {
+				UnexpectedServletException except = new UnexpectedServletException(this.getServletName(),"POST");
+				this.logger.error(except.getMessage()+" thrown by "+cause.getMessage(),cause);
+				response.sendError(500);
+			} catch (Exception e) {
+				this.logger.error(e.getMessage());
+				response.sendError(500);
+			}
+		} catch (IOException cause) {
+			UnableToSendErrorCodeException e = new UnableToSendErrorCodeException(this.getServletName(),"POST");
+			this.logger.error(e.getMessage()+" thrown by "+cause.getMessage(),cause);
 		}
-		
-		response.sendRedirect(this.getServletContext().getContextPath()+"/");
 	}
 }
