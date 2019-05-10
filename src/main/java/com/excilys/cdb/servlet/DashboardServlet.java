@@ -35,10 +35,10 @@ public class DashboardServlet extends Servlet {
 		} catch (ServletException | IOException cause) {
 			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"GET");
 			this.log(cons, cause);
-			throw cons;
+			sendError(response, 500);
 		} catch (ShouldBeSentToClientException e) {
 			this.log(e);
-			throw e;
+			sendError(response, 400);
 		} catch (ShouldOnlyBeLoggedException e) {
 			this.log(e);
 			sendError(response, 500);
@@ -59,10 +59,10 @@ public class DashboardServlet extends Servlet {
 		} catch (IOException cause) {
 			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"POST");
 			this.log(cons, cause);
-			throw cons;
+			sendError(response, 500);
 		} catch (ShouldBeSentToClientException e) {
 			this.log(e);
-			throw e;
+			sendError(response, 400);
 		} catch (ShouldOnlyBeLoggedException e) {
 			this.log(e);
 			sendError(response, 500);
