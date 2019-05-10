@@ -57,19 +57,17 @@ public class Validator {
 		}
 	}
 	
-	public boolean validateCompanyDto(CompanyDto companyDto) {
+	public void validateCompanyDto(CompanyDto companyDto) {
 		this.validateId(companyDto.getId());
 		this.required("name", companyDto.getName());
-		return true;
 	}
 	
-	public boolean validateComputerDto(ComputerDto computerDto) {
+	public void validateComputerDto(ComputerDto computerDto) {
 		this.validateId(computerDto.getId());
 		this.required("name", computerDto.getName());
 		this.validateDate(computerDto.getIntroduction());
 		this.validateDate(computerDto.getDiscontinued());
 		this.validateDateOrder(computerDto.getIntroduction(), computerDto.getDiscontinued());
 		this.validateId(computerDto.getCompanyId());
-		return true;
 	}
 }
