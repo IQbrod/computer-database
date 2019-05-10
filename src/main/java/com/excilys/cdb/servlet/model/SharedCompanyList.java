@@ -1,10 +1,12 @@
 package com.excilys.cdb.servlet.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.excilys.cdb.dto.CompanyDto;
+import com.excilys.cdb.mapper.CompanyMapper;
 import com.excilys.cdb.service.CompanyService;
 
 public class SharedCompanyList extends ServletModel {
@@ -22,7 +24,7 @@ public class SharedCompanyList extends ServletModel {
 	}
 	
 	public void refresh() throws RuntimeException {
-		this.companyList = CompanyService.getInstance().listAllElements();
+		this.companyList = CompanyService.getInstance().listAllElements().stream().map(c -> CompanyMapper.getInstance().modelToDto(c)).collect(Collectors.toList());
 	}
 	
 	@Override

@@ -1,6 +1,6 @@
 package com.excilys.cdb.exception;
 
-public class ForeignKeyViolationException extends RuntimeException {
+public class ForeignKeyViolationException extends ShouldBeSentToClientException {
 	private static final long serialVersionUID = 18042019L;
 
 	public ForeignKeyViolationException(int id, String table) {

@@ -29,11 +29,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>
-                                <input type="date" name="introduced" class="form-control" id="introduced" placeholder="YYYY-MM-dd hh:mm:ss" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])[ /](2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]">
+                                <input type="date" name="introduced" class="form-control" id="introduced" placeholder="YYYY-MM-dd" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])">
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
-                                <input type="date" name="discontinued" class="form-control" id="discontinued" placeholder="YYYY-MM-dd hh:mm:ss" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])[ /](2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]">
+                                <input type="date" name="discontinued" class="form-control" id="discontinued" placeholder="YYYY-MM-dd" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])">
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>

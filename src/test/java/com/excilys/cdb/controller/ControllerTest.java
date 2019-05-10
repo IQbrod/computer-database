@@ -237,13 +237,13 @@ public class ControllerTest {
 	
 	@Test (expected = InvalidDateFormatException.class)
 	public void createComputerInvalidDateFormat2() throws Exception {
-		CdbController.getInstance().treatMessage("C computer 1752 Ordinateur 2019:12:27/12:32-15 _ 0");
+		CdbController.getInstance().treatMessage("C computer 1752 Ordinateur 2019:12:27 _ 0");
 		CdbController.getInstance().treatMessage("D computer 1752");
 	}
 	
 	@Test 
 	public void createComputerValidDate() throws Exception {
-		CdbController.getInstance().treatMessage("C computer 1752 Ordinateur 2019-12-27/12:32:15 _ 0");
+		CdbController.getInstance().treatMessage("C computer 1752 Ordinateur 2019-12-27 _ 0");
 		CdbController.getInstance().treatMessage("D computer 1752");
 	}
 	
@@ -301,14 +301,14 @@ public class ControllerTest {
 	@Test
 	public void updateComputerIntroTest() throws Exception {
 		CdbController.getInstance().treatMessage("C computer 943 ordi _ _ 0");
-		CdbController.getInstance().treatMessage("U computer 943 -i:2017-08-27/19:12:32");
+		CdbController.getInstance().treatMessage("U computer 943 -i:2017-08-27");
 		CdbController.getInstance().treatMessage("D computer 943");
 	}
 	
 	@Test
 	public void updateComputerDiscTest() throws Exception {
 		CdbController.getInstance().treatMessage("C computer 943 ordi _ _ 0");
-		CdbController.getInstance().treatMessage("U computer 943 -d:2017-08-27/19:12:32");
+		CdbController.getInstance().treatMessage("U computer 943 -d:2017-08-27");
 		CdbController.getInstance().treatMessage("D computer 943");
 	}
 	

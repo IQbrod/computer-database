@@ -2,15 +2,11 @@ package com.excilys.cdb.mapper;
 
 import com.excilys.cdb.dto.Dto;
 import com.excilys.cdb.model.Model;
-import com.excilys.cdb.validator.Validator;
 
 public abstract class Mapper<T extends Dto, U extends Model> {
-	public final Validator<T> validator;
 	
 	
-	protected Mapper(Validator<T> validator) {
-		this.validator = validator;
-	}
+	protected Mapper() {}
 	
 	public abstract U dtoToModel (T dtoObject) throws RuntimeException;
 	public abstract T modelToDto (U modelObject) throws RuntimeException;

@@ -1,6 +1,6 @@
 package com.excilys.cdb.exception;
 
-public class InvalidDateFormatException extends Exception {
+public class InvalidDateFormatException extends ShouldBeSentToClientException {
 	private static final long serialVersionUID = 18042019L;
 
 	public InvalidDateFormatException(String format, String date) {

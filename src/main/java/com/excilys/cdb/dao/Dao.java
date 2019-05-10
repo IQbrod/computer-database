@@ -35,6 +35,8 @@ public abstract class Dao<T extends Model> {
 		
 		logger = LogManager.getLogger(this.getClass());
 		
+		dataSource = HikariConnectionProvider.getDataSource();
+		
 		try (
 			Connection connection = this.dataSource.getConnection();
 		) {
@@ -42,8 +44,6 @@ public abstract class Dao<T extends Model> {
 		} catch (SQLException e) {
 			throw this.log(new DatabaseProblemException(dataSource.getJdbcUrl(), dataSource.getUsername(), dataSource.getPassword()), e);
 		}
-		
-		dataSource = HikariConnectionProvider.getDataSource();
 	}
 	
 	public abstract T create(T obj);

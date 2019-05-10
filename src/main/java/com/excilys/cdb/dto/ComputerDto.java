@@ -2,7 +2,7 @@ package com.excilys.cdb.dto;
 
 public class ComputerDto extends Dto {
 	private String name;
-	private String introduction;
+	private String introduction; //YYYY/MM/DD
 	private String discontinued;
 	private String companyId;
 	private String companyName;

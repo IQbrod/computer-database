@@ -1,6 +1,7 @@
 package com.excilys.cdb.controller;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -12,7 +13,10 @@ import com.excilys.cdb.dto.*;
 import com.excilys.cdb.enums.CommandEnum;
 import com.excilys.cdb.enums.CreateOptionEnum;
 import com.excilys.cdb.exception.*;
+import com.excilys.cdb.mapper.CompanyMapper;
+import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.service.*;
+import com.excilys.cdb.validator.Validator;
 
 public class CdbController {
 	private String[] splitStr;
@@ -76,8 +80,8 @@ public class CdbController {
 	private String castDate(String s) throws InvalidDateFormatException {
 		if (s.length() == 19) {
 			// Check Date Format
-			if (s.charAt(4) == '-' && s.charAt(7) == '-' && s.charAt(10) == '/' && s.charAt(13) == ':' && s.charAt(16) == ':') {
-				return s.replace("/", " ");
+			if (s.charAt(4) == '-' && s.charAt(7) == '-') {
+				return s;
 			} else {
 				throw (InvalidDateFormatException) this.log(new InvalidDateFormatException(this.dateFormat,s));
 			}
@@ -109,7 +113,8 @@ public class CdbController {
 					throw (MissingArgumentException) this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
 				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
 					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
-					CompanyDto ret = CompanyService.getInstance().create(c);
+					Validator.getInstance().validateCompanyDto(c);					
+					CompanyDto ret = CompanyMapper.getInstance().modelToDto(CompanyService.getInstance().create(CompanyMapper.getInstance().dtoToModel(c)));
 					return "Create "+ret.toString();
 				} else {
 					throw (InvalidTableException) this.log(new InvalidTableException(splitStr[1]));
@@ -126,7 +131,8 @@ public class CdbController {
 			case 7:
 				if (splitStr[1].equalsIgnoreCase(this.computerTable)) {
 					ComputerDto c = new ComputerDto(splitStr[2],splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),(splitStr[6].contentEquals("_")) ? "0" : splitStr[6],"None");
-					ComputerDto ret = ComputerService.getInstance().create(c);
+					Validator.getInstance().validateComputerDto(c);
+					ComputerDto ret = ComputerMapper.getInstance().modelToDto(ComputerService.getInstance().create(ComputerMapper.getInstance().dtoToModel(c)));
 					return "Create "+ret.toString();
 				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
 					throw (TooManyArgumentsException) this.log(new TooManyArgumentsException(splitStr[5]));
@@ -157,9 +163,9 @@ public class CdbController {
 			case 3:
 				// Load dto by id
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					c = ComputerService.getInstance().read(splitStr[2]);
+					c = ComputerMapper.getInstance().modelToDto(ComputerService.getInstance().read(ComputerMapper.getInstance().idToInt(splitStr[2])));
 				} else if (splitStr[1].toLowerCase().equals("company")) {
-					c = CompanyService.getInstance().read(splitStr[2]);
+					c = CompanyMapper.getInstance().modelToDto(CompanyService.getInstance().read(CompanyMapper.getInstance().idToInt(splitStr[2])));
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}
@@ -180,9 +186,9 @@ public class CdbController {
 			case 3:
 				Dto ret;
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					ret = ComputerService.getInstance().delete(new ComputerDto(splitStr[2]));
+					ret = ComputerMapper.getInstance().modelToDto(ComputerService.getInstance().delete(ComputerMapper.getInstance().dtoToModel(new ComputerDto(splitStr[2]))));
 				} else if (splitStr[1].toLowerCase().equals("company")) {
-					ret = CompanyService.getInstance().delete(new CompanyDto(splitStr[2]));
+					ret = CompanyMapper.getInstance().modelToDto(CompanyService.getInstance().delete(CompanyMapper.getInstance().dtoToModel(new CompanyDto(splitStr[2]))));
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}
@@ -232,11 +238,12 @@ public class CdbController {
 				for (String s : Arrays.copyOfRange(splitStr, 3, splitStr.length)) {
 					this.updateTreatOption(c,s);
 				}
-				ret = ComputerService.getInstance().update(c);;
+				Validator.getInstance().validateComputerDto(c);
+				ret = ComputerMapper.getInstance().modelToDto(ComputerService.getInstance().update(ComputerMapper.getInstance().dtoToModel(c)));
 			} else if (splitStr[1].toLowerCase().equals("company")) {
 				if(splitStr.length == 4) {
 					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
-					ret = CompanyService.getInstance().update(c);
+					ret = CompanyMapper.getInstance().modelToDto(CompanyService.getInstance().update(CompanyMapper.getInstance().dtoToModel(c)));
 				} else {
 					throw this.log(new TooManyArgumentsException(splitStr[4]));
 				}
@@ -254,9 +261,9 @@ public class CdbController {
 			case 2:
 				List<? extends Dto> dtoList;
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					dtoList = ComputerService.getInstance().listAllElements();
+					dtoList = ComputerService.getInstance().listAllElements().stream().map(model -> ComputerMapper.getInstance().modelToDto(model)).collect(Collectors.toList());
 				} else if (splitStr[1].toLowerCase().equals("company")) {
-					dtoList = CompanyService.getInstance().listAllElements();
+					dtoList = CompanyService.getInstance().listAllElements().stream().map(model -> CompanyMapper.getInstance().modelToDto(model)).collect(Collectors.toList());
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}
@@ -282,9 +289,9 @@ public class CdbController {
 			case 4:
 				List<? extends Dto> dtoList;
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					dtoList = ComputerService.getInstance().list(splitStr[2], splitStr[3]);
+					dtoList = ComputerService.getInstance().list(ComputerMapper.getInstance().idToInt(splitStr[2]), ComputerMapper.getInstance().idToInt(splitStr[3])).stream().map(model -> ComputerMapper.getInstance().modelToDto(model)).collect(Collectors.toList());
 				} else if (splitStr[1].toLowerCase().equals("company")) {
-					dtoList = CompanyService.getInstance().list(splitStr[2], splitStr[3]);
+					dtoList = CompanyService.getInstance().list(CompanyMapper.getInstance().idToInt(splitStr[2]), CompanyMapper.getInstance().idToInt(splitStr[3])).stream().map(model -> CompanyMapper.getInstance().modelToDto(model)).collect(Collectors.toList());
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}

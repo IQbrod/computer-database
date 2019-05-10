@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 
 import org.junit.*;
 
-import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.exception.*;
@@ -31,7 +30,7 @@ public class ComputerMapperTest {
 	@Test
 	public void TestDtoToModelDateIntroduction() {
 		assertTrue(
-			ComputerMapper.getInstance().dtoToModel(new ComputerDto("18","Computer","2017-05-27 12:13:14",null,"0","None")).equals(new Computer(18,"Computer",Timestamp.valueOf("2017-05-27 12:13:14"),null,0))
+			ComputerMapper.getInstance().dtoToModel(new ComputerDto("18","Computer","2017-05-27",null,"0","None")).equals(new Computer(18,"Computer",Timestamp.valueOf("2017-05-27 12:00:00"),null,0))
 		);
 	}
 	
@@ -44,7 +43,7 @@ public class ComputerMapperTest {
 	@Test
 	public void TestDtoToModelDateDiscontinued() {
 		assertTrue(
-			ComputerMapper.getInstance().dtoToModel(new ComputerDto("18","Computer",null,"2017-05-27 12:13:14","0","None")).equals(new Computer(18,"Computer",null,Timestamp.valueOf("2017-05-27 12:13:14"),0))
+			ComputerMapper.getInstance().dtoToModel(new ComputerDto("18","Computer",null,"2017-05-27","0","None")).equals(new Computer(18,"Computer",null,Timestamp.valueOf("2017-05-27 12:00:00"),0))
 		);
 	}
 	
@@ -77,14 +76,14 @@ public class ComputerMapperTest {
 	@Test
 	public void TestModelToDtoIntroduction() {
 		assertTrue(
-			ComputerMapper.getInstance().modelToDto(new Computer(5,"Entreprise",Timestamp.valueOf("2017-05-27 12:13:14"),null,0)).equals(new ComputerDto("5","Entreprise","2017-05-27 12:13:14","","0","None"))
+			ComputerMapper.getInstance().modelToDto(new Computer(5,"Entreprise",Timestamp.valueOf("2017-05-27 12:00:00"),null,0)).equals(new ComputerDto("5","Entreprise","2017-05-27","","0","None"))
 		);
 	}
 	
 	@Test
 	public void TestModelToDtoDiscontinued() {
 		assertTrue(
-			ComputerMapper.getInstance().modelToDto(new Computer(5,"Entreprise",null,Timestamp.valueOf("2017-05-27 12:13:14"),0)).equals(new ComputerDto("5","Entreprise","","2017-05-27 12:13:14","0","None"))
+			ComputerMapper.getInstance().modelToDto(new Computer(5,"Entreprise",null,Timestamp.valueOf("2017-05-27 12:00:00"),0)).equals(new ComputerDto("5","Entreprise","","2017-05-27","0","None"))
 		);
 	}
 	

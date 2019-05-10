@@ -2,12 +2,16 @@ package com.excilys.cdb.servlet;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 import com.excilys.cdb.dto.ComputerDto;
+import com.excilys.cdb.exception.ShouldBeSentToClientException;
+import com.excilys.cdb.exception.ShouldOnlyBeLoggedException;
 import com.excilys.cdb.exception.UnexpectedServletException;
+import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.servlet.model.dashboard.DashboardComputerList;
 import com.excilys.cdb.servlet.model.dashboard.DashboardPagination;
@@ -29,11 +33,15 @@ public class DashboardServlet extends Servlet {
 			this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward( request, response );
 			
 		} catch (ServletException | IOException cause) {
-			this.log(new UnexpectedServletException(this.getServletName(),"GET"), cause);
-			this.sendError(response, 500);
-		} catch (Exception e) {
+			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"GET");
+			this.log(cons, cause);
+			throw cons;
+		} catch (ShouldBeSentToClientException e) {
 			this.log(e);
-			this.sendError(response, 500);
+			throw e;
+		} catch (ShouldOnlyBeLoggedException e) {
+			this.log(e);
+			sendError(response, 500);
 		}
 	}
 	
@@ -44,20 +52,24 @@ public class DashboardServlet extends Servlet {
 		try {
 			
 			for (String id : listId) {
-				ComputerService.getInstance().delete(new ComputerDto(id));
+				ComputerService.getInstance().delete(ComputerMapper.getInstance().dtoToModel(new ComputerDto(id)));
 			}
 			response.sendRedirect(this.getServletContext().getContextPath()+"/?page="+ ((DashboardPagination)this.modelMap.get("pagination")).getPage() +"&size="+ ((DashboardPagination)this.modelMap.get("pagination")).getSize());
 			
-		} catch (ServletException | IOException cause) {
-			this.log(new UnexpectedServletException(this.getServletName(),"POST"), cause);
-			this.sendError(response, 500);
-		} catch (Exception e) {
+		} catch (IOException cause) {
+			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"POST");
+			this.log(cons, cause);
+			throw cons;
+		} catch (ShouldBeSentToClientException e) {
 			this.log(e);
-			this.sendError(response, 500);
+			throw e;
+		} catch (ShouldOnlyBeLoggedException e) {
+			this.log(e);
+			sendError(response, 500);
 		}
 	}
 
-	protected void setupDashboard(HttpServletRequest request) throws Exception {
+	protected void setupDashboard(HttpServletRequest request) {
 		// Setup from request
 		if (request.getParameter("page") == null && request.getParameter("size") == null && request.getParameter("search") == null) {
 			((DashboardPagination)this.modelMap.get("pagination")).setDefault();
@@ -82,10 +94,10 @@ public class DashboardServlet extends Servlet {
 		List<ComputerDto> computerList;
 		// Apply changes
 		if (search.equals(" ")) {
-			computerList = ComputerService.getInstance().list(Integer.toString(page), Integer.toString(size), orderBy);
+			computerList = ComputerService.getInstance().list(page, size, orderBy).stream().map(dto -> ComputerMapper.getInstance().modelToDto(dto)).collect(Collectors.toList());
 			nbComputer = ComputerService.getInstance().count();
 		} else {
-			computerList = ComputerService.getInstance().listByName(search, Integer.toString(page), Integer.toString(size), orderBy);
+			computerList = ComputerService.getInstance().listByName(search, page, size, orderBy).stream().map(dto -> ComputerMapper.getInstance().modelToDto(dto)).collect(Collectors.toList());
 			nbComputer = ComputerService.getInstance().countByName(search);
 		}
 		((DashboardComputerList)this.modelMap.get("computerList")).setList(computerList);

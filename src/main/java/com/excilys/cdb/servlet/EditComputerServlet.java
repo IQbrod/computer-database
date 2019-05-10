@@ -7,11 +7,11 @@ import javax.servlet.http.*;
 
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.exception.*;
+import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.service.ComputerService;
-import com.excilys.cdb.servlet.mapper.ServletToDtoComputerMapper;
 import com.excilys.cdb.servlet.model.SharedCompanyList;
 import com.excilys.cdb.servlet.model.editComputer.EditComputerValues;
-import com.excilys.cdb.validator.ComputerValidator;
+import com.excilys.cdb.validator.Validator;
 
 public class EditComputerServlet extends Servlet {
 	private static final long serialVersionUID = 3052019L;
@@ -32,16 +32,20 @@ public class EditComputerServlet extends Servlet {
 			this.getServletContext().getRequestDispatcher("/WEB-INF/views/editComputer.jsp").forward( request, response );
 			
 		} catch (ServletException | IOException cause) {
-			this.log(new UnexpectedServletException(this.getServletName(),"GET"), cause);
-			this.sendError(response, 500);
-		} catch (Exception e) {
+			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"GET");
+			this.log(cons, cause);
+			throw cons;
+		} catch (ShouldBeSentToClientException e) {
 			this.log(e);
-			this.sendError(response, 500);
+			throw e;
+		} catch (ShouldOnlyBeLoggedException e) {
+			this.log(e);
+			sendError(response, 500);
 		}
 	}
 	
-	protected void setupDashboard(String id) throws Exception {
-		ComputerDto computerDto = ComputerService.getInstance().read(id);
+	protected void setupDashboard(String id) {
+		ComputerDto computerDto = ComputerMapper.getInstance().modelToDto( ComputerService.getInstance().read( ComputerMapper.getInstance().idToInt(id) ));
 		((EditComputerValues)this.modelMap.get("values")).setComputer(computerDto);
 	}
 	
@@ -50,17 +54,20 @@ public class EditComputerServlet extends Servlet {
 		try {
 			
 			ComputerDto computerFromFields = new ComputerDto(request.getParameter("id"),request.getParameter("computerName"),request.getParameter("introduced"),request.getParameter("discontinued"),request.getParameter("companyId"),"None");
-			ComputerDto computerToUpdate = ServletToDtoComputerMapper.getInstance().convertFields(computerFromFields);
-			ComputerValidator.getInstance().validate(computerToUpdate);
-			ComputerService.getInstance().update(computerToUpdate);
+			Validator.getInstance().validateComputerDto(computerFromFields);
+			ComputerService.getInstance().update(ComputerMapper.getInstance().dtoToModel(computerFromFields));
 			response.sendRedirect(this.getServletContext().getContextPath()+"/");
 			
-		} catch (ServletException | IOException cause) {
-			this.log(new UnexpectedServletException(this.getServletName(),"POST"), cause);
-			this.sendError(response, 500);
-		} catch (Exception e) {
+		} catch (IOException cause) {
+			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"POST");
+			this.log(cons, cause);
+			throw cons;
+		} catch (ShouldBeSentToClientException e) {
 			this.log(e);
-			this.sendError(response, 500);
+			throw e;
+		} catch (ShouldOnlyBeLoggedException e) {
+			this.log(e);
+			sendError(response, 500);
 		}
 	}
 }

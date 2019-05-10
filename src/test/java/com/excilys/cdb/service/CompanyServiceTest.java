@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.*;
 
-import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.exception.*;
+import com.excilys.cdb.model.Company;
 
 public class CompanyServiceTest {
 
@@ -16,22 +16,22 @@ public class CompanyServiceTest {
 	
 	@Test
 	public void CreateTest() throws Exception {
-		CompanyService.getInstance().create(new CompanyDto("80","Entreprise"));
+		CompanyService.getInstance().create(new Company(80,"Entreprise"));
 	}
 	
 	@Test
 	public void ReadTest() throws Exception {
-		CompanyService.getInstance().read("80");
+		CompanyService.getInstance().read(80);
 	}
 	
 	@Test
 	public void UpdateTest() throws Exception {
-		CompanyService.getInstance().update(new CompanyDto("5","Updated"));
+		CompanyService.getInstance().update(new Company(5,"Updated"));
 	}
 	
 	@Test
 	public void DeleteTest() throws Exception {
-		CompanyService.getInstance().delete(new CompanyDto("80","DeleteMe"));
+		CompanyService.getInstance().delete(new Company(80,"DeleteMe"));
 	}
 	
 	@Test
@@ -41,7 +41,7 @@ public class CompanyServiceTest {
 	
 	@Test
 	public void listTest() throws Exception {
-		CompanyService.getInstance().list("1", "20");
+		CompanyService.getInstance().list(1, 20);
 	}
 	
 	@Test

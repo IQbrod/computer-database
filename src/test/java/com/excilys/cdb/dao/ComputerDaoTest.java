@@ -53,21 +53,21 @@ public class ComputerDaoTest {
 	// dateIntro
 	@Test
 	public void TestCreateDateIntroductionANDBYID() throws Exception {
-		ComputerDao.getInstance().create(new Computer(753,"Ordinateur",Timestamp.valueOf("2017-05-21 17:23:17"),null,0));
+		ComputerDao.getInstance().create(new Computer(753,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),null,0));
 		ComputerDao.getInstance().deleteById(753);
 	}
 	
 	// dateDisc
 	@Test
 	public void TestCreateDateDiscontinued() throws Exception {
-		ComputerDao.getInstance().create(new Computer(754,"Ordinateur",null,Timestamp.valueOf("2017-05-21 17:23:17"),0));
+		ComputerDao.getInstance().create(new Computer(754,"Ordinateur",null,Timestamp.valueOf("2017-05-27 12:00:00"),0));
 		ComputerDao.getInstance().deleteById(754);
 	}
 	
 	// dateIntro + dateDisc
 	@Test
 	public void TestCreateMixedDates() throws Exception {
-		ComputerDao.getInstance().create(new Computer(755,"Ordinateur",Timestamp.valueOf("2017-05-21 17:23:17"),Timestamp.valueOf("2019-05-21 17:23:17"),0));
+		ComputerDao.getInstance().create(new Computer(755,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 12:50:00"),0));
 		ComputerDao.getInstance().deleteById(755);
 	}
 	
@@ -91,7 +91,7 @@ public class ComputerDaoTest {
 	/*-- UPDATE --*/
 	@Test
 	public void TestUpdate() throws Exception {
-		ComputerDao.getInstance().update(new Computer(8,"Computer",Timestamp.valueOf("2017-05-21 17:23:17"),Timestamp.valueOf("2019-05-21 17:23:17"),5));
+		ComputerDao.getInstance().update(new Computer(8,"Computer",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 23:00:00"),5));
 	}
 	
 	@Test
