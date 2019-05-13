@@ -24,7 +24,7 @@ public abstract class Dao<T extends Model> {
 	
 	protected Logger logger;
 	
-	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlList, String sqlLimit, String sqlCount) {
+	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlList, String sqlLimit, String sqlCount, HikariConnectionProvider hikariConn) {
 		this.sqlCreate = sqlCreate;
 		this.sqlUpdate = sqlUpdate;
 		this.sqlDelete = sqlDelete;
@@ -35,7 +35,7 @@ public abstract class Dao<T extends Model> {
 		
 		logger = LogManager.getLogger(this.getClass());
 		
-		dataSource = HikariConnectionProvider.getDataSource();
+		dataSource = hikariConn.dataSource;
 		
 		try (
 			Connection connection = this.dataSource.getConnection();

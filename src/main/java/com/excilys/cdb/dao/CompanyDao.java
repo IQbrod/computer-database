@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import com.excilys.cdb.dbConnector.HikariConnectionProvider;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
@@ -15,7 +16,7 @@ import com.excilys.cdb.model.*;
 public class CompanyDao extends Dao<Company>{
 	private final String sqlDeleteLinkedComputer = "DELETE FROM computer WHERE company_id=?;";
 	
-	public CompanyDao() {
+	public CompanyDao(HikariConnectionProvider hikariConn) {
 		super(
 			"INSERT INTO company VALUES (?,?);",
 			"UPDATE company SET name=? WHERE id=?;",
@@ -23,7 +24,8 @@ public class CompanyDao extends Dao<Company>{
 			"SELECT id, name FROM company WHERE id=?;",
 			"SELECT id, name FROM company",
 			" LIMIT ?,?;",
-			"SELECT count(id) AS count FROM company"
+			"SELECT count(id) AS count FROM company",
+			hikariConn
 		);
 		
 		this.logger = LogManager.getLogger(this.getClass());

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import com.excilys.cdb.dbConnector.HikariConnectionProvider;
 import com.excilys.cdb.enums.ComputerFields;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
@@ -17,7 +18,7 @@ public class ComputerDao extends Dao<Computer> {
 	private final String sqlInsertNoId = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
 	private final String sqlCountByName = "SELECT count(id) FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) LIMIT ?,?";
 	
-	private ComputerDao() {
+	private ComputerDao(HikariConnectionProvider hikariConn) {
 		super(
 			"INSERT INTO computer VALUES (?,?,?,?,?);",
 			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;",
@@ -25,7 +26,8 @@ public class ComputerDao extends Dao<Computer> {
 			"SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id=?;",
 			"SELECT C.id as id, C.name as name, introduced, discontinued, company_id  FROM computer C LEFT OUTER JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) ORDER BY ",
 			" LIMIT ?,?",
-			"SELECT count(id) AS count FROM computer"
+			"SELECT count(id) AS count FROM computer",
+			hikariConn
 		);
 		this.logger = LogManager.getLogger(this.getClass());
 	}
