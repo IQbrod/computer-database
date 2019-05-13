@@ -5,36 +5,19 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.exception.*;
-import com.excilys.cdb.mapper.ComputerMapper;
-import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.servlet.model.SharedCompanyList;
 import com.excilys.cdb.servlet.model.editComputer.EditComputerValues;
-import com.excilys.cdb.spring.AppConfig;
-import com.excilys.cdb.validator.Validator;
 
 public class EditComputerServlet extends Servlet {
 	private static final long serialVersionUID = 3052019L;
 	
-	private final ComputerService computerService;
-	private final ComputerMapper computerMapper;
-	private final Validator validator;
-	
 	public EditComputerServlet() {
-		try (ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class)) {
-			
-			this.modelMap.put("values", context.getBean(EditComputerValues.class));
-			this.modelMap.put("companyList", context.getBean(SharedCompanyList.class));
-			
-			this.computerService = context.getBean(ComputerService.class);
-			this.computerMapper = context.getBean(ComputerMapper.class);
-			this.validator = context.getBean(Validator.class);
+		super();
 		
-		}
+		this.modelMap.put("values", context.getBean(EditComputerValues.class));
+		this.modelMap.put("companyList", context.getBean(SharedCompanyList.class));
 	}
 
 	@Override
