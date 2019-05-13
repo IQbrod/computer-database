@@ -23,7 +23,7 @@ import com.excilys.cdb.validator.Validator;
 
 public class CliController {
 	private String[] splitStr;
-	private final String dateFormat = "yyyy-MM-dd/HH:mm:ss";
+	private final String dateFormat = "yyyy-MM-dd";
 	private final String computerTable = "computer";
 	private final String companyTable = "company";
 	
@@ -307,6 +307,8 @@ public class CliController {
 				throw this.log(new MissingArgumentException(sizeExpected, splitStr.length));
 			case 4:
 				List<? extends Dto> dtoList;
+				this.validator.validatePagination(splitStr[2]);
+				this.validator.validatePagination(splitStr[3]);
 				if (splitStr[1].toLowerCase().equals("computer")) {
 					dtoList = this.computerService.list(this.computerMapper.idToInt(splitStr[2]), this.computerMapper.idToInt(splitStr[3])).stream().map(model -> this.computerMapper.modelToDto(model)).collect(Collectors.toList());
 				} else if (splitStr[1].toLowerCase().equals("company")) {

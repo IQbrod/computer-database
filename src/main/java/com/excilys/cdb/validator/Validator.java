@@ -65,4 +65,14 @@ public class Validator {
 		this.validateDateOrder(computerDto.getIntroduction(), computerDto.getDiscontinued());
 		this.validateId(computerDto.getCompanyId());
 	}
+	
+	public void validatePagination(String paginationValue) {
+		try {
+			int localId = Integer.parseInt(paginationValue);
+			if (localId <= 0)
+				throw new Exception();
+		} catch (Exception e) {
+			throw new InvalidIntegerException(paginationValue);
+		}
+	}
 }

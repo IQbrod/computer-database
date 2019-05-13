@@ -8,8 +8,8 @@ public abstract class Mapper<T extends Dto, U extends Model> {
 	
 	protected Mapper() {}
 	
-	public abstract U dtoToModel (T dtoObject) throws RuntimeException;
-	public abstract T modelToDto (U modelObject) throws RuntimeException;
+	public abstract U dtoToModel (T dtoObject);
+	public abstract T modelToDto (U modelObject);
 	
 	public int idToInt(String id) {
 		return Integer.valueOf(id);
