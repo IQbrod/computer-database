@@ -3,6 +3,7 @@ package com.excilys.cdb.servlet;
 import java.io.IOException;
 import java.util.HashMap;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +13,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import com.excilys.cdb.exception.ShouldBeSentToClientException;
+import com.excilys.cdb.exception.ShouldOnlyBeLoggedException;
 import com.excilys.cdb.exception.UnableToSendErrorCodeException;
+import com.excilys.cdb.exception.UnexpectedServletException;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.servlet.model.ServletModel;
@@ -56,5 +60,19 @@ public abstract class Servlet extends HttpServlet {
 		} catch (IOException cause) {
 			this.log(new UnableToSendErrorCodeException(code), cause);
 		}		
+	}
+	
+	protected void treatException(Exception cause, HttpServletResponse response) {
+		if (cause instanceof ServletException || cause instanceof IOException) {
+			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"GET");
+			this.log(cons, cause);
+			sendError(response, 500);
+		} else if (cause instanceof ShouldBeSentToClientException) {
+			this.log(cause);
+			sendError(response, 400);
+		} else if (cause instanceof ShouldOnlyBeLoggedException) {
+			this.log(cause);
+			sendError(response, 500);
+		}
 	}
 }

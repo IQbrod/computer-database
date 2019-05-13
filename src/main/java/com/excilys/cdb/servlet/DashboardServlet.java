@@ -1,16 +1,11 @@
 package com.excilys.cdb.servlet;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.*;
 import javax.servlet.http.*;
 
 import com.excilys.cdb.dto.ComputerDto;
-import com.excilys.cdb.exception.ShouldBeSentToClientException;
-import com.excilys.cdb.exception.ShouldOnlyBeLoggedException;
-import com.excilys.cdb.exception.UnexpectedServletException;
 import com.excilys.cdb.servlet.model.dashboard.DashboardComputerList;
 import com.excilys.cdb.servlet.model.dashboard.DashboardPagination;
 
@@ -33,16 +28,8 @@ public class DashboardServlet extends Servlet {
 			this.flushSetup(request);
 			this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward( request, response );
 			
-		} catch (ServletException | IOException cause) {
-			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"GET");
-			this.log(cons, cause);
-			sendError(response, 500);
-		} catch (ShouldBeSentToClientException e) {
-			this.log(e);
-			sendError(response, 400);
-		} catch (ShouldOnlyBeLoggedException e) {
-			this.log(e);
-			sendError(response, 500);
+		} catch (Exception e) {
+			this.treatException(e, response);
 		}
 	}
 	
@@ -57,16 +44,8 @@ public class DashboardServlet extends Servlet {
 			}
 			response.sendRedirect(this.getServletContext().getContextPath()+"/?page="+ ((DashboardPagination)this.modelMap.get("pagination")).getPage() +"&size="+ ((DashboardPagination)this.modelMap.get("pagination")).getSize());
 			
-		} catch (IOException cause) {
-			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"POST");
-			this.log(cons, cause);
-			sendError(response, 500);
-		} catch (ShouldBeSentToClientException e) {
-			this.log(e);
-			sendError(response, 400);
-		} catch (ShouldOnlyBeLoggedException e) {
-			this.log(e);
-			sendError(response, 500);
+		} catch (Exception e) {
+			this.treatException(e, response);
 		}
 	}
 

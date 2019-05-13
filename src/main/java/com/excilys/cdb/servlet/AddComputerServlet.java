@@ -1,14 +1,8 @@
 package com.excilys.cdb.servlet;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
 import com.excilys.cdb.dto.ComputerDto;
-import com.excilys.cdb.exception.ShouldBeSentToClientException;
-import com.excilys.cdb.exception.ShouldOnlyBeLoggedException;
-import com.excilys.cdb.exception.UnexpectedServletException;
 import com.excilys.cdb.servlet.model.SharedCompanyList;
 
 public class AddComputerServlet extends Servlet {
@@ -26,16 +20,8 @@ public class AddComputerServlet extends Servlet {
 			this.flushSetup(request);
 			this.getServletContext().getRequestDispatcher("/WEB-INF/views/addComputer.jsp").forward( request, response );
 			
-		} catch (ServletException | IOException cause) {
-			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"GET");
-			this.log(cons, cause);
-			sendError(response, 500);
-		} catch (ShouldBeSentToClientException e) {
-			this.log(e);
-			sendError(response, 400);
-		} catch (ShouldOnlyBeLoggedException e) {
-			this.log(e);
-			sendError(response, 500);
+		} catch (Exception e) {
+			this.treatException(e, response);
 		}
 	}
 	
@@ -48,16 +34,8 @@ public class AddComputerServlet extends Servlet {
 			this.computerService.create(this.computerMapper.dtoToModel(computerFromFields));
 			response.sendRedirect(this.getServletContext().getContextPath()+"/");
 			
-		} catch (IOException cause) {
-			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"POST");
-			this.log(cons, cause);
-			sendError(response, 500);
-		} catch (ShouldBeSentToClientException e) {
-			this.log(e);
-			sendError(response, 400);
-		} catch (ShouldOnlyBeLoggedException e) {
-			this.log(e);
-			sendError(response, 500);
+		} catch (Exception e) {
+			this.treatException(e, response);
 		}
 	}
 }
