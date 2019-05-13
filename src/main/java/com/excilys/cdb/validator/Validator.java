@@ -3,21 +3,16 @@ package com.excilys.cdb.validator;
 import java.sql.Timestamp;
 
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.dto.*;
 import com.excilys.cdb.exception.*;
 
+@Component
 public class Validator {
 	protected Logger logger;
-	private static Validator instance;
 	
 	private Validator() {}
-	
-	public static Validator getInstance() {
-		if (instance == null)
-			instance = new Validator();
-		return instance;
-	}
 	
 	private void validateId(String id) {
 		try {

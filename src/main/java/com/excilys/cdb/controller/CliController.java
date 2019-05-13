@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.apache.logging.log4j.LogManager;
 
 
@@ -16,29 +18,46 @@ import com.excilys.cdb.exception.*;
 import com.excilys.cdb.mapper.CompanyMapper;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.service.*;
+import com.excilys.cdb.spring.AppConfig;
 import com.excilys.cdb.validator.Validator;
 
-public class CdbController {
+public class CliController {
 	private String[] splitStr;
 	private final String dateFormat = "yyyy-MM-dd/HH:mm:ss";
 	private final String computerTable = "computer";
 	private final String companyTable = "company";
 	
-	private static CdbController instance = new CdbController();
-	private Logger logger = LogManager.getLogger(this.getClass());	
+	private Logger logger = LogManager.getLogger(this.getClass());
+	private static CliController instance = null; 
 	
-	private CdbController() {}
+	private final ComputerMapper computerMapper;
+	private final CompanyMapper companyMapper;
+	private final ComputerService computerService;
+	private final CompanyService companyService;
+	private final Validator validator;
 	
-	public static CdbController getInstance() {
+	public CliController() {
+		try (ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class)) {
+			this.computerMapper = context.getBean(ComputerMapper.class);
+			this.companyMapper = context.getBean(CompanyMapper.class);
+			this.computerService = context.getBean(ComputerService.class);
+			this.companyService = context.getBean(CompanyService.class);
+			this.validator = context.getBean(Validator.class);
+		}
+	}
+	
+	public static CliController getInstance() {
+		if (instance == null)
+			instance = new CliController();
 		return instance;
 	}
 	
-	private Exception log (Exception exception) {
+	private RuntimeException log (RuntimeException exception) {
 		this.logger.error(exception.getMessage());
 		return exception;
 	}
 	
-	public String treatMessage(String msg) throws Exception {
+	public String treatMessage(String msg) {
 		this.logger.debug(msg);
 		this.splitStr = msg.trim().split("\\s+");
 		
@@ -77,82 +96,82 @@ public class CdbController {
 			+ "help";
 	}
 	
-	private String castDate(String s) throws InvalidDateFormatException {
+	private String castDate(String s) {
 		if (s.length() == 19) {
 			// Check Date Format
 			if (s.charAt(4) == '-' && s.charAt(7) == '-') {
 				return s;
 			} else {
-				throw (InvalidDateFormatException) this.log(new InvalidDateFormatException(this.dateFormat,s));
+				throw this.log(new InvalidDateFormatException(this.dateFormat,s));
 			}
 		} else if (s.contentEquals("_")) {
 			return null;
 		} else {
-			throw (InvalidDateFormatException) this.log(new InvalidDateFormatException(this.dateFormat,s));
+			throw this.log(new InvalidDateFormatException(this.dateFormat,s));
 		}
 	}
 	
-	private String create() throws InvalidTableException, MissingArgumentException, TooManyArgumentsException, Exception {
+	private String create() {
 		int sizeComputerExpected = 7;
 		int sizeCompanyExpected = 4;
 		
 		switch (splitStr.length) {
 			case 1:
-				throw (MissingArgumentException) this.log(new MissingArgumentException(2,splitStr.length));
+				throw this.log(new MissingArgumentException(2,splitStr.length));
 			case 2:
 			case 3:
 				if (splitStr[1].equalsIgnoreCase(this.computerTable)) {
-					throw (MissingArgumentException) this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
+					throw this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
 				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
-					throw (MissingArgumentException) this.log(new MissingArgumentException(sizeCompanyExpected,splitStr.length));
+					throw this.log(new MissingArgumentException(sizeCompanyExpected,splitStr.length));
 				} else {
-					throw (InvalidTableException)this.log(new InvalidTableException(splitStr[1]));
+					throw this.log(new InvalidTableException(splitStr[1]));
 				}
 			case 4:
 				if (splitStr[1].equalsIgnoreCase(this.computerTable)) {
-					throw (MissingArgumentException) this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
+					throw this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
 				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
 					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
-					Validator.getInstance().validateCompanyDto(c);					
-					CompanyDto ret = CompanyMapper.getInstance().modelToDto(CompanyService.getInstance().create(CompanyMapper.getInstance().dtoToModel(c)));
+					this.validator.validateCompanyDto(c);					
+					CompanyDto ret = this.companyMapper.modelToDto(this.companyService.create(this.companyMapper.dtoToModel(c)));
 					return "Create "+ret.toString();
 				} else {
-					throw (InvalidTableException) this.log(new InvalidTableException(splitStr[1]));
+					throw this.log(new InvalidTableException(splitStr[1]));
 				}
 			case 5:
 			case 6:
 				if (splitStr[1].equalsIgnoreCase(this.computerTable)) {
-					throw (MissingArgumentException) this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
+					throw this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
 				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
-					throw (TooManyArgumentsException) this.log(new TooManyArgumentsException(splitStr[4]));
+					throw this.log(new TooManyArgumentsException(splitStr[4]));
 				} else {
-					throw (InvalidTableException) this.log(new InvalidTableException(splitStr[1]));
+					throw this.log(new InvalidTableException(splitStr[1]));
 				}
 			case 7:
 				if (splitStr[1].equalsIgnoreCase(this.computerTable)) {
 					ComputerDto c = new ComputerDto(splitStr[2],splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),(splitStr[6].contentEquals("_")) ? "0" : splitStr[6],"None");
-					Validator.getInstance().validateComputerDto(c);
-					ComputerDto ret = ComputerMapper.getInstance().modelToDto(ComputerService.getInstance().create(ComputerMapper.getInstance().dtoToModel(c)));
+					this.validator.validateComputerDto(c);
+					ComputerDto ret = this.computerMapper.modelToDto(this.computerService.create(this.computerMapper.dtoToModel(c)));
 					return "Create "+ret.toString();
 				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
-					throw (TooManyArgumentsException) this.log(new TooManyArgumentsException(splitStr[5]));
+					throw this.log(new TooManyArgumentsException(splitStr[5]));
 				} else {
-					throw (InvalidTableException) this.log(new InvalidTableException(splitStr[1]));
+					throw this.log(new InvalidTableException(splitStr[1]));
 				}
 			default:
 			case 8:
 				if (splitStr[1].equalsIgnoreCase(this.computerTable)) {
-					throw (TooManyArgumentsException) this.log(new TooManyArgumentsException(splitStr[7]));
+					throw this.log(new TooManyArgumentsException(splitStr[7]));
 				} else if (splitStr[1].equalsIgnoreCase(this.companyTable)) {
-					throw (TooManyArgumentsException) this.log(new TooManyArgumentsException(splitStr[5]));
+					throw this.log(new TooManyArgumentsException(splitStr[5]));
 				} else {
-					throw (InvalidTableException) this.log(new InvalidTableException(splitStr[1]));
+					throw this.log(new InvalidTableException(splitStr[1]));
 				}
 				
 		}
 	}
 	
-	private String read() throws Exception {
+	private String read() {
 		Dto c;
 		
 		int sizeExpected = 3;
@@ -163,9 +182,9 @@ public class CdbController {
 			case 3:
 				// Load dto by id
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					c = ComputerMapper.getInstance().modelToDto(ComputerService.getInstance().read(ComputerMapper.getInstance().idToInt(splitStr[2])));
+					c = this.computerMapper.modelToDto(this.computerService.read(this.computerMapper.idToInt(splitStr[2])));
 				} else if (splitStr[1].toLowerCase().equals("company")) {
-					c = CompanyMapper.getInstance().modelToDto(CompanyService.getInstance().read(CompanyMapper.getInstance().idToInt(splitStr[2])));
+					c = this.companyMapper.modelToDto(this.companyService.read(this.companyMapper.idToInt(splitStr[2])));
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}
@@ -176,7 +195,7 @@ public class CdbController {
 		}
 	}
 	
-	private String delete() throws Exception {		
+	private String delete() {		
 		int sizeExpected = 3;
 		
 		switch (splitStr.length) {
@@ -186,9 +205,9 @@ public class CdbController {
 			case 3:
 				Dto ret;
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					ret = ComputerMapper.getInstance().modelToDto(ComputerService.getInstance().delete(ComputerMapper.getInstance().dtoToModel(new ComputerDto(splitStr[2]))));
+					ret = this.computerMapper.modelToDto(this.computerService.delete(this.computerMapper.dtoToModel(new ComputerDto(splitStr[2]))));
 				} else if (splitStr[1].toLowerCase().equals("company")) {
-					ret = CompanyMapper.getInstance().modelToDto(CompanyService.getInstance().delete(CompanyMapper.getInstance().dtoToModel(new CompanyDto(splitStr[2]))));
+					ret = this.companyMapper.modelToDto(this.companyService.delete(this.companyMapper.dtoToModel(new CompanyDto(splitStr[2]))));
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}
@@ -198,7 +217,7 @@ public class CdbController {
 		}
 	}
 	
-	private void updateTreatOption(ComputerDto c, String s) throws Exception {
+	private void updateTreatOption(ComputerDto c, String s) {
 		if (s.charAt(0) != '-' || s.charAt(2) != ':' || s.length() == 3) {
 			throw this.log(new InvalidComputerOptionException(s));
 		} else {
@@ -223,7 +242,7 @@ public class CdbController {
 		}
 	}
 	
-	private String update() throws Exception {
+	private String update() {
 		int sizeExpected = 4;
 		
 		switch (splitStr.length) {
@@ -238,12 +257,12 @@ public class CdbController {
 				for (String s : Arrays.copyOfRange(splitStr, 3, splitStr.length)) {
 					this.updateTreatOption(c,s);
 				}
-				Validator.getInstance().validateComputerDto(c);
-				ret = ComputerMapper.getInstance().modelToDto(ComputerService.getInstance().update(ComputerMapper.getInstance().dtoToModel(c)));
+				this.validator.validateComputerDto(c);
+				ret = this.computerMapper.modelToDto(this.computerService.update(this.computerMapper.dtoToModel(c)));
 			} else if (splitStr[1].toLowerCase().equals("company")) {
 				if(splitStr.length == 4) {
 					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
-					ret = CompanyMapper.getInstance().modelToDto(CompanyService.getInstance().update(CompanyMapper.getInstance().dtoToModel(c)));
+					ret = this.companyMapper.modelToDto(this.companyService.update(this.companyMapper.dtoToModel(c)));
 				} else {
 					throw this.log(new TooManyArgumentsException(splitStr[4]));
 				}
@@ -254,16 +273,16 @@ public class CdbController {
 		}
 	}
 	
-	private String listAll() throws Exception {
+	private String listAll() {
 		switch (splitStr.length) {
 			case 1:
 				throw this.log(new MissingArgumentException(2, splitStr.length));
 			case 2:
 				List<? extends Dto> dtoList;
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					dtoList = ComputerService.getInstance().listAllElements().stream().map(model -> ComputerMapper.getInstance().modelToDto(model)).collect(Collectors.toList());
+					dtoList = this.computerService.listAllElements().stream().map(model -> this.computerMapper.modelToDto(model)).collect(Collectors.toList());
 				} else if (splitStr[1].toLowerCase().equals("company")) {
-					dtoList = CompanyService.getInstance().listAllElements().stream().map(model -> CompanyMapper.getInstance().modelToDto(model)).collect(Collectors.toList());
+					dtoList = this.companyService.listAllElements().stream().map(model -> this.companyMapper.modelToDto(model)).collect(Collectors.toList());
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}
@@ -278,7 +297,7 @@ public class CdbController {
 		}
 	}
 	
-	private String list() throws Exception {
+	private String list() {
 		int sizeExpected = 4;
 		
 		switch (splitStr.length) {
@@ -289,9 +308,9 @@ public class CdbController {
 			case 4:
 				List<? extends Dto> dtoList;
 				if (splitStr[1].toLowerCase().equals("computer")) {
-					dtoList = ComputerService.getInstance().list(ComputerMapper.getInstance().idToInt(splitStr[2]), ComputerMapper.getInstance().idToInt(splitStr[3])).stream().map(model -> ComputerMapper.getInstance().modelToDto(model)).collect(Collectors.toList());
+					dtoList = this.computerService.list(this.computerMapper.idToInt(splitStr[2]), this.computerMapper.idToInt(splitStr[3])).stream().map(model -> this.computerMapper.modelToDto(model)).collect(Collectors.toList());
 				} else if (splitStr[1].toLowerCase().equals("company")) {
-					dtoList = CompanyService.getInstance().list(CompanyMapper.getInstance().idToInt(splitStr[2]), CompanyMapper.getInstance().idToInt(splitStr[3])).stream().map(model -> CompanyMapper.getInstance().modelToDto(model)).collect(Collectors.toList());
+					dtoList = this.companyService.list(this.companyMapper.idToInt(splitStr[2]), this.companyMapper.idToInt(splitStr[3])).stream().map(model -> this.companyMapper.modelToDto(model)).collect(Collectors.toList());
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}

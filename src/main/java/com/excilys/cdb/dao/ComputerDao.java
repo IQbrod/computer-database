@@ -5,17 +5,17 @@ import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.enums.ComputerFields;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
+@Component
 public class ComputerDao extends Dao<Computer> {
 	private final String sqlSelectUpdate = "UPDATE computer SET company_id=? WHERE id=?;";
 	private final String sqlInsertNoId = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
 	private final String sqlCountByName = "SELECT count(id) FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) LIMIT ?,?";
-	
-	private static ComputerDao instance = null;
 	
 	private ComputerDao() {
 		super(
@@ -28,12 +28,6 @@ public class ComputerDao extends Dao<Computer> {
 			"SELECT count(id) AS count FROM computer"
 		);
 		this.logger = LogManager.getLogger(this.getClass());
-	}
-	
-	public static ComputerDao getInstance() {
-		if (instance == null)
-			instance = new ComputerDao();
-		return instance;
 	}
 	
 	@Override

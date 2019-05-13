@@ -6,10 +6,10 @@ import com.excilys.cdb.dao.Dao;
 import com.excilys.cdb.model.Model;
 
 
-public abstract class Service<U extends Model> {
+public abstract class AbstractService<U extends Model> {
 	protected Dao<U> dao;
 	
-	protected Service(Dao<U> dao) {
+	protected AbstractService(Dao<U> dao) {
 		this.dao = dao;
 	}
 	

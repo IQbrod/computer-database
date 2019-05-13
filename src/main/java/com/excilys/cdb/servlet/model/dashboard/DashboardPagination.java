@@ -2,15 +2,18 @@ package com.excilys.cdb.servlet.model.dashboard;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.servlet.model.ServletModel;
 
+@Component
+@Scope("prototype")
 public class DashboardPagination extends ServletModel {
 	private int page, maxPage, medianPage, size;
 	private String search, orderBy;
 	
-	private static DashboardPagination instance = null;
-	
-	private DashboardPagination() {
+	public DashboardPagination() {
 		this.setDefault();
 	}
 
@@ -20,12 +23,6 @@ public class DashboardPagination extends ServletModel {
 
 	public void setOrderBy(String orderBy) {
 		this.orderBy = orderBy;
-	}
-
-	public static DashboardPagination getInstance() {
-		if (instance == null)
-			instance = new DashboardPagination();
-		return instance;
 	}
 
 	public void setDefault() {

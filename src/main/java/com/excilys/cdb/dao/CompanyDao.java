@@ -6,15 +6,16 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
+@Component
 public class CompanyDao extends Dao<Company>{
-	private static CompanyDao instance = null;
 	private final String sqlDeleteLinkedComputer = "DELETE FROM computer WHERE company_id=?;";
 	
-	private CompanyDao() {
+	public CompanyDao() {
 		super(
 			"INSERT INTO company VALUES (?,?);",
 			"UPDATE company SET name=? WHERE id=?;",
@@ -26,12 +27,6 @@ public class CompanyDao extends Dao<Company>{
 		);
 		
 		this.logger = LogManager.getLogger(this.getClass());
-	}
-	
-	public static CompanyDao getInstance() {
-		if (instance == null)
-			instance = new CompanyDao();
-		return instance;
 	}
 	
 	@Override

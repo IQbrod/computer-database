@@ -4,16 +4,17 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.servlet.model.ServletModel;
 
+@Component
+@Scope("prototype")
 public class DashboardComputerList extends ServletModel {
 	private List<ComputerDto> list;
 	private int nbComputer;
-	
-	private static DashboardComputerList instance = null;
-	
-	private DashboardComputerList() {}
 
 	public List<ComputerDto> getList() {
 		return list;
@@ -21,12 +22,6 @@ public class DashboardComputerList extends ServletModel {
 
 	public int getNbComputer() {
 		return nbComputer;
-	}
-
-	public static DashboardComputerList getInstance() {
-		if (instance == null)
-			instance = new DashboardComputerList();
-		return instance;
 	}
 
 	public void setList(List<ComputerDto> list) {

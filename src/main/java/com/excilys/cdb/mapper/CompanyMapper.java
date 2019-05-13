@@ -1,20 +1,14 @@
 package com.excilys.cdb.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.exception.InvalidIntegerException;
 import com.excilys.cdb.model.Company;
 
-public class CompanyMapper extends Mapper<CompanyDto, Company>{
-	private static CompanyMapper instance;
-	
-	private CompanyMapper() {}
-	
-	public static CompanyMapper getInstance() {
-		if (instance == null)
-			instance = new CompanyMapper();
-		return instance;
-	}
-	
+@Component
+public class CompanyMapper extends Mapper<CompanyDto, Company>{	
+
 	@Override
 	public Company dtoToModel(CompanyDto dtoObject) throws InvalidIntegerException {
 		return new Company(

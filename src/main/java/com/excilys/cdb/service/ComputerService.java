@@ -4,18 +4,12 @@ import java.util.List;
 
 import com.excilys.cdb.dao.*;
 import com.excilys.cdb.model.Computer;
+import org.springframework.stereotype.Service;
 
-public class ComputerService extends Service<Computer>{
-	private static ComputerService instance = null;
-	
-	private ComputerService() {
-		super(ComputerDao.getInstance());
-	}
-	
-	public static ComputerService getInstance() {
-		if (instance == null)
-			instance = new ComputerService();
-		return instance;
+@Service
+public class ComputerService extends AbstractService<Computer>{	
+	public ComputerService(ComputerDao compDao) {
+		super(compDao);
 	}
 	
 	public List<Computer> list(int page, int size, String orderBy) {

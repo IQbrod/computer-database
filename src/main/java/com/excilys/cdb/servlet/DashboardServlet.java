@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.exception.ShouldBeSentToClientException;
 import com.excilys.cdb.exception.ShouldOnlyBeLoggedException;
@@ -15,13 +18,24 @@ import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.servlet.model.dashboard.DashboardComputerList;
 import com.excilys.cdb.servlet.model.dashboard.DashboardPagination;
+import com.excilys.cdb.spring.AppConfig;
 
 public class DashboardServlet extends Servlet {	
 	private static final long serialVersionUID = 3052019L;
 
-	public DashboardServlet() {
-		this.modelMap.put("pagination", DashboardPagination.getInstance());
-		this.modelMap.put("computerList", DashboardComputerList.getInstance());
+	private final ComputerService computerService;
+	private final ComputerMapper computerMapper;
+	
+	public DashboardServlet() {		
+		try (ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class)) {
+			
+			this.modelMap.put("pagination", context.getBean(DashboardPagination.class));
+			this.modelMap.put("computerList", context.getBean(DashboardComputerList.class));
+			
+			this.computerService = context.getBean(ComputerService.class);
+			this.computerMapper = context.getBean(ComputerMapper.class);
+
+		}
 	}
 	
 	@Override
@@ -52,7 +66,7 @@ public class DashboardServlet extends Servlet {
 		try {
 			
 			for (String id : listId) {
-				ComputerService.getInstance().delete(ComputerMapper.getInstance().dtoToModel(new ComputerDto(id)));
+				this.computerService.delete(this.computerMapper.dtoToModel(new ComputerDto(id)));
 			}
 			response.sendRedirect(this.getServletContext().getContextPath()+"/?page="+ ((DashboardPagination)this.modelMap.get("pagination")).getPage() +"&size="+ ((DashboardPagination)this.modelMap.get("pagination")).getSize());
 			
@@ -94,11 +108,11 @@ public class DashboardServlet extends Servlet {
 		List<ComputerDto> computerList;
 		// Apply changes
 		if (search.equals(" ")) {
-			computerList = ComputerService.getInstance().list(page, size, orderBy).stream().map(dto -> ComputerMapper.getInstance().modelToDto(dto)).collect(Collectors.toList());
-			nbComputer = ComputerService.getInstance().count();
+			computerList = this.computerService.list(page, size, orderBy).stream().map(dto -> this.computerMapper.modelToDto(dto)).collect(Collectors.toList());
+			nbComputer = this.computerService.count();
 		} else {
-			computerList = ComputerService.getInstance().listByName(search, page, size, orderBy).stream().map(dto -> ComputerMapper.getInstance().modelToDto(dto)).collect(Collectors.toList());
-			nbComputer = ComputerService.getInstance().countByName(search);
+			computerList = this.computerService.listByName(search, page, size, orderBy).stream().map(dto -> this.computerMapper.modelToDto(dto)).collect(Collectors.toList());
+			nbComputer = this.computerService.countByName(search);
 		}
 		((DashboardComputerList)this.modelMap.get("computerList")).setList(computerList);
 		((DashboardComputerList)this.modelMap.get("computerList")).setNbComputer(nbComputer);

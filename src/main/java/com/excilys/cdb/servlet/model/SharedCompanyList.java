@@ -5,26 +5,26 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.mapper.CompanyMapper;
 import com.excilys.cdb.service.CompanyService;
 
+@Component
 public class SharedCompanyList extends ServletModel {
 	private List<CompanyDto> companyList;
-	private static SharedCompanyList instance = null;
+	private final CompanyService companyService;
+	private final CompanyMapper companyMapper;
 	
-	private SharedCompanyList() throws RuntimeException {
+	public SharedCompanyList(CompanyService companyService, CompanyMapper companyMapper) throws RuntimeException {
+		this.companyService = companyService;
+		this.companyMapper = companyMapper;
 		this.refresh();
 	}
 	
-	public static SharedCompanyList getInstance() throws RuntimeException {
-		if (instance == null)
-			instance = new SharedCompanyList();
-		return instance;
-	}
-	
 	public void refresh() throws RuntimeException {
-		this.companyList = CompanyService.getInstance().listAllElements().stream().map(c -> CompanyMapper.getInstance().modelToDto(c)).collect(Collectors.toList());
+		this.companyList = this.companyService.listAllElements().stream().map(c -> this.companyMapper.modelToDto(c)).collect(Collectors.toList());
 	}
 	
 	@Override

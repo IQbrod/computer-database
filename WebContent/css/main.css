@@ -27,3 +27,7 @@ input[type='checkbox'] {
     border-radius: 5px;
     white-space: nowrap;
 }
+
+li.selected > a {
+	background: #C3C3C3;
+}

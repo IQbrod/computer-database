@@ -2,21 +2,16 @@ package com.excilys.cdb.servlet.model.editComputer;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.servlet.model.ServletModel;
 
+@Component
+@Scope("prototype")
 public class EditComputerValues extends ServletModel {
 	private ComputerDto compDto;
-	
-	private static EditComputerValues instance = null;
-	
-	private EditComputerValues() {}
-
-	public static EditComputerValues getInstance() {
-		if (instance == null)
-			instance = new EditComputerValues();
-		return instance;
-	}
 	
 	public void setComputer(ComputerDto compDto) {
 		this.compDto = compDto;

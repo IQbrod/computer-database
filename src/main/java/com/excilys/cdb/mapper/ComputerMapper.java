@@ -2,20 +2,21 @@ package com.excilys.cdb.mapper;
 
 import java.sql.*;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.CompanyService;
 
+@Component
 public class ComputerMapper extends Mapper<ComputerDto, Computer>{
-	private static ComputerMapper instance;	
+	private final CompanyMapper companyMapper;
+	private final CompanyService companyService;
 	
-	private ComputerMapper() {}	
-	
-	public static ComputerMapper getInstance() {
-		if (instance == null)
-			instance = new ComputerMapper();		
-		return instance;
+	public ComputerMapper(CompanyMapper companyMapper, CompanyService companyService) {
+		this.companyMapper = companyMapper;
+		this.companyService = companyService;
 	}
 	
 	@Override
@@ -33,7 +34,7 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 
 	@Override
 	public ComputerDto modelToDto(Computer modelObject) throws RuntimeException {
-		CompanyDto companyDto = (modelObject.getManufacturer() <= 0) ? new CompanyDto("0","_") : CompanyMapper.getInstance().modelToDto(CompanyService.getInstance().read(modelObject.getManufacturer()));
+		CompanyDto companyDto = (modelObject.getManufacturer() <= 0) ? new CompanyDto("0","_") : this.companyMapper.modelToDto(this.companyService.read(modelObject.getManufacturer()));
 		
 		return new ComputerDto(
 			Integer.toString(modelObject.getId()),

@@ -3,7 +3,7 @@ package com.excilys.cdb.userinterface;
 import java.io.*;
 import java.util.Scanner;
 
-import com.excilys.cdb.controller.CdbController;
+import com.excilys.cdb.controller.CliController;
 
 public class CdbUi {
 	private InputStream in;
@@ -37,7 +37,7 @@ public class CdbUi {
 					return;
 				default:
 					try {
-						this.println(this.out,CdbController.getInstance().treatMessage(cmd));
+						this.println(this.out, CliController.getInstance().treatMessage(cmd));
 					} catch (Exception e) {
 						this.println(this.err,e.getMessage());
 					}
