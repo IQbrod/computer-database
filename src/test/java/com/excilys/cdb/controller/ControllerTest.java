@@ -2,9 +2,15 @@ package com.excilys.cdb.controller;
 
 import static org.junit.Assert.*;
 import org.junit.*;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.cdb.exception.*;
+import com.excilys.cdb.spring.AppConfig;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes= AppConfig.class)
 public class ControllerTest {
 
 	// Empty

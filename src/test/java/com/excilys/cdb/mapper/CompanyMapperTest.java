@@ -2,29 +2,32 @@ package com.excilys.cdb.mapper;
 
 import static org.junit.Assert.*;
 import org.junit.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.exception.*;
+import com.excilys.cdb.spring.AppConfig;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes= AppConfig.class)
 public class CompanyMapperTest {
-
+	@Autowired
+	private CompanyMapper mapperInstance;
+		
 	@Test
 	public void TestDtoToModel() {
 		assertTrue(
-			CompanyMapper.getInstance().dtoToModel(new CompanyDto("5","Entreprise")).equals(new Company(5,"Entreprise"))
+				mapperInstance.dtoToModel(new CompanyDto("5","Entreprise")).equals(new Company(5,"Entreprise"))
 		);
-	}
-	
-	@Test (expected = InvalidIntegerException.class)
-	public void TestDtoToModelInvalidId() {
-		CompanyMapper.getInstance().dtoToModel(new CompanyDto("Id","Entreprise"));
 	}
 	
 	@Test
 	public void TestModelToDto() {
 		assertTrue(
-			CompanyMapper.getInstance().modelToDto(new Company(5,"Entreprise")).equals(new CompanyDto("5","Entreprise"))
+				mapperInstance.modelToDto(new Company(5,"Entreprise")).equals(new CompanyDto("5","Entreprise"))
 		);
 	}
 }

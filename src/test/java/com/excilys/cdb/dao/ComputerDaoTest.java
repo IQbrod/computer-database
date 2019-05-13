@@ -5,165 +5,170 @@ import static org.junit.Assert.*;
 import java.sql.Timestamp;
 
 import org.junit.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.spring.AppConfig;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes= AppConfig.class)
 public class ComputerDaoTest {
 	
-	@Test
-	public void TestDbConnection() throws DatabaseProblemException {
-		ComputerDao.getInstance();
-	}
+	@Autowired
+	private ComputerDao daoInstance;
 	
 	/*-- READ --*/
 	@Test
 	public void TestRead() throws Exception {
-		ComputerDao.getInstance().read(7);
+		daoInstance.read(7);
 	}
 	
 	@Test (expected = FailedSQLQueryException.class)
 	public void TestReadMissingId() throws Exception {
-		ComputerDao.getInstance().read(870);
+		daoInstance.read(870);
 	}
 	
 	@Test (expected = InvalidIdException.class)
 	public void TestReadInvalidId() throws Exception {
-		ComputerDao.getInstance().read(-8);
+		daoInstance.read(-8);
 	}
 	
 	/*-- CREATE --*/
 	// id
 	@Test
 	public void TestCreateDeleteMinimal() throws Exception {
-		ComputerDao.getInstance().create(new Computer(750,"Ordinateur",null,null,0));
-		ComputerDao.getInstance().delete(new Computer(750,"Suppression",null,null,0));
+		daoInstance.create(new Computer(750,"Ordinateur",null,null,0));
+		daoInstance.delete(new Computer(750,"Suppression",null,null,0));
 	}
 	
 	@Test (expected = InvalidIdException.class)
 	public void TestCreateInvalidId() throws Exception {
-		ComputerDao.getInstance().create(new Computer(-7,"Ordinateur",null,null,0));
+		daoInstance.create(new Computer(-7,"Ordinateur",null,null,0));
 	}
 	
 	@Test (expected = PrimaryKeyViolationException.class)
 	public void TestCreateDuplicateId() throws Exception {
-		ComputerDao.getInstance().create(new Computer(4,"Ordinateur",null,null,0));
+		daoInstance.create(new Computer(4,"Ordinateur",null,null,0));
 	}
 	
 	// dateIntro
 	@Test
 	public void TestCreateDateIntroductionANDBYID() throws Exception {
-		ComputerDao.getInstance().create(new Computer(753,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),null,0));
-		ComputerDao.getInstance().deleteById(753);
+		daoInstance.create(new Computer(753,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),null,0));
+		daoInstance.deleteById(753);
 	}
 	
 	// dateDisc
 	@Test
 	public void TestCreateDateDiscontinued() throws Exception {
-		ComputerDao.getInstance().create(new Computer(754,"Ordinateur",null,Timestamp.valueOf("2017-05-27 12:00:00"),0));
-		ComputerDao.getInstance().deleteById(754);
+		daoInstance.create(new Computer(754,"Ordinateur",null,Timestamp.valueOf("2017-05-27 12:00:00"),0));
+		daoInstance.deleteById(754);
 	}
 	
 	// dateIntro + dateDisc
 	@Test
 	public void TestCreateMixedDates() throws Exception {
-		ComputerDao.getInstance().create(new Computer(755,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 12:50:00"),0));
-		ComputerDao.getInstance().deleteById(755);
+		daoInstance.create(new Computer(755,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 12:50:00"),0));
+		daoInstance.deleteById(755);
 	}
 	
 	// Company id
 	@Test
 	public void TestCreate() throws Exception {
-		ComputerDao.getInstance().create(new Computer(751,"Ordinateur",null,null,2));
-		ComputerDao.getInstance().deleteById(751);
+		daoInstance.create(new Computer(751,"Ordinateur",null,null,2));
+		daoInstance.deleteById(751);
 	}
 	
 	@Test (expected = ForeignKeyViolationException.class)
 	public void TestCreateInvalidCompanyId() throws Exception {
-		ComputerDao.getInstance().create(new Computer(752,"Ordinateur",null,null,-5));
+		daoInstance.create(new Computer(752,"Ordinateur",null,null,-5));
 	}
 	
 	@Test (expected = ForeignKeyViolationException.class)
 	public void TestCreateTooHighCompanyId() throws Exception {
-		ComputerDao.getInstance().create(new Computer(752,"Ordinateur",null,null,750));
+		daoInstance.create(new Computer(752,"Ordinateur",null,null,750));
 	}
 	
 	/*-- UPDATE --*/
 	@Test
 	public void TestUpdate() throws Exception {
-		ComputerDao.getInstance().update(new Computer(8,"Computer",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 23:00:00"),5));
+		daoInstance.update(new Computer(8,"Computer",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 23:00:00"),5));
 	}
 	
 	@Test
 	public void TestUpdateReset() throws Exception {
-		ComputerDao.getInstance().update(new Computer(8,"Ordinateur",null,null,0));
+		daoInstance.update(new Computer(8,"Ordinateur",null,null,0));
 	}
 	
 	@Test (expected = FailedSQLQueryException.class)
 	public void TestUpdateUnexistingComputer() throws Exception {
-		ComputerDao.getInstance().update(new Computer(870,"Ordinateur",null,null,0));
+		daoInstance.update(new Computer(870,"Ordinateur",null,null,0));
 	}
 	
 	@Test (expected = InvalidIdException.class)
 	public void TestUpdateInvalidComputer() throws Exception {
-		ComputerDao.getInstance().update(new Computer(-7,"Ordinateur",null,null,0));
+		daoInstance.update(new Computer(-7,"Ordinateur",null,null,0));
 	}
 	
 	/*-- DELETE --*/
 	@Test (expected = FailedSQLQueryException.class)
 	public void TestDeleteUnexistingCompany() throws Exception {
-		ComputerDao.getInstance().delete(new Computer(870,"Ordinateur",null,null,0));
+		daoInstance.delete(new Computer(870,"Ordinateur",null,null,0));
 	}
 	
 	@Test (expected = InvalidIdException.class)
 	public void TestDeleteInvalidCompany() throws Exception {
-		ComputerDao.getInstance().delete(new Computer(-7,"Ordinateur",null,null,0));
+		daoInstance.delete(new Computer(-7,"Ordinateur",null,null,0));
 	}
 	
 	@Test (expected = FailedSQLQueryException.class)
 	public void TestDeleteByIdUnexistingCompany() throws Exception {
-		ComputerDao.getInstance().deleteById(850);
+		daoInstance.deleteById(850);
 	}
 	
 	@Test (expected = InvalidIdException.class)
 	public void TestDeleteByIdInvalidCompany() throws Exception {
-		ComputerDao.getInstance().deleteById(-7);
+		daoInstance.deleteById(-7);
 	}
 	
 	/*-- LISTALL --*/
 	@Test
 	public void TestListAll() throws Exception {
-		ComputerDao.getInstance().listAll();
+		daoInstance.listAll();
 	}
 	
 	/*-- LIST --*/
 	@Test
 	public void TestList() throws Exception {
-		assertEquals(20,ComputerDao.getInstance().list(1,20).size());
+		assertEquals(20,daoInstance.list(1,20).size());
 	}
 	
 	@Test
 	public void TestListTooFar() throws Exception {
-		assertEquals(0,ComputerDao.getInstance().list(40,100).size());
+		assertEquals(0,daoInstance.list(40,100).size());
 	}
 	
 	@Test (expected = InvalidPageValueException.class)
 	public void TestListInvalidPageZero() throws Exception {
-		ComputerDao.getInstance().list(0, 20);
+		daoInstance.list(0, 20);
 	}
 	
 	@Test (expected = InvalidPageValueException.class)
 	public void TestListInvalidPageNegative() throws Exception {
-		ComputerDao.getInstance().list(-9, 20);
+		daoInstance.list(-9, 20);
 	}
 	
 	@Test (expected = InvalidPageSizeException.class)
 	public void TestListInvalidSize() throws Exception {
-		ComputerDao.getInstance().list(1, -5);
+		daoInstance.list(1, -5);
 	}
 	
 	@Test (expected = InvalidPageSizeException.class)
 	public void TestListEmptySize() throws Exception {
-		ComputerDao.getInstance().list(5,0).size();
+		daoInstance.list(5,0).size();
 	}
 }
