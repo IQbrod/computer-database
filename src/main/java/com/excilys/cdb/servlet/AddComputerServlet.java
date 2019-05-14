@@ -29,7 +29,7 @@ public class AddComputerServlet extends Servlet {
 	public void doPost( HttpServletRequest request, HttpServletResponse response ) {
 		try {
 			
-			ComputerDto computerFromFields = new ComputerDto("0",request.getParameter("computerName"),request.getParameter("introduced"),request.getParameter("discontinued"),request.getParameter("companyId"),"None");
+			ComputerDto computerFromFields = new ComputerDto("0",request.getParameter("computerName"),request.getParameter("introduced").equals("") ? null : request.getParameter("introduced") ,request.getParameter("discontinued").equals("") ? null : request.getParameter("discontinued"),request.getParameter("companyId"),"None");
 			this.validator.validateComputerDto(computerFromFields);
 			this.computerService.create(this.computerMapper.dtoToModel(computerFromFields));
 			response.sendRedirect(this.getServletContext().getContextPath()+"/");

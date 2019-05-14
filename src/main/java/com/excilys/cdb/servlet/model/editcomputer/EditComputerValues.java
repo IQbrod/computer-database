@@ -1,4 +1,4 @@
-package com.excilys.cdb.servlet.model.editComputer;
+package com.excilys.cdb.servlet.model.editcomputer;
 
 import javax.servlet.http.HttpServletRequest;
 

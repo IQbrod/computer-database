@@ -7,16 +7,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.dbConnector.HikariConnectionProvider;
+import com.excilys.cdb.dbconnector.HikariConnectionProvider;
 import com.excilys.cdb.enums.ComputerFields;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 @Repository
 public class ComputerDao extends Dao<Computer> {
-	private final static String sqlSelectUpdate = "UPDATE computer SET company_id=? WHERE id=?;";
-	private final static String sqlInsertNoId = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
-	private final static String sqlCountByName = "SELECT count(id) FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) LIMIT ?,?";
+	private static final String SQL_SELECT_UPDATE = "UPDATE computer SET company_id=? WHERE id=?;";
+	private static final String SQL_INSERT_NOID = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
+	private static final String SQL_COUNT_BY_NAME = "SELECT count(C.id) as count FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?)";
 	
 	public ComputerDao(HikariConnectionProvider hikariConn) {
 		super(
@@ -37,6 +37,21 @@ public class ComputerDao extends Dao<Computer> {
 		return this.logger;
 	}
 
+	private void setupInsertNoIdPreparedStatement(PreparedStatement preparedStatement, Computer aComputer) throws SQLException {
+		preparedStatement.setString(1, aComputer.getName());
+		preparedStatement.setTimestamp(2, aComputer.getDateIntro());
+		preparedStatement.setTimestamp(3, aComputer.getDateDisc());
+		preparedStatement.setNull(4, java.sql.Types.INTEGER);
+	}
+	
+	private void setupInsertPreparedStatement(PreparedStatement preparedStatement, Computer aComputer) throws SQLException {
+		preparedStatement.setInt(1,aComputer.getId());
+		preparedStatement.setString(2, aComputer.getName());
+		preparedStatement.setTimestamp(3, aComputer.getDateIntro());
+		preparedStatement.setTimestamp(4, aComputer.getDateDisc());
+		preparedStatement.setNull(5, java.sql.Types.INTEGER);
+	}
+	
 	@Override
 	public Computer create(Computer aComputer) {
 		int nbRow = 0;
@@ -46,20 +61,16 @@ public class ComputerDao extends Dao<Computer> {
 		} else if (aComputer.getId() == 0) {
 			try (
 				Connection connection = this.dataSource.getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.sqlInsertNoId,Statement.RETURN_GENERATED_KEYS)
+				PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.SQL_INSERT_NOID,Statement.RETURN_GENERATED_KEYS)
 			) {
-				preparedStatement.setString(1, aComputer.getName());
-				preparedStatement.setTimestamp(2, aComputer.getDateIntro());
-				preparedStatement.setTimestamp(3, aComputer.getDateDisc());
-				preparedStatement.setNull(4, java.sql.Types.INTEGER);
-				
+				this.setupInsertNoIdPreparedStatement(preparedStatement, aComputer);				
 				nbRow = preparedStatement.executeUpdate();
 				
 				try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
 					if (generatedKeys.next())
 						aComputer.setId((int)generatedKeys.getLong(1));
 					else
-						throw this.log(new FailedSQLQueryException(sqlInsertNoId));
+						throw this.log(new FailedSQLQueryException(SQL_INSERT_NOID));
 				}
 			} catch (SQLException e) {
 				throw this.log(new PrimaryKeyViolationException(aComputer.getId()),e);
@@ -69,12 +80,7 @@ public class ComputerDao extends Dao<Computer> {
 				Connection connection = this.dataSource.getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCreate)
 			) {
-				preparedStatement.setInt(1,aComputer.getId());
-				preparedStatement.setString(2, aComputer.getName());
-				preparedStatement.setTimestamp(3, aComputer.getDateIntro());
-				preparedStatement.setTimestamp(4, aComputer.getDateDisc());
-				preparedStatement.setNull(5, java.sql.Types.INTEGER);
-
+				this.setupInsertPreparedStatement(preparedStatement, aComputer);
 				nbRow = preparedStatement.executeUpdate();
 			} catch (SQLException e) {
 				throw this.log(new PrimaryKeyViolationException(aComputer.getId()),e);
@@ -90,7 +96,7 @@ public class ComputerDao extends Dao<Computer> {
 		} else {
 			try (
 				Connection connection = this.dataSource.getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.sqlSelectUpdate);
+				PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.SQL_SELECT_UPDATE);
 			) {
 				preparedStatement.setInt(1, aComputer.getManufacturer());
 				preparedStatement.setInt(2, aComputer.getId());
@@ -100,7 +106,7 @@ public class ComputerDao extends Dao<Computer> {
 					return aComputer;
 				} else {
 					this.delete(aComputer);
-					throw this.log(new FailedSQLQueryException(ComputerDao.sqlSelectUpdate));
+					throw this.log(new FailedSQLQueryException(ComputerDao.SQL_SELECT_UPDATE));
 				}
 			} catch (SQLException e) {
 				this.delete(aComputer);
@@ -252,7 +258,7 @@ public class ComputerDao extends Dao<Computer> {
 	public int countByName(String name) {
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.sqlCountByName);
+			PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.SQL_COUNT_BY_NAME);
 		) {
 			preparedStatement.setString(1, "%"+name+"%");
 			preparedStatement.setString(2, "%"+name+"%");
@@ -261,7 +267,7 @@ public class ComputerDao extends Dao<Computer> {
 				return (resultSet.next()) ? resultSet.getInt("count") : 0;
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(ComputerDao.sqlCountByName),e);
+			throw this.log(new FailedSQLQueryException(ComputerDao.SQL_COUNT_BY_NAME),e);
 		}
 	}
 

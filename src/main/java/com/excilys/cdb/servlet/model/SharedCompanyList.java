@@ -17,14 +17,14 @@ public class SharedCompanyList extends ServletModel {
 	private final CompanyService companyService;
 	private final CompanyMapper companyMapper;
 	
-	public SharedCompanyList(CompanyService companyService, CompanyMapper companyMapper) throws RuntimeException {
+	public SharedCompanyList(CompanyService companyService, CompanyMapper companyMapper) {
 		this.companyService = companyService;
 		this.companyMapper = companyMapper;
 		this.refresh();
 	}
 	
-	public void refresh() throws RuntimeException {
-		this.companyList = this.companyService.listAllElements().stream().map(c -> this.companyMapper.modelToDto(c)).collect(Collectors.toList());
+	public void refresh() {
+		this.companyList = this.companyService.listAllElements().stream().map(this.companyMapper::modelToDto).collect(Collectors.toList());
 	}
 	
 	@Override

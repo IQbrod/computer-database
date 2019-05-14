@@ -23,7 +23,7 @@ public class CompanyDaoTest {
 	/*-- READ --*/
 	@Test
 	public void TestRead() throws Exception {
-		daoInstance.read(7);
+		assertEquals(7,daoInstance.read(7).getId());
 	}
 	
 	@Test (expected = FailedSQLQueryException.class)
@@ -39,7 +39,7 @@ public class CompanyDaoTest {
 	/*-- CREATE --*/
 	@Test
 	public void TestCreate() throws Exception {
-		daoInstance.create(new Company(75,"Entreprise"));
+		assertEquals(75,daoInstance.create(new Company(75,"Entreprise")).getId());
 	}
 	
 	@Test (expected = InvalidIdException.class)
@@ -55,7 +55,7 @@ public class CompanyDaoTest {
 	/*-- UPDATE --*/
 	@Test
 	public void TestUpdate() throws Exception {
-		daoInstance.update(new Company(8,"Company"));
+		assertEquals("Company",daoInstance.update(new Company(8,"Company")).getName());
 	}
 	
 	@Test (expected = FailedSQLQueryException.class)
@@ -71,7 +71,7 @@ public class CompanyDaoTest {
 	/*-- DELETE --*/
 	@Test
 	public void TestDelete() throws Exception {
-		daoInstance.delete(new Company(75,"Valide"));
+		assertNotNull(daoInstance.delete(new Company(75,"Valide")));
 	}
 	
 	@Test (expected = FailedSQLQueryException.class)
@@ -87,7 +87,7 @@ public class CompanyDaoTest {
 	@Test
 	public void TestDeleteById() throws Exception {
 		daoInstance.create(new Company(75,"Entreprise"));
-		daoInstance.deleteById(75);
+		assertNotNull(daoInstance.deleteById(75));
 	}
 	
 	@Test (expected = FailedSQLQueryException.class)
@@ -103,7 +103,7 @@ public class CompanyDaoTest {
 	/*-- LISTALL --*/
 	@Test
 	public void TestListAll() throws Exception {
-		daoInstance.listAll();
+		assertTrue(daoInstance.listAll().size() > 0);
 	}
 	
 	/*-- LIST --*/

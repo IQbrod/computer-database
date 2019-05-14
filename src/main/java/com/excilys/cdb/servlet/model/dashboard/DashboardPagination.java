@@ -10,8 +10,12 @@ import com.excilys.cdb.servlet.model.ServletModel;
 @Component
 @Scope("prototype")
 public class DashboardPagination extends ServletModel {
-	private int page, maxPage, medianPage, size;
-	private String search, orderBy;
+	private int page;
+	private int maxPage;
+	private int medianPage;
+	private int size;
+	private String search;
+	private String orderBy;
 	
 	public DashboardPagination() {
 		this.setDefault();

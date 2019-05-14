@@ -6,7 +6,7 @@ import java.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.excilys.cdb.dbConnector.HikariConnectionProvider;
+import com.excilys.cdb.dbconnector.HikariConnectionProvider;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.Model;
 import com.zaxxer.hikari.HikariDataSource;

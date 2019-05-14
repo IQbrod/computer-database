@@ -8,13 +8,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.dbConnector.HikariConnectionProvider;
+import com.excilys.cdb.dbconnector.HikariConnectionProvider;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 @Repository
 public class CompanyDao extends Dao<Company>{
-	private final static String sqlDeleteLinkedComputer = "DELETE FROM computer WHERE company_id=?;";
+	private static final String SQL_DELETE_LINKED_COMPUTERS = "DELETE FROM computer WHERE company_id=?;";
 	
 	public CompanyDao(HikariConnectionProvider hikariConn) {
 		super(
@@ -94,7 +94,7 @@ public class CompanyDao extends Dao<Company>{
 			connection.setAutoCommit(false);
 			
 			try (
-				PreparedStatement deleteComputer = connection.prepareStatement(CompanyDao.sqlDeleteLinkedComputer);
+				PreparedStatement deleteComputer = connection.prepareStatement(CompanyDao.SQL_DELETE_LINKED_COMPUTERS);
 				PreparedStatement deleteCompany = connection.prepareStatement(this.sqlDelete);
 			) {
 				deleteComputer.setInt(1, id);
@@ -111,7 +111,7 @@ public class CompanyDao extends Dao<Company>{
 				throw e;
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryBySQLException(CompanyDao.sqlDeleteLinkedComputer+" or "+this.sqlDelete),e);
+			throw this.log(new FailedSQLQueryBySQLException(CompanyDao.SQL_DELETE_LINKED_COMPUTERS+" or "+this.sqlDelete),e);
 		}
 	}
 

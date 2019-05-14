@@ -16,7 +16,7 @@ public class ControllerTest {
 	// Empty
 	@Test
 	public void emptyTest() throws Exception {
-		assertEquals(CliController.getInstance().treatMessage(""), "");
+		assertEquals("", CliController.getInstance().treatMessage(""));
 	}
 	
 	// Invalid
@@ -28,7 +28,7 @@ public class ControllerTest {
 	// Help
 	@Test
 	public void helpTest() throws Exception {
-		CliController.getInstance().treatMessage("help");
+		assertTrue(CliController.getInstance().treatMessage("help").startsWith("Please use"));
 	}
 	
 	// Read
@@ -39,12 +39,12 @@ public class ControllerTest {
 	
 	@Test
 	public void readCompanyTest() throws Exception {
-		CliController.getInstance().treatMessage("R company 5");
+		assertTrue(CliController.getInstance().treatMessage("R company 5").startsWith("Company"));
 	}
 	
 	@Test
 	public void readComputerTest() throws Exception {
-		CliController.getInstance().treatMessage("R computer 5");
+		assertTrue(CliController.getInstance().treatMessage("R computer 5").startsWith("Computer"));
 	}
 	
 	@Test (expected = InvalidTableException.class)
@@ -66,13 +66,13 @@ public class ControllerTest {
 	@Test
 	public void deleteCompanyTest() throws Exception {
 		CliController.getInstance().treatMessage("C company 975 comp");
-		CliController.getInstance().treatMessage("D company 975");
+		assertTrue(CliController.getInstance().treatMessage("D company 975").startsWith("Delete Company"));
 	}
 	
 	@Test
 	public void deleteComputerTest() throws Exception {
 		CliController.getInstance().treatMessage("C computer 995 ordi _ _ 0");
-		CliController.getInstance().treatMessage("D computer 995");
+		assertTrue(CliController.getInstance().treatMessage("D computer 995").startsWith("Delete Computer"));
 	}
 	
 	@Test (expected = InvalidTableException.class)
@@ -93,12 +93,12 @@ public class ControllerTest {
 	
 	@Test
 	public void listAllCompanyTest() throws Exception {
-		CliController.getInstance().treatMessage("LA company");
+		assertTrue(CliController.getInstance().treatMessage("LA company").startsWith("Company"));
 	}
 	
 	@Test
 	public void listAllComputerTest() throws Exception {
-		CliController.getInstance().treatMessage("LA computer");
+		assertTrue(CliController.getInstance().treatMessage("LA computer").startsWith("Computer"));
 	}
 	
 	@Test (expected = InvalidTableException.class)
@@ -119,12 +119,12 @@ public class ControllerTest {
 	
 	@Test
 	public void listCompanyTest() throws Exception {
-		CliController.getInstance().treatMessage("L company 1 20");
+		assertTrue(CliController.getInstance().treatMessage("L company 1 20").startsWith("Company"));
 	}
 		
 	@Test
 	public void listComputerTest() throws Exception {
-		CliController.getInstance().treatMessage("L computer 1 20");
+		assertTrue(CliController.getInstance().treatMessage("L computer 1 20").startsWith("Computer"));
 	}
 	
 	@Test (expected = InvalidIntegerException.class)
@@ -187,7 +187,7 @@ public class ControllerTest {
 	// Valid Company
 	@Test
 	public void createCompany() throws Exception {
-		CliController.getInstance().treatMessage("C company 984 Entreprise");
+		assertTrue(CliController.getInstance().treatMessage("C company 984 Entreprise").startsWith("Create Company"));
 		CliController.getInstance().treatMessage("D company 984");
 	}
 	
@@ -231,7 +231,7 @@ public class ControllerTest {
 	// 7
 	@Test
 	public void createComputer() throws Exception {
-		CliController.getInstance().treatMessage("C computer 1752 Ordinateur _ _ 0");
+		assertTrue(CliController.getInstance().treatMessage("C computer 1752 Ordinateur _ _ 0").startsWith("Create Computer"));
 		CliController.getInstance().treatMessage("D computer 1752");
 	}
 	
@@ -249,7 +249,7 @@ public class ControllerTest {
 	
 	@Test 
 	public void createComputerValidDate() throws Exception {
-		CliController.getInstance().treatMessage("C computer 1752 Ordinateur 2019-12-27 _ 0");
+		assertTrue(CliController.getInstance().treatMessage("C computer 1752 Ordinateur 2019-12-27 _ 0").startsWith("Create Computer"));
 		CliController.getInstance().treatMessage("D computer 1752");
 	}
 	
@@ -288,7 +288,7 @@ public class ControllerTest {
 	@Test
 	public void updateCompanyTest() throws Exception {
 		CliController.getInstance().treatMessage("C company 943 UnNom");
-		CliController.getInstance().treatMessage("U company 943 Name");
+		assertTrue(CliController.getInstance().treatMessage("U company 943 Name").startsWith("Update Company"));
 		CliController.getInstance().treatMessage("D company 943");
 	}
 	
@@ -300,28 +300,28 @@ public class ControllerTest {
 	@Test
 	public void updateComputerNameTest() throws Exception {
 		CliController.getInstance().treatMessage("C computer 943 ordi _ _ 0");
-		CliController.getInstance().treatMessage("U computer 943 -n:Ordinateur");
+		assertTrue(CliController.getInstance().treatMessage("U computer 943 -n:Ordinateur").startsWith("Update Computer"));
 		CliController.getInstance().treatMessage("D computer 943");
 	}
 	
 	@Test
 	public void updateComputerIntroTest() throws Exception {
 		CliController.getInstance().treatMessage("C computer 943 ordi _ _ 0");
-		CliController.getInstance().treatMessage("U computer 943 -i:2017-08-27");
+		assertTrue(CliController.getInstance().treatMessage("U computer 943 -i:2017-08-27").startsWith("Update Computer"));
 		CliController.getInstance().treatMessage("D computer 943");
 	}
 	
 	@Test
 	public void updateComputerDiscTest() throws Exception {
 		CliController.getInstance().treatMessage("C computer 943 ordi _ _ 0");
-		CliController.getInstance().treatMessage("U computer 943 -d:2017-08-27");
+		assertTrue(CliController.getInstance().treatMessage("U computer 943 -d:2017-08-27").startsWith("Update Computer"));
 		CliController.getInstance().treatMessage("D computer 943");
 	}
 	
 	@Test
 	public void updateComputerCompanyidTest() throws Exception {
 		CliController.getInstance().treatMessage("C computer 943 ordi _ _ 0");
-		CliController.getInstance().treatMessage("U computer 943 -c:7");
+		assertTrue(CliController.getInstance().treatMessage("U computer 943 -c:7").startsWith("Update Computer"));
 		CliController.getInstance().treatMessage("D computer 943");
 	}
 	

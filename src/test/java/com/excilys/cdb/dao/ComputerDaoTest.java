@@ -24,7 +24,7 @@ public class ComputerDaoTest {
 	/*-- READ --*/
 	@Test
 	public void TestRead() throws Exception {
-		daoInstance.read(7);
+		assertEquals(7,daoInstance.read(7).getId());
 	}
 	
 	@Test (expected = FailedSQLQueryException.class)
@@ -41,7 +41,7 @@ public class ComputerDaoTest {
 	// id
 	@Test
 	public void TestCreateDeleteMinimal() throws Exception {
-		daoInstance.create(new Computer(750,"Ordinateur",null,null,0));
+		assertEquals(750,daoInstance.create(new Computer(750,"Ordinateur",null,null,0)).getId());
 		daoInstance.delete(new Computer(750,"Suppression",null,null,0));
 	}
 	
@@ -57,29 +57,29 @@ public class ComputerDaoTest {
 	
 	// dateIntro
 	@Test
-	public void TestCreateDateIntroductionANDBYID() throws Exception {
-		daoInstance.create(new Computer(753,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),null,0));
+	public void TestCreateDateIntroductionAndDeleteById() throws Exception {
+		assertEquals("2017-05-27 12:00:00.0",daoInstance.create(new Computer(753,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),null,0)).getDateIntro().toString());
 		daoInstance.deleteById(753);
 	}
 	
 	// dateDisc
 	@Test
 	public void TestCreateDateDiscontinued() throws Exception {
-		daoInstance.create(new Computer(754,"Ordinateur",null,Timestamp.valueOf("2017-05-27 12:00:00"),0));
+		assertEquals("2017-05-27 12:00:00.0",daoInstance.create(new Computer(754,"Ordinateur",null,Timestamp.valueOf("2017-05-27 12:00:00"),0)).getDateDisc().toString());
 		daoInstance.deleteById(754);
 	}
 	
 	// dateIntro + dateDisc
 	@Test
 	public void TestCreateMixedDates() throws Exception {
-		daoInstance.create(new Computer(755,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 12:50:00"),0));
+		assertEquals(755,daoInstance.create(new Computer(755,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 12:50:00"),0)).getId());
 		daoInstance.deleteById(755);
 	}
 	
 	// Company id
 	@Test
 	public void TestCreate() throws Exception {
-		daoInstance.create(new Computer(751,"Ordinateur",null,null,2));
+		assertEquals(2,daoInstance.create(new Computer(751,"Ordinateur",null,null,2)).getManufacturer());
 		daoInstance.deleteById(751);
 	}
 	
@@ -96,12 +96,12 @@ public class ComputerDaoTest {
 	/*-- UPDATE --*/
 	@Test
 	public void TestUpdate() throws Exception {
-		daoInstance.update(new Computer(8,"Computer",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 23:00:00"),5));
+		assertNotNull(daoInstance.update(new Computer(8,"Computer",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 23:00:00"),5)));
 	}
 	
 	@Test
 	public void TestUpdateReset() throws Exception {
-		daoInstance.update(new Computer(8,"Ordinateur",null,null,0));
+		assertNotNull(daoInstance.update(new Computer(8,"Ordinateur",null,null,0)));
 	}
 	
 	@Test (expected = FailedSQLQueryException.class)
@@ -138,7 +138,7 @@ public class ComputerDaoTest {
 	/*-- LISTALL --*/
 	@Test
 	public void TestListAll() throws Exception {
-		daoInstance.listAll();
+		assertTrue(daoInstance.listAll().size() > 0);
 	}
 	
 	/*-- LIST --*/

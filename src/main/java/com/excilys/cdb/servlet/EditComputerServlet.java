@@ -4,7 +4,7 @@ import javax.servlet.http.*;
 
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.servlet.model.SharedCompanyList;
-import com.excilys.cdb.servlet.model.editComputer.EditComputerValues;
+import com.excilys.cdb.servlet.model.editcomputer.EditComputerValues;
 
 public class EditComputerServlet extends Servlet {
 	private static final long serialVersionUID = 3052019L;

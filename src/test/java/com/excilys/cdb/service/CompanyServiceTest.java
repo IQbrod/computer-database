@@ -1,6 +1,6 @@
 package com.excilys.cdb.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -20,32 +20,32 @@ public class CompanyServiceTest {
 	
 	@Test
 	public void CreateTest() throws Exception {
-		serviceInstance.create(new Company(80,"Entreprise"));
+		assertEquals(80,serviceInstance.create(new Company(80,"Entreprise")).getId());
 	}
 	
 	@Test
 	public void ReadTest() throws Exception {
-		serviceInstance.read(80);
+		assertEquals(80,serviceInstance.read(80).getId());
 	}
 	
 	@Test
 	public void UpdateTest() throws Exception {
-		serviceInstance.update(new Company(5,"Updated"));
+		assertEquals("Updated",serviceInstance.update(new Company(5,"Updated")).getName());
 	}
 	
 	@Test
 	public void DeleteTest() throws Exception {
-		serviceInstance.delete(new Company(80,"DeleteMe"));
+		assertEquals(80,serviceInstance.delete(new Company(80,"DeleteMe")).getId());
 	}
 	
 	@Test
 	public void listAllTest() throws Exception {
-		serviceInstance.listAllElements();
+		assertTrue(serviceInstance.listAllElements().size() > 0);
 	}
 	
 	@Test
 	public void listTest() throws Exception {
-		serviceInstance.list(1, 20);
+		assertEquals(20,serviceInstance.list(1, 20).size());
 	}
 	
 	@Test

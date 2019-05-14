@@ -24,9 +24,9 @@ import com.excilys.cdb.spring.AppConfig;
 import com.excilys.cdb.validator.Validator;
 
 public abstract class Servlet extends HttpServlet {
-	private static final String errorAdminCall = "Please contact administrator";
+	private static final String ERROR_ADMIN_CALL = "Please contact administrator";
 	private static final long serialVersionUID = 3052019L;
-	protected final HashMap<String,ServletModel> modelMap = new HashMap<String,ServletModel>();
+	protected final HashMap<String,ServletModel> modelMap = new HashMap<>();
 	protected final Logger logger = LogManager.getLogger(this.getClass());
 	
 	protected final ConfigurableApplicationContext context;
@@ -70,13 +70,13 @@ public abstract class Servlet extends HttpServlet {
 		if (cause instanceof ServletException || cause instanceof IOException) {
 			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"GET");
 			this.log(cons, cause);
-			sendError(response, 500, cause.getMessage()+"\n"+Servlet.errorAdminCall);
+			sendError(response, 500, ERROR_ADMIN_CALL);
 		} else if (cause instanceof ShouldBeSentToClientException) {
 			this.log(cause);
 			sendError(response, 400, cause.getMessage());
 		} else if (cause instanceof ShouldOnlyBeLoggedException) {
 			this.log(cause);
-			sendError(response, 500, cause.getMessage()+"\n"+Servlet.errorAdminCall);
+			sendError(response, 500, ERROR_ADMIN_CALL);
 		} else {
 			sendError(response, 501, null);
 		}

@@ -1,15 +1,15 @@
 package com.excilys.cdb.enums;
 
 public enum CommandEnum {
-	Create("create","c"),
-	Read("read","r"),
-	Update("update","u"),
-	Delete("delete","d"),
-	List("list","l"),
-	ListAll("list","la"),
-	Help("help","h"),
-	Empty("",""),
-	Unknown("others","other");
+	CREATE("create","c"),
+	READ("read","r"),
+	UPDATE("update","u"),
+	DELETE("delete","d"),
+	LIST("list","l"),
+	LISTALL("list","la"),
+	HELP("help","h"),
+	EMPTY("",""),
+	UNKNOWN("others","other");
 	
 	private CommandEnum(String cmd, String shor) {
 		this.command = cmd;
@@ -25,6 +25,6 @@ public enum CommandEnum {
 				return comd;
 			}
 		}
-		return Unknown;
+		return UNKNOWN;
 	}
 }

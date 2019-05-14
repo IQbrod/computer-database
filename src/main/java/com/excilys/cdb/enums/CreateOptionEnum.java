@@ -1,11 +1,11 @@
 package com.excilys.cdb.enums;
 
 public enum CreateOptionEnum {
-	Name('n'),
-	Introduction('i'),
-	Discontinued('d'),
-	Company('c'),
-	Unknown(' ');
+	NAME('n'),
+	INTRODUCTION('i'),
+	DISCONTINUED('d'),
+	COMPANY('c'),
+	UNKNOWN(' ');
 	
 	private CreateOptionEnum(char shor) {
 		this.shortcut = shor;
@@ -19,6 +19,6 @@ public enum CreateOptionEnum {
 				return create;
 			}
 		}
-		return Unknown;
+		return UNKNOWN;
 	}
 }

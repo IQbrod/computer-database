@@ -23,13 +23,13 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 	public Computer dtoToModel(ComputerDto dtoObject) {
 		int id = this.idToInt(dtoObject.getId());
 		String name = dtoObject.getName();
-		Timestamp t1, t2;
+		Timestamp t1;
+		Timestamp t2;
 		t1 = (dtoObject.getIntroduction() == null) ? null : Timestamp.valueOf(dtoObject.getIntroduction()+" 12:00:00");
 		t2 = (dtoObject.getDiscontinued() == null) ? null : Timestamp.valueOf(dtoObject.getDiscontinued()+" 12:00:00");
 		int cid = this.idToInt(dtoObject.getCompanyId());
 			
-		Computer computer = new Computer(id,name,t1,t2,cid);
-		return computer;
+		return new Computer(id,name,t1,t2,cid);
 	}
 
 	@Override

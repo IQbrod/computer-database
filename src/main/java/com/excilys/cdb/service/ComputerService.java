@@ -18,7 +18,7 @@ public class ComputerService extends AbstractService<Computer>{
 	
 	public List<Computer> listByName(String name, int page, int size, String orderBy) {
 		return ((ComputerDao)this.dao).listByName(name, page, size, orderBy);
-	};
+	}
 	
 	public int countByName(String name) {
 		return ((ComputerDao)this.dao).countByName(name);

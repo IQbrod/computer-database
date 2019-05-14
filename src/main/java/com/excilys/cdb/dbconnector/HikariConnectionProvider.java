@@ -1,4 +1,4 @@
-package com.excilys.cdb.dbConnector;
+package com.excilys.cdb.dbconnector;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -22,17 +22,18 @@ public class HikariConnectionProvider {
 			bundle = ResourceBundle.getBundle("dbconfig_travis");
 		}
 		
+		String driver = bundle.getString("driver");
 		try {
-			Class.forName(bundle.getString("driver"));
+			Class.forName(driver);
 		} catch (ClassNotFoundException cause) {
-			DriverNotFoundException except = new DriverNotFoundException(bundle.getString("driver"));
+			DriverNotFoundException except = new DriverNotFoundException(driver);
 			LogManager.getLogger(HikariConnectionProvider.class).error(except.getMessage()+" caused by "+cause.getMessage(),cause);
 			throw except;
 		}
 		
 		HikariConfig config = new HikariConfig();
 		
-		config.setDriverClassName(bundle.getString("driver"));
+		config.setDriverClassName(driver);
 		config.setJdbcUrl(bundle.getString("url"));
 		config.setUsername(bundle.getString("username"));
 		config.setPassword(bundle.getString("password"));
