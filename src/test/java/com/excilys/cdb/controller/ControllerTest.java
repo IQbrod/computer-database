@@ -132,12 +132,12 @@ public class ControllerTest {
 		CliController.getInstance().treatMessage("L computer A 20");
 	}
 	
-	@Test (expected = InvalidPageValueException.class)
+	@Test (expected = InvalidIntegerException.class)
 	public void listForbiddenPageTest() throws Exception {
 		CliController.getInstance().treatMessage("L computer 0 20");
 	}
 	
-	@Test (expected = InvalidPageSizeException.class)
+	@Test (expected = InvalidIntegerException.class)
 	public void listForbiddenSizeTest() throws Exception {
 		CliController.getInstance().treatMessage("L computer 1 0");
 	}

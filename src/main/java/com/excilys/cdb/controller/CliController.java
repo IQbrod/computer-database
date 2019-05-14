@@ -97,7 +97,7 @@ public class CliController {
 	}
 	
 	private String castDate(String s) {
-		if (s.length() == 19) {
+		if (s.length() == 10) {
 			// Check Date Format
 			if (s.charAt(4) == '-' && s.charAt(7) == '-') {
 				return s;
