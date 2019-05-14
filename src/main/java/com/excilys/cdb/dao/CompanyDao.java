@@ -6,15 +6,15 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.dbConnector.HikariConnectionProvider;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
-@Component
+@Repository
 public class CompanyDao extends Dao<Company>{
-	private final String sqlDeleteLinkedComputer = "DELETE FROM computer WHERE company_id=?;";
+	private final static String sqlDeleteLinkedComputer = "DELETE FROM computer WHERE company_id=?;";
 	
 	public CompanyDao(HikariConnectionProvider hikariConn) {
 		super(
@@ -94,7 +94,7 @@ public class CompanyDao extends Dao<Company>{
 			connection.setAutoCommit(false);
 			
 			try (
-				PreparedStatement deleteComputer = connection.prepareStatement(this.sqlDeleteLinkedComputer);
+				PreparedStatement deleteComputer = connection.prepareStatement(CompanyDao.sqlDeleteLinkedComputer);
 				PreparedStatement deleteCompany = connection.prepareStatement(this.sqlDelete);
 			) {
 				deleteComputer.setInt(1, id);
@@ -107,13 +107,11 @@ public class CompanyDao extends Dao<Company>{
 				connection.commit();
 				return company;
 			} catch (SQLException e) {
-				if (connection != null) {
-					connection.rollback();
-				}
+				connection.rollback();
 				throw e;
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryBySQLException(this.sqlDeleteLinkedComputer+" or "+this.sqlDelete),e);
+			throw this.log(new FailedSQLQueryBySQLException(CompanyDao.sqlDeleteLinkedComputer+" or "+this.sqlDelete),e);
 		}
 	}
 
@@ -131,8 +129,7 @@ public class CompanyDao extends Dao<Company>{
 			
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
 				if(resultSet.first()) {
-					Company company = new Company(id,resultSet.getString("name"));
-					return company;
+					return new Company(id,resultSet.getString("name"));
 				} else {
 					throw this.log(new FailedSQLQueryException(this.sqlSelect));
 				}			
@@ -165,7 +162,7 @@ public class CompanyDao extends Dao<Company>{
 			preparedStatement.setInt(2, size);
 			
 			try(ResultSet r = preparedStatement.executeQuery()) {
-				List<Company> lst = new ArrayList<Company>();
+				List<Company> lst = new ArrayList<>();
 				while(r.next()) {
 					lst.add(new Company(r.getInt("id"),r.getString("name")));
 				}

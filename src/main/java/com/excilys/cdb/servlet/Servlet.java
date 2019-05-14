@@ -24,6 +24,7 @@ import com.excilys.cdb.spring.AppConfig;
 import com.excilys.cdb.validator.Validator;
 
 public abstract class Servlet extends HttpServlet {
+	private static final String errorAdminCall = "Please contact administrator";
 	private static final long serialVersionUID = 3052019L;
 	protected final HashMap<String,ServletModel> modelMap = new HashMap<String,ServletModel>();
 	protected final Logger logger = LogManager.getLogger(this.getClass());
@@ -54,9 +55,12 @@ public abstract class Servlet extends HttpServlet {
 		this.logger.error(ex.getMessage()+" caused by "+ cause.getMessage(), cause);
 	}
 	
-	protected void sendError(HttpServletResponse response, int code) {
+	protected void sendError(HttpServletResponse response, int code, String message) {
 		try {
-			response.sendError(500);
+			if (message == null)
+				response.sendError(code);
+			else
+				response.sendError(code, message);
 		} catch (IOException cause) {
 			this.log(new UnableToSendErrorCodeException(code), cause);
 		}		
@@ -66,13 +70,15 @@ public abstract class Servlet extends HttpServlet {
 		if (cause instanceof ServletException || cause instanceof IOException) {
 			UnexpectedServletException cons = new UnexpectedServletException(this.getServletName(),"GET");
 			this.log(cons, cause);
-			sendError(response, 500);
+			sendError(response, 500, cause.getMessage()+"\n"+Servlet.errorAdminCall);
 		} else if (cause instanceof ShouldBeSentToClientException) {
 			this.log(cause);
-			sendError(response, 400);
+			sendError(response, 400, cause.getMessage());
 		} else if (cause instanceof ShouldOnlyBeLoggedException) {
 			this.log(cause);
-			sendError(response, 500);
+			sendError(response, 500, cause.getMessage()+"\n"+Servlet.errorAdminCall);
+		} else {
+			sendError(response, 501, null);
 		}
 	}
 }

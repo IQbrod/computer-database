@@ -5,20 +5,20 @@ import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.dbConnector.HikariConnectionProvider;
 import com.excilys.cdb.enums.ComputerFields;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
-@Component
+@Repository
 public class ComputerDao extends Dao<Computer> {
-	private final String sqlSelectUpdate = "UPDATE computer SET company_id=? WHERE id=?;";
-	private final String sqlInsertNoId = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
-	private final String sqlCountByName = "SELECT count(id) FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) LIMIT ?,?";
+	private final static String sqlSelectUpdate = "UPDATE computer SET company_id=? WHERE id=?;";
+	private final static String sqlInsertNoId = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
+	private final static String sqlCountByName = "SELECT count(id) FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) LIMIT ?,?";
 	
-	private ComputerDao(HikariConnectionProvider hikariConn) {
+	public ComputerDao(HikariConnectionProvider hikariConn) {
 		super(
 			"INSERT INTO computer VALUES (?,?,?,?,?);",
 			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;",
@@ -46,7 +46,7 @@ public class ComputerDao extends Dao<Computer> {
 		} else if (aComputer.getId() == 0) {
 			try (
 				Connection connection = this.dataSource.getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(this.sqlInsertNoId,Statement.RETURN_GENERATED_KEYS)
+				PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.sqlInsertNoId,Statement.RETURN_GENERATED_KEYS)
 			) {
 				preparedStatement.setString(1, aComputer.getName());
 				preparedStatement.setTimestamp(2, aComputer.getDateIntro());
@@ -90,7 +90,7 @@ public class ComputerDao extends Dao<Computer> {
 		} else {
 			try (
 				Connection connection = this.dataSource.getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(this.sqlSelectUpdate);
+				PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.sqlSelectUpdate);
 			) {
 				preparedStatement.setInt(1, aComputer.getManufacturer());
 				preparedStatement.setInt(2, aComputer.getId());
@@ -100,7 +100,7 @@ public class ComputerDao extends Dao<Computer> {
 					return aComputer;
 				} else {
 					this.delete(aComputer);
-					throw this.log(new FailedSQLQueryException(this.sqlSelectUpdate));
+					throw this.log(new FailedSQLQueryException(ComputerDao.sqlSelectUpdate));
 				}
 			} catch (SQLException e) {
 				this.delete(aComputer);
@@ -238,7 +238,7 @@ public class ComputerDao extends Dao<Computer> {
 			preparedStatement.setInt(4, size);
 			
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				List<Computer> computerList = new ArrayList<Computer>();
+				List<Computer> computerList = new ArrayList<>();
 				while(resultSet.next()) {
 					computerList.add(new Computer(resultSet.getInt("id"),resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id")));
 				}
@@ -252,7 +252,7 @@ public class ComputerDao extends Dao<Computer> {
 	public int countByName(String name) {
 		try (
 			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCountByName);
+			PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.sqlCountByName);
 		) {
 			preparedStatement.setString(1, "%"+name+"%");
 			preparedStatement.setString(2, "%"+name+"%");
@@ -261,7 +261,7 @@ public class ComputerDao extends Dao<Computer> {
 				return (resultSet.next()) ? resultSet.getInt("count") : 0;
 			}
 		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryException(this.sqlCountByName),e);
+			throw this.log(new FailedSQLQueryException(ComputerDao.sqlCountByName),e);
 		}
 	}
 

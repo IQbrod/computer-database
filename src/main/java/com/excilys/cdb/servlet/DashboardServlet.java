@@ -55,15 +55,18 @@ public class DashboardServlet extends Servlet {
 			((DashboardPagination)this.modelMap.get("pagination")).setDefault();
 		}
 			
-		if (request.getParameter("page") != null)
+		if (request.getParameter("page") != null) {
+			this.validator.validatePagination(request.getParameter("page"));
 			((DashboardPagination)this.modelMap.get("pagination")).setPage(Integer.valueOf(request.getParameter("page")));
-		if (request.getParameter("size") != null)
+		}
+		if (request.getParameter("size") != null) {
+			this.validator.validatePagination(request.getParameter("size"));
 			((DashboardPagination)this.modelMap.get("pagination")).setSize(Integer.valueOf(request.getParameter("size")));
+		}
 		if (request.getParameter("search") != null)
 			((DashboardPagination)this.modelMap.get("pagination")).setSearch(request.getParameter("search"));
 		if (request.getParameter("orderBy") != null)
 			((DashboardPagination)this.modelMap.get("pagination")).setOrderBy(request.getParameter("orderBy"));
-		
 		
 		int page = ((DashboardPagination)this.modelMap.get("pagination")).getPage();
 		int size = ((DashboardPagination)this.modelMap.get("pagination")).getSize();

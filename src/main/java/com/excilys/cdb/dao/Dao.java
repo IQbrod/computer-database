@@ -39,9 +39,7 @@ public abstract class Dao<T extends Model> {
 		
 		try (
 			Connection connection = this.dataSource.getConnection();
-		) {
-			;
-		} catch (SQLException e) {
+		) {} catch (SQLException e) {
 			throw this.log(new DatabaseProblemException(dataSource.getJdbcUrl(), dataSource.getUsername(), dataSource.getPassword()), e);
 		}
 	}

@@ -16,11 +16,11 @@
 	</header>
 
 	<section id="main">
-		<div class="container">
+		<div class="container">	
 			<div class="alert alert-danger">
-				Error 400: Bad Request
+				Error 500: Internal Error
 				<br/>
-				<!-- stacktrace -->
+				${requestScope['javax.servlet.error.message']}
 			</div>
 		</div>
 	</section>
