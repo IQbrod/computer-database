@@ -12,7 +12,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Component
 public class HikariConnectionProvider {
-	public final HikariDataSource dataSource;
+	private final HikariDataSource dataSource;
 	
 	public HikariConnectionProvider() {
 		ResourceBundle bundle;
@@ -39,5 +39,9 @@ public class HikariConnectionProvider {
 		config.setPassword(bundle.getString("password"));
 		
 		dataSource = new HikariDataSource(config);
+	}
+
+	public HikariDataSource getDataSource() {
+		return dataSource;
 	}
 }

@@ -47,7 +47,7 @@ public class CompanyDaoTest {
 		daoInstance.create(new Company(-7,"Invalide"));
 	}
 	
-	@Test (expected = PrimaryKeyViolationException.class)
+	@Test (expected = KeyViolationException.class)
 	public void TestCreateDuplicateId() throws Exception {
 		daoInstance.create(new Company(4,"PrimaryKey"));
 	}

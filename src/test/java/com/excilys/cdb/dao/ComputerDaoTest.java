@@ -50,7 +50,7 @@ public class ComputerDaoTest {
 		daoInstance.create(new Computer(-7,"Ordinateur",null,null,0));
 	}
 	
-	@Test (expected = PrimaryKeyViolationException.class)
+	@Test (expected = KeyViolationException.class)
 	public void TestCreateDuplicateId() throws Exception {
 		daoInstance.create(new Computer(4,"Ordinateur",null,null,0));
 	}
@@ -83,12 +83,12 @@ public class ComputerDaoTest {
 		daoInstance.deleteById(751);
 	}
 	
-	@Test (expected = ForeignKeyViolationException.class)
+	@Test (expected = KeyViolationException.class)
 	public void TestCreateInvalidCompanyId() throws Exception {
 		daoInstance.create(new Computer(752,"Ordinateur",null,null,-5));
 	}
 	
-	@Test (expected = ForeignKeyViolationException.class)
+	@Test (expected = KeyViolationException.class)
 	public void TestCreateTooHighCompanyId() throws Exception {
 		daoInstance.create(new Computer(752,"Ordinateur",null,null,750));
 	}

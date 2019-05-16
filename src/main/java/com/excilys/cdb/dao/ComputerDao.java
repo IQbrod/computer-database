@@ -1,33 +1,37 @@
 package com.excilys.cdb.dao;
 
-import java.sql.*;
 import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.dbconnector.HikariConnectionProvider;
+import com.excilys.cdb.dao.mapper.ComputerRowMapper;
+import com.excilys.cdb.dbconnector.JdbcTemplateProvider;
 import com.excilys.cdb.enums.ComputerFields;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 @Repository
 public class ComputerDao extends Dao<Computer> {
-	private static final String SQL_SELECT_UPDATE = "UPDATE computer SET company_id=? WHERE id=?;";
-	private static final String SQL_INSERT_NOID = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?,?,?,?);";
-	private static final String SQL_COUNT_BY_NAME = "SELECT count(C.id) as count FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?)";
+	private static final String SQL_COUNT_BY_NAME = "SELECT count(C.id) as count FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(:like) or UPPER(D.name) LIKE UPPER(:like)";
 	
-	public ComputerDao(HikariConnectionProvider hikariConn) {
+	public ComputerDao(JdbcTemplateProvider jdbcTemplateProvider, ComputerRowMapper rowMapper) {
 		super(
-			"INSERT INTO computer VALUES (?,?,?,?,?);",
-			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;",
-			"DELETE FROM computer WHERE id=?;",
-			"SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id=?;",
-			"SELECT C.id as id, C.name as name, introduced, discontinued, company_id  FROM computer C LEFT OUTER JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(?) or UPPER(D.name) LIKE UPPER(?) ORDER BY ",
-			" LIMIT ?,?",
+			"INSERT INTO computer VALUES (:id,:name,:introduced,:discontinued,:company_id);",
+			"UPDATE computer SET name=:name, introduced=:introduced, discontinued=:discontinued, company_id=:company_id WHERE id=:id;",
+			"DELETE FROM computer WHERE id=:id;",
+			"SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id=:id;",
+			"SELECT C.id as id, C.name as name, introduced, discontinued, company_id  FROM computer C LEFT OUTER JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(:like) or UPPER(D.name) LIKE UPPER(:like) ORDER BY ",
+			" LIMIT :offset, :size",
 			"SELECT count(id) AS count FROM computer",
-			hikariConn
+			jdbcTemplateProvider,
+			rowMapper
 		);
 		this.logger = LogManager.getLogger(this.getClass());
 	}
@@ -36,82 +40,24 @@ public class ComputerDao extends Dao<Computer> {
 	protected Logger getLogger() {
 		return this.logger;
 	}
-
-	private void setupInsertNoIdPreparedStatement(PreparedStatement preparedStatement, Computer aComputer) throws SQLException {
-		preparedStatement.setString(1, aComputer.getName());
-		preparedStatement.setTimestamp(2, aComputer.getDateIntro());
-		preparedStatement.setTimestamp(3, aComputer.getDateDisc());
-		preparedStatement.setNull(4, java.sql.Types.INTEGER);
-	}
-	
-	private void setupInsertPreparedStatement(PreparedStatement preparedStatement, Computer aComputer) throws SQLException {
-		preparedStatement.setInt(1,aComputer.getId());
-		preparedStatement.setString(2, aComputer.getName());
-		preparedStatement.setTimestamp(3, aComputer.getDateIntro());
-		preparedStatement.setTimestamp(4, aComputer.getDateDisc());
-		preparedStatement.setNull(5, java.sql.Types.INTEGER);
-	}
 	
 	@Override
 	public Computer create(Computer aComputer) {
-		int nbRow = 0;
 		
 		if(aComputer.getId() < 0) {
 			throw this.log(new InvalidIdException(aComputer.getId()));
-		} else if (aComputer.getId() == 0) {
-			try (
-				Connection connection = this.dataSource.getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.SQL_INSERT_NOID,Statement.RETURN_GENERATED_KEYS)
-			) {
-				this.setupInsertNoIdPreparedStatement(preparedStatement, aComputer);				
-				nbRow = preparedStatement.executeUpdate();
-				
-				try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-					if (generatedKeys.next())
-						aComputer.setId((int)generatedKeys.getLong(1));
-					else
-						throw this.log(new FailedSQLQueryException(SQL_INSERT_NOID));
-				}
-			} catch (SQLException e) {
-				throw this.log(new PrimaryKeyViolationException(aComputer.getId()),e);
-			}
-		} else {
-			try (
-				Connection connection = this.dataSource.getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCreate)
-			) {
-				this.setupInsertPreparedStatement(preparedStatement, aComputer);
-				nbRow = preparedStatement.executeUpdate();
-			} catch (SQLException e) {
-				throw this.log(new PrimaryKeyViolationException(aComputer.getId()),e);
-			}
 		}
-		
-		if (aComputer.getManufacturer() == 0) {
-			if (nbRow == 1) {
+		try {
+			SqlParameterSource params = new BeanPropertySqlParameterSource(aComputer);
+			if (this.namedTemplate.update(this.sqlCreate, params) == 1)
 				return aComputer;
-			} else {
+			else {
 				throw this.log(new FailedSQLQueryException(this.sqlCreate));
 			}
-		} else {
-			try (
-				Connection connection = this.dataSource.getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.SQL_SELECT_UPDATE);
-			) {
-				preparedStatement.setInt(1, aComputer.getManufacturer());
-				preparedStatement.setInt(2, aComputer.getId());
-				
-				nbRow += preparedStatement.executeUpdate();
-				if (nbRow == 2) {
-					return aComputer;
-				} else {
-					this.delete(aComputer);
-					throw this.log(new FailedSQLQueryException(ComputerDao.SQL_SELECT_UPDATE));
-				}
-			} catch (SQLException e) {
-				this.delete(aComputer);
-				throw this.log(new ForeignKeyViolationException(aComputer.getManufacturer(), "company"),e);
-			}
+		} catch (DuplicateKeyException exception) {
+			throw this.log(new KeyViolationException(aComputer.getId()));			
+		} catch (DataAccessException exception) {
+			throw this.log(new FailedSQLQueryException(this.sqlCreate));
 		}
 	}
 
@@ -121,27 +67,18 @@ public class ComputerDao extends Dao<Computer> {
 			throw this.log(new InvalidIdException(aComputer.getId()));
 		}
 		
-		try (
-			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlUpdate);
-		) {
-			preparedStatement.setString(1, aComputer.getName());
-			preparedStatement.setTimestamp(2, aComputer.getDateIntro());
-			preparedStatement.setTimestamp(3, aComputer.getDateDisc());
-			if (aComputer.getManufacturer() == 0) {
-				preparedStatement.setNull(4, java.sql.Types.INTEGER);
-			} else {
-				preparedStatement.setInt(4, aComputer.getManufacturer());
-			}
-			preparedStatement.setInt(5, aComputer.getId());
+		try {
+			SqlParameterSource params = new BeanPropertySqlParameterSource(aComputer);
 
-			if (preparedStatement.executeUpdate() == 1) {
-				return this.read(aComputer.getId());
-			} else {
+			if (this.namedTemplate.update(this.sqlCreate, params) == 1)
+				return aComputer;
+			else {
 				throw this.log(new FailedSQLQueryException(this.sqlUpdate));
-			}		
-		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryBySQLException(this.sqlUpdate),e);
+			}	
+		} catch (DuplicateKeyException exception) {
+			throw this.log(new KeyViolationException(aComputer.getId()));			
+		} catch (DataAccessException exception) {
+			throw this.log(new FailedSQLQueryException(this.sqlUpdate));
 		}
 	}
 
@@ -153,18 +90,12 @@ public class ComputerDao extends Dao<Computer> {
 	@Override
 	public Computer deleteById(int id) {
 		Computer returnComputer = this.read(id);
-		try (
-			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlDelete);
-		) {
-			preparedStatement.setInt(1, id);
-			
-			if (preparedStatement.executeUpdate() == 1) {
-				return returnComputer;
-			} else {
-				throw this.log(new FailedSQLQueryException(this.sqlDelete));
-			}
-		} catch (SQLException e) {
+		try {
+			MapSqlParameterSource params = new MapSqlParameterSource();
+			params.addValue("id", id);
+			this.namedTemplate.update(this.sqlDelete, params);
+			return returnComputer;
+		} catch (DataAccessException e) {
 			throw this.log(new FailedSQLQueryBySQLException(this.sqlDelete),e);
 		}
 	}
@@ -175,35 +106,20 @@ public class ComputerDao extends Dao<Computer> {
 			throw this.log(new InvalidIdException(id));
 		}
 		
-		try (
-			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlSelect);
-		) {
-			preparedStatement.setInt(1, id);
-			
-			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				if(resultSet.first()) {
-					return new Computer(id,resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id"));
-				} else {
-					throw this.log(new FailedSQLQueryException(this.sqlSelect));
-				}
-			}
-		} catch (SQLException e) {
+		try {
+			MapSqlParameterSource params = new MapSqlParameterSource();
+			params.addValue("id", id);
+			return this.namedTemplate.query(this.sqlSelect, params, this.rowMapper).get(0);
+		} catch (DataAccessException e) {
 			throw this.log(new FailedSQLQueryBySQLException(this.sqlSelect),e);
 		}
 	}
 	
 	@Override
 	public int count() {
-		try (
-			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCount);
-		) {
-			
-			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				return (resultSet.next()) ? resultSet.getInt("count") : 0;
-			}
-		} catch (SQLException e) {
+		try {			
+			return this.template.queryForObject(this.sqlCount, Integer.class);
+		} catch (DataAccessException e) {
 			throw this.log(new FailedSQLQueryException(this.sqlCount),e);
 		}
 	}	
@@ -225,48 +141,31 @@ public class ComputerDao extends Dao<Computer> {
 	}
 	
 	public List<Computer> listByName(String name, int page, int size, String orderBy) {
-		if (size <= 0) {
+		if (size <= 0)
 			throw this.log(new InvalidPageSizeException(size));
-		}
-		if (page <= 0) {
+		if (page <= 0)
 			throw this.log(new InvalidPageValueException(page));
-			
-		}
 		int offset = (page-1)*size;
 		
-		try (
-			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlList+ ComputerFields.getOrderByField(orderBy).getField() + sqlLimit);
-		) {
-			preparedStatement.setString(1, "%"+name+"%");
-			preparedStatement.setString(2, "%"+name+"%");
-			preparedStatement.setInt(3, offset);
-			preparedStatement.setInt(4, size);
+		try {
+			MapSqlParameterSource params = new MapSqlParameterSource();
+			params.addValue("like", "%"+name+"%");
+			params.addValue("offset", offset);
+			params.addValue("size", size);
 			
-			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				List<Computer> computerList = new ArrayList<>();
-				while(resultSet.next()) {
-					computerList.add(new Computer(resultSet.getInt("id"),resultSet.getString("name"),resultSet.getTimestamp("introduced"),resultSet.getTimestamp("discontinued"), resultSet.getInt("company_id")));
-				}
-				return computerList;
-			}			
-		} catch (SQLException e) {
+			return this.namedTemplate.query(this.sqlList+ ComputerFields.getOrderByField(orderBy).getField() + sqlLimit, params, this.rowMapper);		
+		} catch (DataAccessException e) {
 			throw this.log(new FailedSQLQueryException(this.sqlList),e);
 		}
 	}
 	
 	public int countByName(String name) {
-		try (
-			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(ComputerDao.SQL_COUNT_BY_NAME);
-		) {
-			preparedStatement.setString(1, "%"+name+"%");
-			preparedStatement.setString(2, "%"+name+"%");
+		try {
+			MapSqlParameterSource params = new MapSqlParameterSource();
+			params.addValue("like", "%"+name+"%");
 			
-			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				return (resultSet.next()) ? resultSet.getInt("count") : 0;
-			}
-		} catch (SQLException e) {
+			return this.namedTemplate.queryForObject(ComputerDao.SQL_COUNT_BY_NAME, params, Integer.class);
+		} catch (DataAccessException e) {
 			throw this.log(new FailedSQLQueryException(ComputerDao.SQL_COUNT_BY_NAME),e);
 		}
 	}

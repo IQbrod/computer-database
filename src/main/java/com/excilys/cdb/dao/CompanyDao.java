@@ -1,14 +1,20 @@
 package com.excilys.cdb.dao;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.dbconnector.HikariConnectionProvider;
+import com.excilys.cdb.dao.mapper.CompanyRowMapper;
+import com.excilys.cdb.dbconnector.JdbcTemplateProvider;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
@@ -16,16 +22,19 @@ import com.excilys.cdb.model.*;
 public class CompanyDao extends Dao<Company>{
 	private static final String SQL_DELETE_LINKED_COMPUTERS = "DELETE FROM computer WHERE company_id=?;";
 	
-	public CompanyDao(HikariConnectionProvider hikariConn) {
+	public CompanyDao(JdbcTemplateProvider templateProvider, CompanyRowMapper rowMapper) {		
 		super(
-			"INSERT INTO company VALUES (?,?);",
-			"UPDATE company SET name=? WHERE id=?;",
+			"INSERT INTO company VALUES (:id,:name);",
+			"UPDATE company SET name=:name WHERE id=:id;",
+			
 			"DELETE FROM company WHERE id=?;",
-			"SELECT id, name FROM company WHERE id=?;",
+			
+			"SELECT id, name FROM company WHERE id=:id;",
 			"SELECT id, name FROM company",
-			" LIMIT ?,?;",
+			" LIMIT :offset,:size;",
 			"SELECT count(id) AS count FROM company",
-			hikariConn
+			templateProvider,
+			rowMapper
 		);
 		
 		this.logger = LogManager.getLogger(this.getClass());
@@ -42,46 +51,40 @@ public class CompanyDao extends Dao<Company>{
 			throw this.log(new InvalidIdException(aCompany.getId()));
 		}
 		
-		try (
-			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCreate);
-		) {
-			preparedStatement.setInt(1,aCompany.getId());
-			preparedStatement.setString(2, aCompany.getName());
+		try {
+			SqlParameterSource params = new BeanPropertySqlParameterSource(aCompany);
 			
-			int nbRow = preparedStatement.executeUpdate();
-			if (nbRow == 1)
+			if (this.namedTemplate.update(this.sqlCreate, params) == 1)
 				return aCompany;
 			else {
 				throw this.log(new FailedSQLQueryException(this.sqlCreate));
 			}
-		} catch (SQLException e) {
-			throw this.log(new PrimaryKeyViolationException(aCompany.getId()),e);
+		} catch (DuplicateKeyException exception) {
+			throw this.log(new KeyViolationException(aCompany.getId()));			
+		} catch (DataAccessException exception) {
+			throw this.log(new FailedSQLQueryException(this.sqlCreate));
 		}
 	}
 
 	@Override
 	public Company update(Company aCompany) {
-		Company company = this.read(aCompany.getId());
-		try (
-			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlUpdate);
-		) {
-			company.setName(aCompany.getName());
-
-			preparedStatement.setString(1, company.getName());
-			preparedStatement.setInt(2, aCompany.getId());
+		this.read(aCompany.getId());
+		try {
+			SqlParameterSource params = new BeanPropertySqlParameterSource(aCompany);
 			
-			if (preparedStatement.executeUpdate() == 1) 
-				return company;
+			if (this.namedTemplate.update(this.sqlUpdate, params) == 1) 
+				return aCompany;
 			else {
 				throw this.log(new FailedSQLQueryException(this.sqlUpdate));
 			}
-		} catch (SQLException e) {
-			throw this.log(new FailedSQLQueryBySQLException(this.sqlUpdate),e);
+		} catch (DuplicateKeyException exception) {
+			throw this.log(new KeyViolationException(aCompany.getId()));			
+		} catch (DataAccessException exception) {
+			throw this.log(new FailedSQLQueryException(this.sqlCreate));
 		}
 	}
 
+	
 	@Override
 	public Company delete(Company aCompany) {
 		return this.deleteById(aCompany.getId());
@@ -90,7 +93,7 @@ public class CompanyDao extends Dao<Company>{
 	@Override
 	public Company deleteById(int id) {
 		Company company = this.read(id);
-		try (Connection connection = this.dataSource.getConnection();) {
+		try (Connection connection = DataSourceUtils.getConnection(this.namedTemplate.getJdbcTemplate().getDataSource());) {
 			connection.setAutoCommit(false);
 			
 			try (
@@ -117,24 +120,14 @@ public class CompanyDao extends Dao<Company>{
 
 	@Override
 	public Company read(int id) {
-		if(id <= 0) {
+		if(id <= 0)
 			throw this.log(new InvalidIdException(id));
-		}
 		
-		try (
-			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlSelect);
-		) {
-			preparedStatement.setInt(1, id);
-			
-			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				if(resultSet.first()) {
-					return new Company(id,resultSet.getString("name"));
-				} else {
-					throw this.log(new FailedSQLQueryException(this.sqlSelect));
-				}			
-			}
-		} catch (SQLException e) {
+		try {
+			MapSqlParameterSource params = new MapSqlParameterSource();
+			params.addValue("id", id);
+			return this.namedTemplate.query(this.sqlSelect, params, this.rowMapper).get(0);
+		} catch (IndexOutOfBoundsException | DataAccessException e) {
 			throw this.log(new FailedSQLQueryException(this.sqlSelect),e);
 		}
 	}
@@ -146,44 +139,28 @@ public class CompanyDao extends Dao<Company>{
 	
 	@Override
 	public List<Company> list(int page, int size) {
-		if (size <= 0) {
+		if (size <= 0)
 			throw this.log(new InvalidPageSizeException(size));
-		}
-		if (page <= 0) {
+		if (page <= 0)
 			throw this.log(new InvalidPageValueException(page));
-		}
 		int offset = (page-1)*size;
 		
-		try (
-			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlList+this.sqlLimit);
-		) {
-			preparedStatement.setInt(1, offset);
-			preparedStatement.setInt(2, size);
+		try {
+			MapSqlParameterSource params = new MapSqlParameterSource();
+			params.addValue("offset", offset);
+			params.addValue("size", size);
 			
-			try(ResultSet r = preparedStatement.executeQuery()) {
-				List<Company> lst = new ArrayList<>();
-				while(r.next()) {
-					lst.add(new Company(r.getInt("id"),r.getString("name")));
-				}
-				return lst;
-			}
-		} catch (SQLException e) {
+			return this.namedTemplate.query(this.sqlList+sqlLimit, params, this.rowMapper);
+		} catch (DataAccessException e) {
 			throw this.log(new FailedSQLQueryException(this.sqlList),e);
 		}
 	}
 	
 	@Override
 	public int count() {
-		try (
-			Connection connection = this.dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(this.sqlCount);
-		) {
-			
-			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				return (resultSet.next()) ? resultSet.getInt("count") : 0;
-			}
-		} catch (SQLException e) {
+		try {
+			return this.template.queryForObject(this.sqlCount, Integer.class);
+		} catch (DataAccessException e) {
 			throw this.log(new FailedSQLQueryException(this.sqlCount),e);
 		}
 	}

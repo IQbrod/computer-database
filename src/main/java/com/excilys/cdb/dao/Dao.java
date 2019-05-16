@@ -1,18 +1,19 @@
 package com.excilys.cdb.dao;
 
-import java.sql.*;
 import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.excilys.cdb.dbconnector.HikariConnectionProvider;
-import com.excilys.cdb.exception.*;
+import com.excilys.cdb.dbconnector.JdbcTemplateProvider;
 import com.excilys.cdb.model.Model;
-import com.zaxxer.hikari.HikariDataSource;
 
 public abstract class Dao<T extends Model> {
-	protected HikariDataSource dataSource;
+	protected NamedParameterJdbcTemplate namedTemplate;
+	protected JdbcTemplate template;
 	
 	protected final String sqlCreate;
 	protected final String sqlUpdate;
@@ -22,9 +23,11 @@ public abstract class Dao<T extends Model> {
 	protected final String sqlLimit;
 	protected final String sqlCount;
 	
+	protected RowMapper<T> rowMapper;
+	
 	protected Logger logger;
 	
-	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlList, String sqlLimit, String sqlCount, HikariConnectionProvider hikariConn) {
+	protected Dao(String sqlCreate, String sqlUpdate, String sqlDelete, String sqlSelect, String sqlList, String sqlLimit, String sqlCount, JdbcTemplateProvider templateProvider, RowMapper<T> rowMapper) {
 		this.sqlCreate = sqlCreate;
 		this.sqlUpdate = sqlUpdate;
 		this.sqlDelete = sqlDelete;
@@ -32,16 +35,10 @@ public abstract class Dao<T extends Model> {
 		this.sqlList = sqlList;
 		this.sqlLimit = sqlLimit;
 		this.sqlCount = sqlCount;
-		
-		logger = LogManager.getLogger(this.getClass());
-		
-		dataSource = hikariConn.dataSource;
-		
-		try (
-			Connection connection = this.dataSource.getConnection();
-		) {} catch (SQLException e) {
-			throw this.log(new DatabaseProblemException(dataSource.getJdbcUrl(), dataSource.getUsername(), dataSource.getPassword()), e);
-		}
+		this.namedTemplate = templateProvider.getJdbcTemplateNamedParameter();
+		this.template = templateProvider.getJdbcTemplate();
+		this.rowMapper = rowMapper;
+		this.logger = LogManager.getLogger(this.getClass());
 	}
 	
 	public abstract T create(T obj);
