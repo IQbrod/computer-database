@@ -9,9 +9,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.excilys.cdb.dbconnector.JdbcTemplateProvider;
-import com.excilys.cdb.model.Model;
+import com.excilys.cdb.model.AbstractModel;
 
-public abstract class Dao<T extends Model> {
+public abstract class Dao<T extends AbstractModel> {
 	protected NamedParameterJdbcTemplate namedTemplate;
 	protected JdbcTemplate template;
 	

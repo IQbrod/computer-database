@@ -23,7 +23,7 @@ public class ComputerDao extends Dao<Computer> {
 	
 	public ComputerDao(JdbcTemplateProvider jdbcTemplateProvider, ComputerRowMapper rowMapper) {
 		super(
-			"INSERT INTO computer VALUES (:id,:name,:introduced,:discontinued,:company_id);",
+			"INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (:name,:introduced,:discontinued,:company_id);",
 			"UPDATE computer SET name=:name, introduced=:introduced, discontinued=:discontinued, company_id=:company_id WHERE id=:id;",
 			"DELETE FROM computer WHERE id=:id;",
 			"SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id=:id;",
@@ -43,7 +43,6 @@ public class ComputerDao extends Dao<Computer> {
 	
 	@Override
 	public Computer create(Computer aComputer) {
-		
 		if(aComputer.getId() < 0) {
 			throw this.log(new InvalidIdException(aComputer.getId()));
 		}

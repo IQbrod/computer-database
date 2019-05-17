@@ -1,6 +1,6 @@
 package com.excilys.cdb.model;
 
-public class Company extends Model{
+public class Company extends AbstractModel{
 	private String name;
 	
 	public Company(int id, String name) {

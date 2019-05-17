@@ -2,18 +2,18 @@ package com.excilys.cdb.model;
 
 import java.sql.*;
 
-public class Computer extends Model {
+public class Computer extends AbstractModel {
 	private String name;
-	private Timestamp dateIntro;
-	private Timestamp dateDisc;
-	private int manufacturer;
+	private Timestamp introduced;
+	private Timestamp discontinued;
+	private Integer company_id;
 	
-	public Computer(int id, String name, Timestamp dateIntro, Timestamp dateDisc, int manufacturer) {
+	public Computer(int id, String name, Timestamp dateIntro, Timestamp dateDisc, Integer manufacturer) {
 		super(id);
 		this.setName(name);
-		this.setDateIntro(dateIntro);
-		this.setDateDisc(dateDisc);
-		this.setManufacturer(manufacturer);
+		this.setIntroduced(dateIntro);
+		this.setDiscontinued(dateDisc);
+		this.setCompany_id(manufacturer);
 	}
 
 	public String getName() {
@@ -24,30 +24,30 @@ public class Computer extends Model {
 		this.name = name;
 	}
 
-	public Timestamp getDateIntro() {
-		return dateIntro;
+	public Timestamp getIntroduced() {
+		return introduced;
 	}
 
-	public void setDateIntro(Timestamp dateIntro) {
-		this.dateIntro = dateIntro;
+	public void setIntroduced(Timestamp dateIntro) {
+		this.introduced = dateIntro;
 	}
 
-	public Timestamp getDateDisc() {
-		return dateDisc;
+	public Timestamp getDiscontinued() {
+		return discontinued;
 	}
 
-	public void setDateDisc(Timestamp dateDisc) {
-		this.dateDisc = dateDisc;
-	}
-
-	public int getManufacturer() {
-		return manufacturer;
-	}
-
-	public void setManufacturer(int manufacturer) {
-		this.manufacturer = manufacturer;
+	public void setDiscontinued(Timestamp dateDisc) {
+		this.discontinued = dateDisc;
 	}
 	
+	public Integer getCompany_id() {
+		return company_id;
+	}
+
+	public void setCompany_id(Integer company_id) {
+		this.company_id = company_id;
+	}
+
 	@Override
 	public boolean equals(Object object) {
 		if (object == this)
@@ -63,9 +63,9 @@ public class Computer extends Model {
 	public int hashCode() {
 		int result = 31*17 + this.getId();
 		result = 31*result + this.getName().hashCode();
-		result = 31*result + ((this.getDateIntro() == null) ? 0 : this.getDateIntro().hashCode());
-		result = 31*result + ((this.getDateDisc() == null) ? 0 : this.getDateDisc().hashCode());
-		result = 31*result + this.getManufacturer();
+		result = 31*result + ((this.getIntroduced() == null) ? 0 : this.getIntroduced().hashCode());
+		result = 31*result + ((this.getDiscontinued() == null) ? 0 : this.getDiscontinued().hashCode());
+		result = 31*result + this.getCompany_id();
 		
 		
 		return result;

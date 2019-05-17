@@ -18,7 +18,7 @@ import com.excilys.cdb.exception.*;
 import com.excilys.cdb.mapper.CompanyMapper;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.service.*;
-import com.excilys.cdb.spring.AppConfig;
+import com.excilys.cdb.spring.WebMvcConfig;
 import com.excilys.cdb.validator.Validator;
 
 public class CliController {
@@ -37,7 +37,7 @@ public class CliController {
 	private final Validator validator;
 	
 	public CliController() {
-		try (ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class)) {
+		try (ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(WebMvcConfig.class)) {
 			this.computerMapper = context.getBean(ComputerMapper.class);
 			this.companyMapper = context.getBean(CompanyMapper.class);
 			this.computerService = context.getBean(ComputerService.class);

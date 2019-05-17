@@ -1,41 +1,49 @@
 package com.excilys.cdb.servlet;
 
-import javax.servlet.http.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.*;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.excilys.cdb.dto.ComputerDto;
-import com.excilys.cdb.servlet.model.SharedCompanyList;
+import com.excilys.cdb.mapper.CompanyMapper;
+import com.excilys.cdb.mapper.ComputerMapper;
+import com.excilys.cdb.service.*;
+import com.excilys.cdb.validator.Validator;
 
-public class AddComputerServlet extends Servlet {
-	private static final long serialVersionUID = 29042019L;	
+@Controller
+public class AddComputerServlet {
 	
-	public AddComputerServlet() {
-		super();
-		this.modelMap.put("companyList", context.getBean(SharedCompanyList.class));
-	}
-
-	@Override
-	public void doGet( HttpServletRequest request, HttpServletResponse response ) {
-		try {
-			
-			this.flushSetup(request);
-			this.getServletContext().getRequestDispatcher("/WEB-INF/views/addComputer.jsp").forward( request, response );
-			
-		} catch (Exception e) {
-			this.treatException(e, response);
-		}
+	@Autowired
+	private ComputerService computerService;
+	@Autowired
+	private CompanyService companyService;
+	@Autowired
+	private CompanyMapper companyMapper;
+	@Autowired
+	private ComputerMapper computerMapper;
+	@Autowired
+	private Validator validator;
+	
+	@GetMapping("/addComputer")
+	public String get(Model model) {
+		model.addAttribute("companyList",this.companyService.listAllElements().stream().map(this.companyMapper::modelToDto).collect(Collectors.toList()));
+		return "addComputer";
 	}
 	
-	@Override
-	public void doPost( HttpServletRequest request, HttpServletResponse response ) {
-		try {
-			
-			ComputerDto computerFromFields = new ComputerDto("0",request.getParameter("computerName"),request.getParameter("introduced").equals("") ? null : request.getParameter("introduced") ,request.getParameter("discontinued").equals("") ? null : request.getParameter("discontinued"),request.getParameter("companyId"),"None");
-			this.validator.validateComputerDto(computerFromFields);
-			this.computerService.create(this.computerMapper.dtoToModel(computerFromFields));
-			response.sendRedirect(this.getServletContext().getContextPath()+"/");
-			
-		} catch (Exception e) {
-			this.treatException(e, response);
-		}
+	@PostMapping("/addComputer")
+	public RedirectView post(
+		@RequestParam("computerName") String name,
+		@RequestParam("introduced") String introduced,
+		@RequestParam("discontinued") String discontinued,
+		@RequestParam("companyId") String company_id
+	) {
+		ComputerDto computerDto = new ComputerDto("0", name, introduced.equals("") ? null : introduced, discontinued.equals("") ? null : discontinued, company_id,"None");
+		this.validator.validateComputerDto(computerDto);
+		this.computerService.create(this.computerMapper.dtoToModel(computerDto));
+		return new RedirectView("dashboard");
 	}
 }

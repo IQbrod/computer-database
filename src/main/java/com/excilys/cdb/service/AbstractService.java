@@ -3,10 +3,10 @@ package com.excilys.cdb.service;
 import java.util.*;
 
 import com.excilys.cdb.dao.Dao;
-import com.excilys.cdb.model.Model;
+import com.excilys.cdb.model.AbstractModel;
 
 
-public abstract class AbstractService<U extends Model> {
+public abstract class AbstractService<U extends AbstractModel> {
 	protected Dao<U> dao;
 	
 	protected AbstractService(Dao<U> dao) {

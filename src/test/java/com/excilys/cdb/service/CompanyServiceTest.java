@@ -9,10 +9,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.spring.AppConfig;
+import com.excilys.cdb.spring.WebMvcConfig;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes= AppConfig.class)
+@ContextConfiguration(classes= WebMvcConfig.class)
 public class CompanyServiceTest {
 	
 	@Autowired

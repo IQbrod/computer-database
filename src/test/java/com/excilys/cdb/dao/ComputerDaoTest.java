@@ -12,10 +12,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.spring.AppConfig;
+import com.excilys.cdb.spring.WebMvcConfig;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes= AppConfig.class)
+@ContextConfiguration(classes= WebMvcConfig.class)
 public class ComputerDaoTest {
 	
 	@Autowired
@@ -58,14 +58,14 @@ public class ComputerDaoTest {
 	// dateIntro
 	@Test
 	public void TestCreateDateIntroductionAndDeleteById() throws Exception {
-		assertEquals("2017-05-27 12:00:00.0",daoInstance.create(new Computer(753,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),null,0)).getDateIntro().toString());
+		assertEquals("2017-05-27 12:00:00.0",daoInstance.create(new Computer(753,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),null,0)).getIntroduced().toString());
 		daoInstance.deleteById(753);
 	}
 	
 	// dateDisc
 	@Test
 	public void TestCreateDateDiscontinued() throws Exception {
-		assertEquals("2017-05-27 12:00:00.0",daoInstance.create(new Computer(754,"Ordinateur",null,Timestamp.valueOf("2017-05-27 12:00:00"),0)).getDateDisc().toString());
+		assertEquals("2017-05-27 12:00:00.0",daoInstance.create(new Computer(754,"Ordinateur",null,Timestamp.valueOf("2017-05-27 12:00:00"),0)).getDiscontinued().toString());
 		daoInstance.deleteById(754);
 	}
 	
@@ -79,7 +79,7 @@ public class ComputerDaoTest {
 	// Company id
 	@Test
 	public void TestCreate() throws Exception {
-		assertEquals(2,daoInstance.create(new Computer(751,"Ordinateur",null,null,2)).getManufacturer());
+		assertEquals(2,daoInstance.create(new Computer(751,"Ordinateur",null,null,2)).getCompany_id().intValue());
 		daoInstance.deleteById(751);
 	}
 	

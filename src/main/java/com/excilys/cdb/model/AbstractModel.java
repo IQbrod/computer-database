@@ -1,9 +1,9 @@
 package com.excilys.cdb.model;
 
-public abstract class Model {
+public abstract class AbstractModel {
 	protected int id;
 	
-	public Model(int id) {
+	public AbstractModel(int id) {
 		this.id = id;
 	}
 	

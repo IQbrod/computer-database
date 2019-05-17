@@ -13,7 +13,7 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="dashboard"> Application - Computer Database </a>
+            <a class="navbar-brand" href="${pageContext.request.contextPath}"> Application - Computer Database </a>
         </div>
     </header>
 
@@ -26,7 +26,7 @@
                 <div class="pull-left">
                     <form id="searchForm" action="" method="GET" class="form-inline">
 
-                        <input type="search" id="searchbox" name="search" class="form-control" placeholder="Search name" value='${search.equals(" ") ? "" : search}' />
+                        <input type="search" id="searchbox" name="search" class="form-control" placeholder="Search name" value='${pagination.search}' />
                         <input type="submit" id="searchsubmit" value="Filter by name"
                         class="btn btn-primary" />
                     </form>
@@ -108,13 +108,13 @@
                       <span aria-hidden="true">&laquo;</span>
                   	</a>
               	</li>
-	            <li><a href="?page=${medianPage-2}">${medianPage-2}</a></li>
-	            <li><a href="?page=${medianPage-1}">${medianPage-1}</a></li>
-	            <li><a href="?page=${medianPage}">${medianPage}</a></li>
-	            <li><a href="?page=${medianPage+1}">${medianPage+1}</a></li>
-	            <li><a href="?page=${medianPage+2}">${medianPage+2}</a></li>
+	            <li><a href="?page=${pagination.medianPage-2}">${pagination.medianPage-2}</a></li>
+	            <li><a href="?page=${pagination.medianPage-1}">${pagination.medianPage-1}</a></li>
+	            <li><a href="?page=${pagination.medianPage}">${pagination.medianPage}</a></li>
+	            <li><a href="?page=${pagination.medianPage+1}">${pagination.medianPage+1}</a></li>
+	            <li><a href="?page=${pagination.medianPage+2}">${pagination.medianPage+2}</a></li>
 	            <li>
-	              	<a href="?page=${maxPage}" aria-label="End">
+	              	<a href="?page=${pagination.maxPage}" aria-label="End">
 	                	<span aria-hidden="true">&raquo;</span>
 	              	</a>
 	            </li>
