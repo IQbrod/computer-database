@@ -69,7 +69,7 @@ public class ComputerDao extends Dao<Computer> {
 		try {
 			SqlParameterSource params = new BeanPropertySqlParameterSource(aComputer);
 
-			if (this.namedTemplate.update(this.sqlCreate, params) == 1)
+			if (this.namedTemplate.update(this.sqlUpdate, params) == 1)
 				return aComputer;
 			else {
 				throw this.log(new FailedSQLQueryException(this.sqlUpdate));

@@ -7,7 +7,16 @@ public class Pagination {
 	private int size;
 	private String search;
 	private String orderBy;
+	private int nbComputer;
 	
+	public int getNbComputer() {
+		return nbComputer;
+	}
+
+	public void setNbComputer(int nbComputer) {
+		this.nbComputer = nbComputer;
+	}
+
 	public Pagination() {
 		this.reset();
 	}
@@ -19,6 +28,7 @@ public class Pagination {
 		this.size = 10;
 		this.search = "";
 		this.orderBy = "";
+		this.nbComputer = 0;
 	}
 
 	public int getPage() {

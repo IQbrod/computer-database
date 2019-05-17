@@ -33,11 +33,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>
-                                <input type="date" class="form-control" name="introduced" id="introduced" value="${computer.getIntroduction()}">
+                                <input type="date" class="form-control" name="introduced" id="introduced" placeholder="YYYY-MM-DD" value="${computer.getIntroduction()}">
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
-                                <input type="date" class="form-control" name="discontinued" id="discontinued" value="${computer.getDiscontinued()}">
+                                <input type="date" class="form-control" name="discontinued" id="discontinued" placeholder="YYYY-MM-DD" value="${computer.getDiscontinued()}">
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>

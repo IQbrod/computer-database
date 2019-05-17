@@ -48,11 +48,10 @@ public class DashboardServlet {
 			pagination.setOrderBy(orderBy);
 
 		List<ComputerDto> computerList = this.computerService.listByName(pagination.getSearch(), pagination.getPage(), pagination.getSize(), pagination.getOrderBy()).stream().map(this.computerMapper::modelToDto).collect(Collectors.toList());
-		int nbComputer = this.computerService.countByName(pagination.getSearch());
-		model.addAttribute("nbComputer", nbComputer);
+		pagination.setNbComputer(this.computerService.countByName(pagination.getSearch()));
 		model.addAttribute("computerList", computerList);
 		
-		int maxPage = nbComputer / pagination.getSize() + ((nbComputer % pagination.getSize() == 0) ? 0 : 1);
+		int maxPage = pagination.getNbComputer() / pagination.getSize() + ((pagination.getNbComputer() % pagination.getSize() == 0) ? 0 : 1);
 		pagination.setMaxPage(maxPage);
 		
 		if (pagination.getPage() < 3)
@@ -74,7 +73,7 @@ public class DashboardServlet {
 		@RequestParam(value="selection") Integer[] selection,
 		@ModelAttribute(PAGINATION_PATTERN) Pagination pagination
 	) {
-		if (selection.length == pagination.getSize() && pagination.getPage() > 1)
+		if ((selection.length == pagination.getSize() && pagination.getPage() > 1) || pagination.getNbComputer() - (pagination.getPage()-1) * pagination.getSize() == selection.length)
 			pagination.setPage(pagination.getPage()-1);
 		
 		for (Integer id : selection) {
