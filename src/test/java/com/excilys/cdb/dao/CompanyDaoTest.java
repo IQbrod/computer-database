@@ -10,10 +10,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.spring.WebMvcConfig;
+import com.excilys.cdb.spring.TestConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes= WebMvcConfig.class)
+@ContextConfiguration(classes= TestConfiguration.class)
 public class CompanyDaoTest {
 	
 	@Autowired

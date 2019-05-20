@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.apache.logging.log4j.LogManager;
 
 
@@ -18,9 +18,9 @@ import com.excilys.cdb.exception.*;
 import com.excilys.cdb.mapper.CompanyMapper;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.service.*;
-import com.excilys.cdb.spring.WebMvcConfig;
 import com.excilys.cdb.validator.Validator;
 
+@Component
 public class CliController {
 	private String[] splitStr;
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
@@ -28,29 +28,17 @@ public class CliController {
 	private static final String COMPANY_TABLE = "company";
 	
 	private Logger logger = LogManager.getLogger(this.getClass());
-	private static CliController instance = null; 
 	
-	private final ComputerMapper computerMapper;
-	private final CompanyMapper companyMapper;
-	private final ComputerService computerService;
-	private final CompanyService companyService;
-	private final Validator validator;
-	
-	public CliController() {
-		try (ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(WebMvcConfig.class)) {
-			this.computerMapper = context.getBean(ComputerMapper.class);
-			this.companyMapper = context.getBean(CompanyMapper.class);
-			this.computerService = context.getBean(ComputerService.class);
-			this.companyService = context.getBean(CompanyService.class);
-			this.validator = context.getBean(Validator.class);
-		}
-	}
-	
-	public static CliController getInstance() {
-		if (instance == null)
-			instance = new CliController();
-		return instance;
-	}
+	@Autowired
+	private ComputerMapper computerMapper;
+	@Autowired
+	private CompanyMapper companyMapper;
+	@Autowired
+	private ComputerService computerService;
+	@Autowired
+	private CompanyService companyService;
+	@Autowired
+	private Validator validator;
 	
 	private RuntimeException log (RuntimeException exception) {
 		this.logger.error(exception.getMessage());

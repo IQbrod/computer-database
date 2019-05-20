@@ -34,7 +34,6 @@ public class Validator {
 			try {
 				Timestamp.valueOf(date+DEFAULT_TIME_VALUE);
 			} catch (Exception e) {
-				e.printStackTrace();
 				RuntimeException exception = new InvalidDateValueException(date);
 				this.logger.error(exception.getMessage());
 				throw exception;

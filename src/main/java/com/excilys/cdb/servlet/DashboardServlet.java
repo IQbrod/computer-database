@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.excilys.cdb.dto.ComputerDto;
@@ -63,8 +64,8 @@ public class DashboardServlet {
     }
 	
 	@GetMapping(value="/")
-	public RedirectView reset(@ModelAttribute(PAGINATION_PATTERN) Pagination pagination) {
-		pagination.reset();
+	public RedirectView reset(SessionStatus status) {
+		status.setComplete();
 		return new RedirectView("dashboard");
 	}
 	
