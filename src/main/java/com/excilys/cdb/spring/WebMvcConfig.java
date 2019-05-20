@@ -26,7 +26,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
    
    @Override
    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-	   exceptionResolvers.clear();
        exceptionResolvers.add(new ErrorServlet());
+   }
+   
+   @Override
+   public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+	   registry.addResourceHandler("/css/**").addResourceLocations("/css/");
+	   registry.addResourceHandler("/js/**").addResourceLocations("/js/");
+	   registry.addResourceHandler("/fonts/**").addResourceLocations("/fonts/");
    }
 }

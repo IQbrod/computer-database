@@ -20,14 +20,14 @@ public class CompanyMapperTest {
 	@Test
 	public void TestDtoToModel() {
 		assertTrue(
-				mapperInstance.dtoToModel(new CompanyDto("5","Entreprise")).equals(new Company(5,"Entreprise"))
+				mapperInstance.dtoToModel(new CompanyDto(5,"Entreprise")).equals(new Company(5,"Entreprise"))
 		);
 	}
 	
 	@Test
 	public void TestModelToDto() {
 		assertTrue(
-				mapperInstance.modelToDto(new Company(5,"Entreprise")).equals(new CompanyDto("5","Entreprise"))
+				mapperInstance.modelToDto(new Company(5,"Entreprise")).equals(new CompanyDto(5,"Entreprise"))
 		);
 	}
 }

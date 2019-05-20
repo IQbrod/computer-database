@@ -13,14 +13,9 @@ public class Validator {
 	private static final String DEFAULT_TIME_VALUE = " 12:00:00";
 	protected Logger logger;
 	
-	private void validateId(String id) {
-		try {
-			int localId = Integer.parseInt(id);
-			if (localId < 0)
-				throw new InvalidIntegerException(id);
-		} catch (Exception e) {
-			throw new InvalidIntegerException(id);
-		}
+	private void validateId(Integer id) {
+		if (id < 0)
+			throw new InvalidIntegerException(id.toString());
 	}
 	
 	private void required(String name, String element) {

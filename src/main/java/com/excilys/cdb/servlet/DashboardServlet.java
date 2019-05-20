@@ -78,7 +78,7 @@ public class DashboardServlet {
 			pagination.setPage(pagination.getPage()-1);
 		
 		for (Integer id : selection) {
-			this.computerService.delete(this.computerMapper.dtoToModel(new ComputerDto(id.toString())));
+			this.computerService.delete(this.computerMapper.dtoToModel(new ComputerDto(id)));
 		}
 		return new RedirectView("dashboard");
 	}

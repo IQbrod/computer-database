@@ -119,7 +119,7 @@ public class CliController {
 				if (splitStr[1].equalsIgnoreCase(COMPUTER_TABLE)) {
 					throw this.log(new MissingArgumentException(sizeComputerExpected,splitStr.length));
 				} else if (splitStr[1].equalsIgnoreCase(COMPANY_TABLE)) {
-					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
+					CompanyDto c = new CompanyDto(this.companyMapper.idToInt(splitStr[2]),splitStr[3]);
 					this.validator.validateCompanyDto(c);					
 					CompanyDto ret = this.companyMapper.modelToDto(this.companyService.create(this.companyMapper.dtoToModel(c)));
 					return "Create "+ret.toString();
@@ -137,7 +137,7 @@ public class CliController {
 				}
 			case 7:
 				if (splitStr[1].equalsIgnoreCase(COMPUTER_TABLE)) {
-					ComputerDto c = new ComputerDto(splitStr[2],splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),(splitStr[6].contentEquals("_")) ? "0" : splitStr[6],"None");
+					ComputerDto c = new ComputerDto(this.companyMapper.idToInt(splitStr[2]),splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),(splitStr[6].contentEquals("_")) ? 0 : this.companyMapper.idToInt(splitStr[6]),"None");
 					this.validator.validateComputerDto(c);
 					ComputerDto ret = this.computerMapper.modelToDto(this.computerService.create(this.computerMapper.dtoToModel(c)));
 					return "Create "+ret.toString();
@@ -193,9 +193,9 @@ public class CliController {
 			case 3:
 				Dto ret;
 				if (splitStr[1].equalsIgnoreCase(COMPUTER_TABLE)) {
-					ret = this.computerMapper.modelToDto(this.computerService.delete(this.computerMapper.dtoToModel(new ComputerDto(splitStr[2]))));
+					ret = this.computerMapper.modelToDto(this.computerService.delete(this.computerMapper.dtoToModel(new ComputerDto(this.companyMapper.idToInt(splitStr[2])))));
 				} else if (splitStr[1].equalsIgnoreCase(COMPANY_TABLE)) {
-					ret = this.companyMapper.modelToDto(this.companyService.delete(this.companyMapper.dtoToModel(new CompanyDto(splitStr[2]))));
+					ret = this.companyMapper.modelToDto(this.companyService.delete(this.companyMapper.dtoToModel(new CompanyDto(this.companyMapper.idToInt(splitStr[2])))));
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}
@@ -221,7 +221,7 @@ public class CliController {
 					c.setDiscontinued(this.castDate(s.substring(3)));
 					break;
 				case COMPANY:
-					c.setCompanyId(s.substring(3).contentEquals("_") ? "-1" : s.substring(3));
+					c.setCompanyId(s.substring(3).contentEquals("_") ? 0 : this.companyMapper.idToInt(s.substring(3)));
 					break;
 				case UNKNOWN:
 				default:
@@ -241,7 +241,7 @@ public class CliController {
 		default:
 			Dto ret;
 			if (splitStr[1].equalsIgnoreCase(COMPUTER_TABLE)) {
-				ComputerDto c = new ComputerDto(splitStr[2]);
+				ComputerDto c = new ComputerDto(this.companyMapper.idToInt(splitStr[2]));
 				for (String s : Arrays.copyOfRange(splitStr, 3, splitStr.length)) {
 					this.updateTreatOption(c,s);
 				}
@@ -249,7 +249,7 @@ public class CliController {
 				ret = this.computerMapper.modelToDto(this.computerService.update(this.computerMapper.dtoToModel(c)));
 			} else if (splitStr[1].equalsIgnoreCase(COMPANY_TABLE)) {
 				if(splitStr.length == 4) {
-					CompanyDto c = new CompanyDto(splitStr[2],splitStr[3]);
+					CompanyDto c = new CompanyDto(this.companyMapper.idToInt(splitStr[2]),splitStr[3]);
 					ret = this.companyMapper.modelToDto(this.companyService.update(this.companyMapper.dtoToModel(c)));
 				} else {
 					throw this.log(new TooManyArgumentsException(splitStr[4]));

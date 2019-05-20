@@ -29,6 +29,7 @@
 		<webdrivermanager.version>3.4.0</webdrivermanager.version>
 		<sonar.version>3.6.0.1398</sonar.version>
 		<spring.version>5.1.7.RELEASE</spring.version>
+		<validation.version>2.0.1.Final</validation.version>
 	</properties>
     
     <dependencies>
@@ -114,6 +115,12 @@
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-jdbc</artifactId>
 		    <version>${spring.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>javax.validation</groupId>
+		    <artifactId>validation-api</artifactId>
+		    <version>${validation.version}</version>
 		</dependency>
     </dependencies>
 

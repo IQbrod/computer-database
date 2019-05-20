@@ -19,7 +19,7 @@ public class ErrorServlet extends ExceptionHandlerExceptionResolver {
 	@ExceptionHandler(value = Exception.class)
 	public ModelAndView treatException(Exception cause) {
 		
-		ServletErrorModel error = new ServletErrorModel(418, "I'm a teapot", ADMIN_CONTACT);
+		ServletErrorModel error = new ServletErrorModel(418, "I'm a teapot", ADMIN_CONTACT, cause.getClass().toString());
 		
 		if (cause instanceof NoHandlerFoundException) {
 			error.setErrorCode(404);

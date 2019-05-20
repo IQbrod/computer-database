@@ -1,17 +1,28 @@
 package com.excilys.cdb.dto;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.PositiveOrZero;
+
 public class ComputerDto extends Dto {
+	@NotEmpty
 	private String name;
-	private String introduction; //YYYY/MM/DD
+	@Pattern(regexp=DATE_PATTERN)
+	private String introduction;
+	@Pattern(regexp=DATE_PATTERN)
 	private String discontinued;
-	private String companyId;
+	@PositiveOrZero
+	private Integer companyId;
+	@NotEmpty
 	private String companyName;
 	
-	public ComputerDto(String id) {
-		this(id,"",null,null,"0","None");
+	private static final String DATE_PATTERN = "^(((19|2[0-9])[0-9]{2})/(0[469]|11)/(0[1-9]|[12][0-9]|30))$";
+	
+	public ComputerDto(Integer id) {
+		this(id,"",null,null,0,"None");
 	}
 	
-	public ComputerDto(String id, String name, String intro, String disc, String cId, String cName) {
+	public ComputerDto(Integer id, String name, String intro, String disc, Integer cId, String cName) {
 		super(id);
 		this.name = name;
 		this.introduction = intro;
@@ -44,11 +55,11 @@ public class ComputerDto extends Dto {
 		this.discontinued = discontinued;
 	}
 	
-	public String getCompanyId() {
+	public Integer getCompanyId() {
 		return companyId;
 	}
 
-	public void setCompanyId(String companyId) {
+	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
 	}
 

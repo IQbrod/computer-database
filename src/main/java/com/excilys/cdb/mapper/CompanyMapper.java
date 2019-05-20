@@ -11,7 +11,7 @@ public class CompanyMapper extends Mapper<CompanyDto, Company>{
 	@Override
 	public Company dtoToModel(CompanyDto dtoObject) {
 		return new Company(
-			this.idToInt(dtoObject.getId()),
+			dtoObject.getId(),
 			dtoObject.getName()
 		);
 	}
@@ -19,7 +19,7 @@ public class CompanyMapper extends Mapper<CompanyDto, Company>{
 	@Override
 	public CompanyDto modelToDto(Company modelObject) {
 		return new CompanyDto(
-			Integer.toString(modelObject.getId()),
+			modelObject.getId(),
 			modelObject.getName()
 		);
 	}

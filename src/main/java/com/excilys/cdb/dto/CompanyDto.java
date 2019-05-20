@@ -1,13 +1,16 @@
 package com.excilys.cdb.dto;
 
+import javax.validation.constraints.NotEmpty;
+
 public class CompanyDto extends Dto {
+	@NotEmpty
 	private String name;
 	
-	public CompanyDto(String id) {
+	public CompanyDto(Integer id) {
 		this(id,"");
 	}
 	
-	public CompanyDto(String id, String name) {
+	public CompanyDto(Integer id, String name) {
 		super(id);
 		this.name = name;
 	}

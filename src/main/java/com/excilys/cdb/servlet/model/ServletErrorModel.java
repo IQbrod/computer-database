@@ -4,13 +4,21 @@ public class ServletErrorModel {
 	private int errorCode;
 	private String message;
 	private String customMessage;
-	
-	public ServletErrorModel(int errorCode, String errorMessage, String errorCustomMessage) {
+	private String className;
+
+	public ServletErrorModel(int errorCode, String errorMessage, String errorCustomMessage, String className) {
 		this.errorCode = errorCode;
 		this.message = errorMessage;
 		this.customMessage = errorCustomMessage;
+		this.className = className;
 	}
 	
+	public String getClassName() {
+		return className;
+	}
+	public void setClassName(String className) {
+		this.className = className;
+	}	
 	public int getErrorCode() {
 		return errorCode;
 	}

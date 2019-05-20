@@ -39,9 +39,9 @@ public class AddComputerServlet {
 		@RequestParam("computerName") String name,
 		@RequestParam("introduced") String introduced,
 		@RequestParam("discontinued") String discontinued,
-		@RequestParam("companyId") String company_id
+		@RequestParam("companyId") Integer company_id
 	) {
-		ComputerDto computerDto = new ComputerDto("0", name, introduced.equals("") ? null : introduced, discontinued.equals("") ? null : discontinued, company_id,"None");
+		ComputerDto computerDto = new ComputerDto(0, name, introduced.equals("") ? null : introduced, discontinued.equals("") ? null : discontinued, company_id,"None");
 		this.validator.validateComputerDto(computerDto);
 		this.computerService.create(this.computerMapper.dtoToModel(computerDto));
 		return new RedirectView("dashboard");

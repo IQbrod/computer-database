@@ -18,10 +18,24 @@
 	<section id="main">
 		<div class="container">	
 			<div class="alert alert-danger">
-				Error ${error.getErrorCode()}: ${error.getMessage()}
-				<br/>
-				Something unexpected happened:
-				${error.getCustomMessage()}
+				<table id="errtable">
+					<tr>
+				        <td>Status</td>
+				        <td>${error.getErrorCode()}</td>
+				    </tr>
+				    <tr>
+				        <td>Error</td>
+				        <td>${error.getMessage()}</td>
+				    </tr>
+				    <tr>
+				        <td>Exception</td>
+				        <td>${error.getClassName()}</td>
+				    </tr>
+				    <tr>
+				        <td>Message</td>
+				        <td>${error.getCustomMessage()}</td>
+				    </tr>
+				</table>
 			</div>
 		</div>
 	</section>
