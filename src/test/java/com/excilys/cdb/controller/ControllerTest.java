@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.excilys.cdb.cli.CliController;
 import com.excilys.cdb.exception.*;
 import com.excilys.cdb.spring.TestConfiguration;
 

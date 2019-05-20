@@ -1,4 +1,4 @@
-package com.excilys.cdb.controller;
+package com.excilys.cdb.cli;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
