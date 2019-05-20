@@ -93,7 +93,7 @@ public class ComputerDto extends Dto {
 		result = 31*result + this.getName().hashCode();
 		result = 31*result + ((this.getIntroduction() == null) ? 0 : this.getIntroduction().hashCode());
 		result = 31*result + ((this.getDiscontinued() == null) ? 0 : this.getDiscontinued().hashCode());
-		result = 31*result + Integer.valueOf(this.getCompanyId());
+		result = 31*result + this.getCompanyId();
 		
 		return result;
 	}

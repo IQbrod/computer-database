@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,27 +14,27 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="${pageContext.request.contextPath}"> Application - Computer Database </a>
+            <a class="navbar-brand" href="${pageContext.request.contextPath}"> <spring:message code="app.title"/> </a>
         </div>
     </header>
 
     <section id="main">
         <div class="container">
             <h1 id="homeTitle">
-                ${pagination.getNbComputer()} Computers founds
+                ${pagination.getNbComputer()} <spring:message code="computer.found"/>
             </h1>
             <div id="actions" class="form-horizontal">
                 <div class="pull-left">
                     <form id="searchForm" action="" method="GET" class="form-inline">
 
-                        <input type="search" id="searchbox" name="search" class="form-control" placeholder="Search name" value='${pagination.search}' />
-                        <input type="submit" id="searchsubmit" value="Filter by name"
+                        <input type="search" id="searchbox" name="search" class="form-control" placeholder="<spring:message code="search.name"/>" value='${pagination.search}' />
+                        <input type="submit" id="searchsubmit" value="<spring:message code="filter"/>"
                         class="btn btn-primary" />
                     </form>
                 </div>
                 <div class="pull-right">
-                    <a class="btn btn-success" id="addComputer" href="addComputer">Add Computer</a> 
-                    <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
+                    <a class="btn btn-success" id="addComputer" href="addComputer"><spring:message code="add.computer"/></a> 
+                    <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();"><spring:message code="edit"/></a>
                 </div>
             </div>
         </div>
@@ -55,18 +56,16 @@
                             </span>
                         </th>
                         <th>
-                            Computer name <a href="dashboard?orderBy=name">&#x2193</a> <a href="dashboard?orderBy=name_rev">&#x2191</a>
+                            <spring:message code="computer.name"/> <a href="dashboard?orderBy=name">&#x2193</a> <a href="dashboard?orderBy=name_rev">&#x2191</a>
                         </th>
                         <th>
-                            Introduced date <a href="dashboard?orderBy=introduced">&#x2193</a> <a href="dashboard?orderBy=introduced_rev">&#x2191</a>
+                            <spring:message code="computer.introduction"/> <a href="dashboard?orderBy=introduced">&#x2193</a> <a href="dashboard?orderBy=introduced_rev">&#x2191</a>
                         </th>
-                        <!-- Table header for Discontinued Date -->
                         <th>
-                            Discontinued date <a href="dashboard?orderBy=discontinued">&#x2193</a> <a href="dashboard?orderBy=discontinued_rev">&#x2191</a>
+                            <spring:message code="computer.discontinued"/> <a href="dashboard?orderBy=discontinued">&#x2193</a> <a href="dashboard?orderBy=discontinued_rev">&#x2191</a>
                         </th>
-                        <!-- Table header for Company -->
                         <th>
-                            Company <a href="dashboard?orderBy=company">&#x2193</a> <a href="dashboard?orderBy=company_rev">&#x2191</a>
+                            <spring:message code="computer.company"/> <a href="dashboard?orderBy=company">&#x2193</a> <a href="dashboard?orderBy=company_rev">&#x2191</a>
                         </th>
 
                     </tr>
