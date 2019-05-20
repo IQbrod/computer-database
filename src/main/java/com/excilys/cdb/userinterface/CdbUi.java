@@ -3,7 +3,7 @@ package com.excilys.cdb.userinterface;
 import java.io.*;
 import java.util.Scanner;
 
-import com.excilys.cdb.controller.CliController;
+import com.excilys.cdb.cli.CliController;
 
 public class CdbUi {
 	private InputStream in;
