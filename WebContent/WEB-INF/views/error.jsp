@@ -1,7 +1,8 @@
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Computer Database</title>
+	<title><spring:message code="app.title"/></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- Bootstrap -->
 	<link href="./css/bootstrap.min.css" rel="stylesheet" media="screen">
@@ -11,7 +12,7 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboard.html"> Application - Computer Database </a>
+			<a class="navbar-brand" href="dashboard.html"><spring:message code="app.title"/></a>
 		</div>
 	</header>
 

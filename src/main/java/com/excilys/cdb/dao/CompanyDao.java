@@ -1,6 +1,5 @@
 package com.excilys.cdb.dao;
 
-import java.sql.*;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,8 +9,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.mapper.CompanyRowMapper;
 import com.excilys.cdb.dbconnector.JdbcTemplateProvider;
@@ -19,6 +18,7 @@ import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 @Repository
+@Transactional
 public class CompanyDao extends Dao<Company>{
 	private static final String SQL_DELETE_LINKED_COMPUTERS = "DELETE FROM computer WHERE company_id=?;";
 	
@@ -93,27 +93,15 @@ public class CompanyDao extends Dao<Company>{
 	@Override
 	public Company deleteById(int id) {
 		Company company = this.read(id);
-		try (Connection connection = DataSourceUtils.getConnection(this.namedTemplate.getJdbcTemplate().getDataSource());) {
-			connection.setAutoCommit(false);
-			
-			try (
-				PreparedStatement deleteComputer = connection.prepareStatement(CompanyDao.SQL_DELETE_LINKED_COMPUTERS);
-				PreparedStatement deleteCompany = connection.prepareStatement(this.sqlDelete);
-			) {
-				deleteComputer.setInt(1, id);
-				deleteComputer.executeUpdate();
-				
-				deleteCompany.setInt(1, id);
-				if (deleteCompany.executeUpdate() == 0)
-					throw this.log(new FailedSQLQueryException(this.sqlDelete));
-				
-				connection.commit();
-				return company;
-			} catch (SQLException e) {
-				connection.rollback();
-				throw e;
-			}
-		} catch (SQLException e) {
+		
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("id", id);
+		
+		try {
+			this.namedTemplate.update(CompanyDao.SQL_DELETE_LINKED_COMPUTERS, params);
+			this.namedTemplate.update(this.sqlDelete, params);
+			return company;
+		} catch (DataAccessException e) {
 			throw this.log(new FailedSQLQueryBySQLException(CompanyDao.SQL_DELETE_LINKED_COMPUTERS+" or "+this.sqlDelete),e);
 		}
 	}

@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.mapper.ComputerRowMapper;
 import com.excilys.cdb.dbconnector.JdbcTemplateProvider;
@@ -18,6 +19,7 @@ import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 @Repository
+@Transactional
 public class ComputerDao extends Dao<Computer> {
 	private static final String SQL_COUNT_BY_NAME = "SELECT count(C.id) as count FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(:like) or UPPER(D.name) LIKE UPPER(:like)";
 	
