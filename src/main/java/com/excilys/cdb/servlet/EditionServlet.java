@@ -29,9 +29,9 @@ public class EditionServlet {
 		this.validator = validator;
 	}
 	
-	@GetMapping("/editComputer")
+	@GetMapping("/editComputer/{id}")
 	public String get(
-		@RequestParam("id") int id,	
+		@PathVariable("id") int id,	
 		Model model
 	) {
 		model.addAttribute("computer", this.computerMapper.modelToDto(this.computerService.read(id)));
