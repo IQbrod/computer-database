@@ -11,13 +11,13 @@ import com.excilys.cdb.exception.*;
 import com.excilys.cdb.servlet.model.ServletErrorModel;
 
 @ControllerAdvice
-public class ErrorServlet extends ExceptionHandlerExceptionResolver {
+public class CustomExceptionHandler extends ExceptionHandlerExceptionResolver {
 	private static final String ERROR_PATTERN = "error";
 	private static final String ADMIN_CONTACT = "Please contact administrator";
 	
 	
 	@ExceptionHandler(value = Exception.class)
-	public ModelAndView treatException(Exception cause) {
+	public void treatException(Exception cause) {
 		ServletErrorModel error = new ServletErrorModel(418, ADMIN_CONTACT, cause.getClass().toString());
 		
 		if (cause instanceof NoHandlerFoundException) {
@@ -36,7 +36,5 @@ public class ErrorServlet extends ExceptionHandlerExceptionResolver {
 		ModelAndView mav = new ModelAndView();
 		mav.addObject(ERROR_PATTERN, error);
 		mav.setViewName(ERROR_PATTERN);
-		
-		return mav;
 	}
 }

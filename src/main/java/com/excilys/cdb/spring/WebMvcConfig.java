@@ -13,10 +13,11 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import com.excilys.cdb.servlet.ErrorServlet;
+import com.excilys.cdb.servlet.CustomExceptionHandler;
 
 @Configuration
 @EnableWebMvc
+@Import(RootConfig.class)
 @ComponentScan(basePackages = { "com.excilys.cdb.servlet" })
 public class WebMvcConfig implements WebMvcConfigurer {
 	
@@ -44,12 +45,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
    
    @Override
    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-       exceptionResolvers.add(new ErrorServlet());
+	   exceptionResolvers.clear();
+       exceptionResolvers.add(new CustomExceptionHandler());
    }
    
    @Override
    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-	   registry.addResourceHandler("/**").addResourceLocations("/resources/");
+	   registry.addResourceHandler("/css/**", "/js/**", "/fonts/**").addResourceLocations("/resources/");
    }
    
    @Override
