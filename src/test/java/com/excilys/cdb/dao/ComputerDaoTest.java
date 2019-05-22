@@ -83,7 +83,7 @@ public class ComputerDaoTest {
 	// Company id
 	@Test
 	public void TestCreate() throws Exception {
-		assertEquals(2,daoInstance.create(new Computer(751,"Ordinateur",null,null,2)).getCompany_id().intValue());
+		assertEquals(2,daoInstance.create(new Computer(751,"Ordinateur",null,null,2)).getCompanyId().intValue());
 		daoInstance.deleteById(751);
 	}
 	

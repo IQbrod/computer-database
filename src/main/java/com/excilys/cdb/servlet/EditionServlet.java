@@ -45,9 +45,9 @@ public class EditionServlet {
 		@RequestParam("computerName") String name,
 		@RequestParam("introduced") String introduced,
 		@RequestParam("discontinued") String discontinued,
-		@RequestParam("companyId") Integer company_id
+		@RequestParam("companyId") Integer companyId
 	) {
-		ComputerDto computerDto = new ComputerDto(id, name, introduced.equals("") ? null : introduced, discontinued.equals("") ? null : discontinued, company_id,"None");
+		ComputerDto computerDto = new ComputerDto(id, name, introduced.equals("") ? null : introduced, discontinued.equals("") ? null : discontinued, companyId,"None");
 		this.validator.validateComputerDto(computerDto);
 		this.computerService.update(this.computerMapper.dtoToModel(computerDto));
 		return new RedirectView("dashboard");
@@ -64,9 +64,9 @@ public class EditionServlet {
 		@RequestParam("computerName") String name,
 		@RequestParam("introduced") String introduced,
 		@RequestParam("discontinued") String discontinued,
-		@RequestParam("companyId") Integer company_id
+		@RequestParam("companyId") Integer companyId
 	) {
-		ComputerDto computerDto = new ComputerDto(0, name, introduced.equals("") ? null : introduced, discontinued.equals("") ? null : discontinued, company_id,"None");
+		ComputerDto computerDto = new ComputerDto(0, name, introduced.equals("") ? null : introduced, discontinued.equals("") ? null : discontinued, companyId,"None");
 		this.validator.validateComputerDto(computerDto);
 		this.computerService.create(this.computerMapper.dtoToModel(computerDto));
 		return new RedirectView("dashboard");

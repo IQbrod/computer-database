@@ -25,10 +25,10 @@ public class ComputerDao extends Dao<Computer> {
 	
 	public ComputerDao(JdbcTemplateProvider jdbcTemplateProvider, ComputerRowMapper rowMapper) {
 		super(
-			"INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (:name,:introduced,:discontinued,:company_id);",
-			"UPDATE computer SET name=:name, introduced=:introduced, discontinued=:discontinued, company_id=:company_id WHERE id=:id;",
+			"INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (:name,:introduced,:discontinued,:companyId);",
+			"UPDATE computer SET name=:name, introduced=:introduced, discontinued=:discontinued, company_id=:companyId WHERE id=:id;",
 			"DELETE FROM computer WHERE id=:id;",
-			"SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id=:id;",
+			"SELECT id, name, introduced, discontinued, companyId FROM computer WHERE id=:id;",
 			"SELECT C.id as id, C.name as name, introduced, discontinued, company_id  FROM computer C LEFT OUTER JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(:like) or UPPER(D.name) LIKE UPPER(:like) ORDER BY ",
 			" LIMIT :offset, :size",
 			"SELECT count(id) AS count FROM computer",

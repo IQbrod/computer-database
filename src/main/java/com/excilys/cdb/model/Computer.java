@@ -6,14 +6,14 @@ public class Computer extends AbstractModel {
 	private String name;
 	private Timestamp introduced;
 	private Timestamp discontinued;
-	private Integer company_id;
+	private Integer companyId;
 	
-	public Computer(int id, String name, Timestamp dateIntro, Timestamp dateDisc, Integer manufacturer) {
+	public Computer(int id, String name, Timestamp dateIntro, Timestamp dateDisc, Integer companyId) {
 		super(id);
 		this.setName(name);
 		this.setIntroduced(dateIntro);
 		this.setDiscontinued(dateDisc);
-		this.setCompany_id(manufacturer);
+		this.setCompanyId(companyId);
 	}
 
 	public String getName() {
@@ -40,12 +40,12 @@ public class Computer extends AbstractModel {
 		this.discontinued = dateDisc;
 	}
 	
-	public Integer getCompany_id() {
-		return company_id;
+	public Integer getCompanyId() {
+		return companyId;
 	}
 
-	public void setCompany_id(Integer company_id) {
-		this.company_id = company_id;
+	public void setCompanyId(Integer companyId) {
+		this.companyId = companyId;
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class Computer extends AbstractModel {
 		result = 31*result + this.getName().hashCode();
 		result = 31*result + ((this.getIntroduced() == null) ? 0 : this.getIntroduced().hashCode());
 		result = 31*result + ((this.getDiscontinued() == null) ? 0 : this.getDiscontinued().hashCode());
-		result = 31*result + this.getCompany_id();
+		result = 31*result + this.getCompanyId();
 		
 		
 		return result;

@@ -34,7 +34,7 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 
 	@Override
 	public ComputerDto modelToDto(Computer modelObject) {
-		CompanyDto companyDto = (modelObject.getCompany_id() <= 0) ? new CompanyDto(0,"_") : this.companyMapper.modelToDto(this.companyService.read(modelObject.getCompany_id()));
+		CompanyDto companyDto = (modelObject.getCompanyId() <= 0) ? new CompanyDto(0,"_") : this.companyMapper.modelToDto(this.companyService.read(modelObject.getCompanyId()));
 		
 		return new ComputerDto(
 			modelObject.getId(),

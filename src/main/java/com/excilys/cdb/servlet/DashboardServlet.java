@@ -18,6 +18,7 @@ import com.excilys.cdb.servlet.model.Pagination;
 @SessionAttributes( value=DashboardServlet.PAGINATION_PATTERN, types= {Pagination.class})
 public class DashboardServlet {
 	protected static final String PAGINATION_PATTERN = "pagination";
+	private static final String DASHBOARD_PATTERN = "dashboard";
 	
 	private final ComputerService computerService;
 	private final ComputerMapper computerMapper;
@@ -32,7 +33,7 @@ public class DashboardServlet {
         return new Pagination();
     }
 	
-	@GetMapping(value={"/dashboard"})
+	@GetMapping(value={"/"+DASHBOARD_PATTERN})
     public String get(
     		@RequestParam(value="page", required=false) Integer page,
     		@RequestParam(value="size", required=false) Integer size,
@@ -61,16 +62,16 @@ public class DashboardServlet {
 		else
 			pagination.setMedianPage((pagination.getPage() < maxPage-2 || maxPage <= 4) ? pagination.getPage() : maxPage-2);
 		
-        return "dashboard";
+        return DASHBOARD_PATTERN;
     }
 	
 	@GetMapping(value="/")
 	public RedirectView reset(SessionStatus status) {
 		status.setComplete();
-		return new RedirectView("dashboard");
+		return new RedirectView(DASHBOARD_PATTERN);
 	}
 	
-	@PostMapping(value= {"/","/dashboard"})
+	@PostMapping(value= {"/","/"+DASHBOARD_PATTERN})
 	public RedirectView post(
 		@RequestParam(value="selection") Integer[] selection,
 		@ModelAttribute(PAGINATION_PATTERN) Pagination pagination
@@ -81,6 +82,6 @@ public class DashboardServlet {
 		for (Integer id : selection) {
 			this.computerService.delete(this.computerMapper.dtoToModel(new ComputerDto(id)));
 		}
-		return new RedirectView("dashboard");
+		return new RedirectView(DASHBOARD_PATTERN);
 	}
 }
