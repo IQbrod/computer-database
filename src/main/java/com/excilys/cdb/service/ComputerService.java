@@ -5,8 +5,10 @@ import java.util.List;
 import com.excilys.cdb.dao.*;
 import com.excilys.cdb.model.Computer;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ComputerService extends AbstractService<Computer>{	
 	public ComputerService(ComputerDao compDao) {
 		super(compDao);

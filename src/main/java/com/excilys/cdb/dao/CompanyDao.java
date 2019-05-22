@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.mapper.CompanyRowMapper;
 import com.excilys.cdb.dbconnector.JdbcTemplateProvider;
@@ -18,10 +17,7 @@ import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 @Repository
-@Transactional
-public class CompanyDao extends Dao<Company>{
-	private static final String SQL_DELETE_LINKED_COMPUTERS = "DELETE FROM computer WHERE company_id=?;";
-	
+public class CompanyDao extends Dao<Company>{	
 	public CompanyDao(JdbcTemplateProvider templateProvider, CompanyRowMapper rowMapper) {		
 		super(
 			"INSERT INTO company VALUES (:id,:name);",
@@ -98,11 +94,10 @@ public class CompanyDao extends Dao<Company>{
 		params.addValue("id", id);
 		
 		try {
-			this.namedTemplate.update(CompanyDao.SQL_DELETE_LINKED_COMPUTERS, params);
 			this.namedTemplate.update(this.sqlDelete, params);
 			return company;
 		} catch (DataAccessException e) {
-			throw this.log(new FailedSQLQueryBySQLException(CompanyDao.SQL_DELETE_LINKED_COMPUTERS+" or "+this.sqlDelete),e);
+			throw this.log(new FailedSQLQueryBySQLException(this.sqlDelete),e);
 		}
 	}
 

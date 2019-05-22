@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.mapper.ComputerRowMapper;
 import com.excilys.cdb.dbconnector.JdbcTemplateProvider;
@@ -19,9 +18,9 @@ import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
 
 @Repository
-@Transactional
 public class ComputerDao extends Dao<Computer> {
 	private static final String SQL_COUNT_BY_NAME = "SELECT count(C.id) as count FROM computer C LEFT JOIN company D ON C.company_id = D.id WHERE UPPER(C.name) LIKE UPPER(:like) or UPPER(D.name) LIKE UPPER(:like)";
+	private static final String SQL_DELETE_LINKED_COMPUTERS = "DELETE FROM computer WHERE company_id=:cid;";
 	
 	public ComputerDao(JdbcTemplateProvider jdbcTemplateProvider, ComputerRowMapper rowMapper) {
 		super(
@@ -83,6 +82,17 @@ public class ComputerDao extends Dao<Computer> {
 		}
 	}
 
+	public List<Computer> deleteByCompanyId(int companyId) {		
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("cid", companyId);
+		
+		try {
+			return this.namedTemplate.query(SQL_DELETE_LINKED_COMPUTERS, params, this.rowMapper);
+		} catch (DataAccessException e) {
+			throw this.log(new FailedSQLQueryBySQLException(SQL_DELETE_LINKED_COMPUTERS),e);
+		}
+	}
+	
 	@Override
 	public Computer delete(Computer aComputer) {
 		return this.deleteById(aComputer.getId());
