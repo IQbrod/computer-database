@@ -15,8 +15,11 @@ import com.excilys.cdb.spring.TestConfiguration;
 @ContextConfiguration(classes= TestConfiguration.class)
 public class CompanyServiceTest {
 	
+	private CompanyService serviceInstance;
 	@Autowired
-	private CompanyService serviceInstance;	
+	void setInstance(CompanyService beanInjection) {
+		this.serviceInstance = beanInjection;
+	}
 	
 	@Test
 	public void CreateTest() throws Exception {

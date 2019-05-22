@@ -18,23 +18,18 @@ public class ErrorServlet extends ExceptionHandlerExceptionResolver {
 	
 	@ExceptionHandler(value = Exception.class)
 	public ModelAndView treatException(Exception cause) {
-		
-		ServletErrorModel error = new ServletErrorModel(418, "I'm a teapot", ADMIN_CONTACT, cause.getClass().toString());
+		ServletErrorModel error = new ServletErrorModel(418, ADMIN_CONTACT, cause.getClass().toString());
 		
 		if (cause instanceof NoHandlerFoundException) {
 			error.setErrorCode(404);
-			error.setMessage("Not Found");
 			error.setCustomMessage(cause.getMessage());
 		} else if (cause instanceof ShouldBeSentToClientException || cause instanceof MethodArgumentTypeMismatchException) {
 			error.setErrorCode(400);
-			error.setMessage("Bad Request");
 			error.setCustomMessage(cause.getMessage());
 		} else if (cause instanceof ShouldOnlyBeLoggedException) {
 			error.setErrorCode(500);
-			error.setMessage("Internal Server Error");
 		} else {
 			error.setErrorCode(501);
-			error.setMessage("Not Implemented");
 			error.setCustomMessage("Something went wrong unfortunately: "+cause.getClass().toString());
 		}
 		

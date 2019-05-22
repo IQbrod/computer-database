@@ -17,14 +17,7 @@ import com.excilys.cdb.servlet.ErrorServlet;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {
-		"com.excilys.cdb.dao",
-		"com.excilys.cdb.dbconnector",
-		"com.excilys.cdb.mapper",
-		"com.excilys.cdb.service",
-		"com.excilys.cdb.servlet",
-		"com.excilys.cdb.validator"
-	})
+@ComponentScan(basePackages = { "com.excilys.cdb.servlet" })
 public class WebMvcConfig implements WebMvcConfigurer {
 	
    @Bean
@@ -40,7 +33,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
    public MessageSource messageSource() {
 	   ReloadableResourceBundleMessageSource messageSource=new ReloadableResourceBundleMessageSource();
 	   messageSource.setBasename("classpath:locale/messages");
-	   messageSource.setDefaultEncoding("UTF-8");
 	   messageSource.setUseCodeAsDefaultMessage(true);
 	   return messageSource;
    }

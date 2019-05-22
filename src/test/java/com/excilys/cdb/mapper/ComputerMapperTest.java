@@ -18,9 +18,12 @@ import com.excilys.cdb.spring.TestConfiguration;
 @ContextConfiguration(classes= TestConfiguration.class)
 public class ComputerMapperTest {
 
-	@Autowired
 	private ComputerMapper mapperInstance;
 	
+	@Autowired
+	void setInstance(ComputerMapper beanInjection) {
+		this.mapperInstance = beanInjection;
+	}
 	/*-- dtoToModel --*/
 	// id
 	@Test

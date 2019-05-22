@@ -3,7 +3,6 @@ package com.excilys.cdb.servlet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +19,13 @@ import com.excilys.cdb.servlet.model.Pagination;
 public class DashboardServlet {
 	protected static final String PAGINATION_PATTERN = "pagination";
 	
-	@Autowired
-	private ComputerService computerService;
-	@Autowired
-	private ComputerMapper computerMapper;
+	private final ComputerService computerService;
+	private final ComputerMapper computerMapper;
+	
+	public DashboardServlet(ComputerService computerService, ComputerMapper computerMapper) {
+		this.computerService = computerService;
+		this.computerMapper = computerMapper;
+	}
 	
 	@ModelAttribute(PAGINATION_PATTERN)
     public Pagination addPaginationToSessionScope() {
@@ -51,7 +53,6 @@ public class DashboardServlet {
 		List<ComputerDto> computerList = this.computerService.listByName(pagination.getSearch(), pagination.getPage(), pagination.getSize(), pagination.getOrderBy()).stream().map(this.computerMapper::modelToDto).collect(Collectors.toList());
 		pagination.setNbComputer(this.computerService.countByName(pagination.getSearch()));
 		model.addAttribute("computerList", computerList);
-		
 		int maxPage = pagination.getNbComputer() / pagination.getSize() + ((pagination.getNbComputer() % pagination.getSize() == 0) ? 0 : 1);
 		pagination.setMaxPage(maxPage);
 		

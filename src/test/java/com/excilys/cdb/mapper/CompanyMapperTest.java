@@ -14,8 +14,13 @@ import com.excilys.cdb.spring.TestConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= TestConfiguration.class)
 public class CompanyMapperTest {
-	@Autowired
+
 	private CompanyMapper mapperInstance;
+	
+	@Autowired
+	void setInstance(CompanyMapper beanInjection) {
+		this.mapperInstance = beanInjection;
+	}
 		
 	@Test
 	public void TestDtoToModel() {

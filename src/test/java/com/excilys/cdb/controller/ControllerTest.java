@@ -14,9 +14,13 @@ import com.excilys.cdb.spring.TestConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= TestConfiguration.class)
 public class ControllerTest {
-
-	@Autowired
+	
 	private CliController instance;
+	
+	@Autowired
+	void setInstance(CliController beanInjection) {
+		this.instance = beanInjection;
+	}
 	
 	// Empty
 	@Test

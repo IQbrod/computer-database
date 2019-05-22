@@ -14,8 +14,12 @@ import com.excilys.cdb.spring.TestConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= TestConfiguration.class)
 public class ComputerServiceTest {
-	@Autowired
+
 	private ComputerService serviceInstance;
+	@Autowired
+	void setInstance(ComputerService beanInjection) {
+		this.serviceInstance = beanInjection;
+	}
 
 	@Test
 	public void createTest() throws Exception {

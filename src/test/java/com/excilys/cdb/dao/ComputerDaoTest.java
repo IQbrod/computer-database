@@ -18,8 +18,12 @@ import com.excilys.cdb.spring.TestConfiguration;
 @ContextConfiguration(classes= TestConfiguration.class)
 public class ComputerDaoTest {
 	
-	@Autowired
 	private ComputerDao daoInstance;
+	
+	@Autowired
+	void setInstance(ComputerDao beanInjection) {
+		this.daoInstance = beanInjection;
+	}
 	
 	/*-- READ --*/
 	@Test

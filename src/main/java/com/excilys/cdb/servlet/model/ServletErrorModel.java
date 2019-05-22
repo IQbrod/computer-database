@@ -2,13 +2,11 @@ package com.excilys.cdb.servlet.model;
 
 public class ServletErrorModel {
 	private int errorCode;
-	private String message;
 	private String customMessage;
 	private String className;
 
-	public ServletErrorModel(int errorCode, String errorMessage, String errorCustomMessage, String className) {
+	public ServletErrorModel(int errorCode, String errorCustomMessage, String className) {
 		this.errorCode = errorCode;
-		this.message = errorMessage;
 		this.customMessage = errorCustomMessage;
 		this.className = className;
 	}
@@ -24,12 +22,6 @@ public class ServletErrorModel {
 	}
 	public void setErrorCode(int errorCode) {
 		this.errorCode = errorCode;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String errorMessage) {
-		this.message = errorMessage;
 	}
 	public String getCustomMessage() {
 		return customMessage;

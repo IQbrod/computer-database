@@ -21,19 +21,19 @@
 			<div class="alert alert-danger">
 				<table id="errtable">
 					<tr>
-				        <td>Status</td>
+				        <td><spring:message code="error.status"/></td>
 				        <td>${error.getErrorCode()}</td>
 				    </tr>
 				    <tr>
-				        <td>Error</td>
-				        <td>${error.getMessage()}</td>
+				        <td><spring:message code="error.error"/></td>
+				        <td><spring:message code="error.${error.getErrorCode()}"/></td>
 				    </tr>
 				    <tr>
-				        <td>Exception</td>
+				        <td><spring:message code="error.exception"/></td>
 				        <td>${error.getClassName()}</td>
 				    </tr>
 				    <tr>
-				        <td>Message</td>
+				        <td><spring:message code="error.message"/></td>
 				        <td>${error.getCustomMessage()}</td>
 				    </tr>
 				</table>
