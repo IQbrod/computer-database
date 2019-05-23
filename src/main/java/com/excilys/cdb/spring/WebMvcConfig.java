@@ -50,7 +50,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
    
    @Override
    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-	   exceptionResolvers.clear();
        exceptionResolvers.add(new CustomExceptionHandler());
    }
    

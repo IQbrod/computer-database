@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="sform" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,28 +22,27 @@
             <div class="row">
                 <div class="col-xs-8 col-xs-offset-2 box">
                     <h1><spring:message code="add.computer"/></h1>
-                    <form action="${pageContext.request.contextPath}/computers" method="POST">
+                    <spring:message code="computer.name" var="computerName"/>
+                    <sform:form action="${pageContext.request.contextPath}/computers" method="POST" modelAttribute="computer">
                         <fieldset>
                             <div class="form-group">
-                                <label for="computerName"><spring:message code="computer.name"/></label>
-                                <input type="text" name="computerName" class="form-control" id="computerName" placeholder="<spring:message code="computer.name"/>" required>
+                                <sform:label path="name">${computerName}</sform:label>
+                                <sform:input type="text" path="name" class="form-control" placeholder="${computerName}"/>
                             </div>
                             <div class="form-group">
-                                <label for="introduced"><spring:message code="computer.introduction"/></label>
-                                <input type="date" name="introduced" class="form-control" id="introduced" placeholder="YYYY-MM-DD" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])">
+                                <sform:label path="introduction"><spring:message code="computer.introduction"/></sform:label>
+                                <sform:input type="date" path="introduction" class="form-control" placeholder="YYYY-MM-DD" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])"/>
                             </div>
                             <div class="form-group">
-                                <label for="discontinued"><spring:message code="computer.discontinued"/></label>
-                                <input type="date" name="discontinued" class="form-control" id="discontinued" placeholder="YYYY-MM-DD" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])">
+                                <sform:label path="discontinued"><spring:message code="computer.discontinued"/></sform:label>
+                                <sform:input type="date" path="discontinued" class="form-control" placeholder="YYYY-MM-DD" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])"/>
                             </div>
                             <div class="form-group">
-                                <label for="companyId"><spring:message code="computer.company"/></label>
-                                <select name="companyId" class="form-control" id="companyId" >
-                                	<option value="0">-</option>
-                                	<c:forEach var="company" items="${companyList}">
-                                		<option value="${company.getId()}">${company.getName()}</option>
-                                	</c:forEach>
-                                </select>
+                                <sform:label path="companyId"><spring:message code="computer.company"/></sform:label>
+                                <sform:select path="companyId" class="form-control" id="companyId" >
+                                	<sform:option value="0" label="-"/>
+                                	<sform:options items="${companyList}" itemValue="id" itemLabel="name" />
+                                </sform:select>
                             </div>                  
                         </fieldset>
                         <div class="actions pull-right">
@@ -50,7 +50,7 @@
                             <spring:message code="or"/>
                             <a href="${pageContext.request.contextPath}/computers" class="btn btn-default"><spring:message code="cancel"/></a>
                         </div>
-                    </form>
+                    </sform:form>
                 </div>
             </div>
         </div>

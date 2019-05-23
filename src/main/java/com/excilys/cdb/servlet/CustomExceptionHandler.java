@@ -1,9 +1,9 @@
 package com.excilys.cdb.servlet;
 
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
@@ -17,7 +17,7 @@ public class CustomExceptionHandler extends ExceptionHandlerExceptionResolver {
 	
 	
 	@ExceptionHandler(value = Exception.class)
-	public void treatException(Exception cause) {
+	public String treatException(Exception cause, Model model) {
 		ServletErrorModel error = new ServletErrorModel(418, ADMIN_CONTACT, cause.getClass().toString());
 		
 		if (cause instanceof NoHandlerFoundException) {
@@ -33,8 +33,8 @@ public class CustomExceptionHandler extends ExceptionHandlerExceptionResolver {
 			error.setCustomMessage("Something went wrong unfortunately: "+cause.getClass().toString());
 		}
 		
-		ModelAndView mav = new ModelAndView();
-		mav.addObject(ERROR_PATTERN, error);
-		mav.setViewName(ERROR_PATTERN);
+		model.addAttribute(ERROR_PATTERN, error);
+		
+		return ERROR_PATTERN;
 	}
 }

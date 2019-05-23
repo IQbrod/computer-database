@@ -2,8 +2,12 @@ package com.excilys.cdb.servlet;
 
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.*;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -32,6 +36,16 @@ public class EditionServlet {
 		this.validator = validator;
 	}
 	
+	@ModelAttribute("computer")
+	public ComputerDto computerAttribute() {
+		return new ComputerDto(0);
+	}
+	
+	@InitBinder
+	public void allowEmptyDates(WebDataBinder binder) {  
+		binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));  
+	}
+	
 	@GetMapping(DashboardServlet.COMPUTER_PATTERN+"/{id}")
 	public String getComputerById(
 		@PathVariable("id") int id,	
@@ -44,15 +58,10 @@ public class EditionServlet {
 	
 	@PutMapping(DashboardServlet.COMPUTER_PATTERN)
 	public RedirectView updateComputer(
-		@RequestParam("id") Integer id,
-		@RequestParam("computerName") String name,
-		@RequestParam("introduced") String introduced,
-		@RequestParam("discontinued") String discontinued,
-		@RequestParam("companyId") Integer companyId
+		@Valid @ModelAttribute("computer") ComputerDto computer
 	) {
-		ComputerDto computerDto = new ComputerDto(id, name, introduced.equals("") ? null : introduced, discontinued.equals("") ? null : discontinued, companyId,"None");
-		this.validator.validateComputerDto(computerDto);
-		this.computerService.update(this.computerMapper.dtoToModel(computerDto));
+		this.validator.validateComputerDto(computer);
+		this.computerService.update(this.computerMapper.dtoToModel(computer));
 		return new RedirectView(DashboardServlet.COMPUTER_PATTERN);
 	}
 	
@@ -64,14 +73,10 @@ public class EditionServlet {
 	
 	@PostMapping(DashboardServlet.COMPUTER_PATTERN)
 	public RedirectView newComputer(
-		@RequestParam("computerName") String name,
-		@RequestParam("introduced") String introduced,
-		@RequestParam("discontinued") String discontinued,
-		@RequestParam("companyId") Integer companyId
-	) {
-		ComputerDto computerDto = new ComputerDto(0, name, introduced.equals("") ? null : introduced, discontinued.equals("") ? null : discontinued, companyId,"None");
-		this.validator.validateComputerDto(computerDto);
-		this.computerService.create(this.computerMapper.dtoToModel(computerDto));
+		@Valid @ModelAttribute("computer") ComputerDto computer
+	) {;
+		this.validator.validateComputerDto(computer);
+		this.computerService.create(this.computerMapper.dtoToModel(computer));
 		return new RedirectView(DashboardServlet.COMPUTER_PATTERN);
 	}
 }
