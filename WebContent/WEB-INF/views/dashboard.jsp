@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->
-<link href="./css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="./css/font-awesome.css" rel="stylesheet" media="screen">
-<link href="./css/main.css" rel="stylesheet" media="screen">
+<link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="${pageContext.request.contextPath}/css/font-awesome.css" rel="stylesheet" media="screen">
+<link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet" media="screen">
 </head>
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
@@ -33,13 +33,14 @@
                     </form>
                 </div>
                 <div class="pull-right">
-                    <a class="btn btn-success" id="addComputer" href="addComputer"><spring:message code="add.computer"/></a> 
+                    <a class="btn btn-success" id="addComputer" href="computers/new"><spring:message code="add.computer"/></a> 
                     <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();"><spring:message code="edit"/></a>
                 </div>
             </div>
         </div>
 
         <form id="deleteForm" action="" method="POST">
+        	<input type="hidden" name="_method" value="DELETE">
             <input type="hidden" name="selection" value="">
         </form>
 
@@ -56,16 +57,16 @@
                             </span>
                         </th>
                         <th>
-                            <spring:message code="computer.name"/> <a href="dashboard?orderBy=name">&#x2193</a> <a href="dashboard?orderBy=name_rev">&#x2191</a>
+                            <spring:message code="computer.name"/> <a href="?orderBy=name">&#x2193</a> <a href="?orderBy=name_rev">&#x2191</a>
                         </th>
                         <th>
-                            <spring:message code="computer.introduction"/> <a href="dashboard?orderBy=introduced">&#x2193</a> <a href="dashboard?orderBy=introduced_rev">&#x2191</a>
+                            <spring:message code="computer.introduction"/> <a href="?orderBy=introduced">&#x2193</a> <a href="?orderBy=introduced_rev">&#x2191</a>
                         </th>
                         <th>
-                            <spring:message code="computer.discontinued"/> <a href="dashboard?orderBy=discontinued">&#x2193</a> <a href="dashboard?orderBy=discontinued_rev">&#x2191</a>
+                            <spring:message code="computer.discontinued"/> <a href="?orderBy=discontinued">&#x2193</a> <a href="?orderBy=discontinued_rev">&#x2191</a>
                         </th>
                         <th>
-                            <spring:message code="computer.company"/> <a href="dashboard?orderBy=company">&#x2193</a> <a href="dashboard?orderBy=company_rev">&#x2191</a>
+                            <spring:message code="computer.company"/> <a href="?orderBy=company">&#x2193</a> <a href="?orderBy=company_rev">&#x2191</a>
                         </th>
 
                     </tr>
@@ -78,7 +79,7 @@
                 				<input type="checkbox" name="cb" class="cb" value="${computer.getId()}">
                 			</td>
                 			<td>
-                            	<a href="editComputer?id=${computer.getId()}" onclick="">${computer.getName()}</a>
+                            	<a href="computers/${computer.getId()}" onclick="">${computer.getName()}</a>
                         	</td>
                         	<td>
                         		${computer.getIntroduction()}
@@ -124,9 +125,9 @@
         </div>
 
     </footer>
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/dashboard.js"></script>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/bootstrap.min.js"></script>
+<script src="./js/dashboard.js"></script>
 
 </body>
 </html>

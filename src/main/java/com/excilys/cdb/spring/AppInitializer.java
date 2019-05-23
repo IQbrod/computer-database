@@ -1,6 +1,9 @@
 package com.excilys.cdb.spring;
 
+import javax.servlet.Filter;
+
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -9,7 +12,7 @@ public class AppInitializer extends
  
    @Override
    protected Class<?>[] getRootConfigClasses() {
-      return new Class[] { };
+      return new Class[] { RootConfig.class };
    }
  
    @Override
@@ -27,5 +30,10 @@ public class AppInitializer extends
        final DispatcherServlet dispatcherServlet = (DispatcherServlet) super.createDispatcherServlet(servletAppContext);
        dispatcherServlet.setThrowExceptionIfNoHandlerFound(true);
        return dispatcherServlet;
+   }
+   
+   @Override
+   protected Filter[] getServletFilters() {
+       return new Filter[] { new HiddenHttpMethodFilter() };
    }
 }

@@ -6,9 +6,9 @@
 <title><spring:message code="app.title"/></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Bootstrap -->
-<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="css/font-awesome.css" rel="stylesheet" media="screen">
-<link href="css/main.css" rel="stylesheet" media="screen">
+<link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="${pageContext.request.contextPath}/css/font-awesome.css" rel="stylesheet" media="screen">
+<link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet" media="screen">
 </head>
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
@@ -25,7 +25,8 @@
                     </div>
                     <h1><spring:message code="edit.computer"/></h1>
 
-                    <form action="editComputer" method="POST">
+                    <form action="${pageContext.request.contextPath}/computers" method="POST">
+                    	<input type="hidden" name="_method" value="PUT"> 
                         <input type="hidden" value="${computer.getId()}" name="id" id="id"/>
                         <fieldset>
                             <div class="form-group">
@@ -53,7 +54,7 @@
                         <div class="actions pull-right">
                             <input type="submit" value="<spring:message code="edit"/>" class="btn btn-primary">
                             <spring:message code="or"/>
-                            <a href="dashboard" class="btn btn-default"><spring:message code="cancel"/></a>
+                            <a href="${pageContext.request.contextPath}/computers" class="btn btn-default"><spring:message code="cancel"/></a>
                         </div>
                     </form>
                 </div>

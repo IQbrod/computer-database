@@ -17,7 +17,8 @@ import com.excilys.cdb.servlet.model.Pagination;
 @Controller
 @SessionAttributes( value=DashboardServlet.PAGINATION_PATTERN, types= {Pagination.class})
 public class DashboardServlet {
-	protected static final String PAGINATION_PATTERN = "pagination";
+	static final String PAGINATION_PATTERN = "pagination";
+	protected static final String COMPUTER_PATTERN = "computers";
 	private static final String DASHBOARD_PATTERN = "dashboard";
 	
 	private final ComputerService computerService;
@@ -33,8 +34,14 @@ public class DashboardServlet {
         return new Pagination();
     }
 	
-	@GetMapping(value={"/"+DASHBOARD_PATTERN})
-    public String get(
+	@GetMapping(value="/")
+	public RedirectView reset(SessionStatus status) {
+		status.setComplete();
+		return new RedirectView(COMPUTER_PATTERN);
+	}
+	
+	@GetMapping(COMPUTER_PATTERN)
+    public String getComputers(
     		@RequestParam(value="page", required=false) Integer page,
     		@RequestParam(value="size", required=false) Integer size,
     		@RequestParam(value="search", required=false) String search,
@@ -65,14 +72,8 @@ public class DashboardServlet {
         return DASHBOARD_PATTERN;
     }
 	
-	@GetMapping(value="/")
-	public RedirectView reset(SessionStatus status) {
-		status.setComplete();
-		return new RedirectView(DASHBOARD_PATTERN);
-	}
-	
-	@PostMapping(value= {"/","/"+DASHBOARD_PATTERN})
-	public RedirectView post(
+	@DeleteMapping(COMPUTER_PATTERN)
+	public RedirectView deleteComputers(
 		@RequestParam(value="selection") Integer[] selection,
 		@ModelAttribute(PAGINATION_PATTERN) Pagination pagination
 	) {
@@ -82,6 +83,6 @@ public class DashboardServlet {
 		for (Integer id : selection) {
 			this.computerService.delete(this.computerMapper.dtoToModel(new ComputerDto(id)));
 		}
-		return new RedirectView(DASHBOARD_PATTERN);
+		return new RedirectView(COMPUTER_PATTERN);
 	}
 }

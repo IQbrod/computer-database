@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.*;
@@ -17,7 +18,6 @@ import com.excilys.cdb.servlet.CustomExceptionHandler;
 
 @Configuration
 @EnableWebMvc
-@Import(RootConfig.class)
 @ComponentScan(basePackages = { "com.excilys.cdb.servlet" })
 public class WebMvcConfig implements WebMvcConfigurer {
 	
@@ -43,6 +43,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
       return new CookieLocaleResolver();
    }
    
+   @Bean
+   public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+	   return new HiddenHttpMethodFilter();
+   }
+   
    @Override
    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
 	   exceptionResolvers.clear();
@@ -51,7 +56,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
    
    @Override
    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-	   registry.addResourceHandler("/css/**", "/js/**", "/fonts/**").addResourceLocations("/resources/");
+	   registry.addResourceHandler("/css/**").addResourceLocations("resources/css/");
+	   registry.addResourceHandler("/js/**").addResourceLocations("resources/js/");
+	   registry.addResourceHandler("/fonts/**").addResourceLocations("resources/fonts/");
    }
    
    @Override

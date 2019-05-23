@@ -5,14 +5,14 @@
 	<title><spring:message code="app.title"/></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- Bootstrap -->
-	<link href="./css/bootstrap.min.css" rel="stylesheet" media="screen">
-	<link href="./css/font-awesome.css" rel="stylesheet" media="screen">
-	<link href="./css/main.css" rel="stylesheet" media="screen">
+	<link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<link href="${pageContext.request.contextPath}/css/font-awesome.css" rel="stylesheet" media="screen">
+	<link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet" media="screen">
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboard.html"><spring:message code="app.title"/></a>
+			<a class="navbar-brand" href="${pageContext.request.contextPath}"><spring:message code="app.title"/></a>
 		</div>
 	</header>
 
@@ -40,10 +40,5 @@
 			</div>
 		</div>
 	</section>
-
-	<script src="./js/jquery.min.js"></script>
-	<script src="./js/bootstrap.min.js"></script>
-	<script src="./js/dashboard.js"></script>
-
 </body>
 </html>

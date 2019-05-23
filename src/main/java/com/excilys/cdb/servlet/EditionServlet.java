@@ -15,6 +15,9 @@ import com.excilys.cdb.validator.Validator;
 
 @Controller
 public class EditionServlet {
+	private static final String NEWCOMPUTER_PATTERN = "addComputer";
+	private static final String EDITCOMPUTER_PATTERN = "editComputer";
+	
 	private final ComputerService computerService;
 	private final CompanyService companyService;
 	private final CompanyMapper companyMapper;
@@ -29,18 +32,18 @@ public class EditionServlet {
 		this.validator = validator;
 	}
 	
-	@GetMapping("/editComputer/{id}")
-	public String get(
+	@GetMapping(DashboardServlet.COMPUTER_PATTERN+"/{id}")
+	public String getComputerById(
 		@PathVariable("id") int id,	
 		Model model
 	) {
 		model.addAttribute("computer", this.computerMapper.modelToDto(this.computerService.read(id)));
 		model.addAttribute("companyList",this.companyService.listAllElements().stream().map(this.companyMapper::modelToDto).collect(Collectors.toList()));
-		return "editComputer";
+		return EDITCOMPUTER_PATTERN;
 	}
 	
-	@PostMapping("/editComputer")
-	public RedirectView post(
+	@PutMapping(DashboardServlet.COMPUTER_PATTERN)
+	public RedirectView updateComputer(
 		@RequestParam("id") Integer id,
 		@RequestParam("computerName") String name,
 		@RequestParam("introduced") String introduced,
@@ -50,17 +53,17 @@ public class EditionServlet {
 		ComputerDto computerDto = new ComputerDto(id, name, introduced.equals("") ? null : introduced, discontinued.equals("") ? null : discontinued, companyId,"None");
 		this.validator.validateComputerDto(computerDto);
 		this.computerService.update(this.computerMapper.dtoToModel(computerDto));
-		return new RedirectView("dashboard");
+		return new RedirectView(DashboardServlet.COMPUTER_PATTERN);
 	}
 	
-	@GetMapping("/addComputer")
-	public String get(Model model) {
+	@GetMapping(DashboardServlet.COMPUTER_PATTERN+"/new")
+	public String getNewComputer(Model model) {
 		model.addAttribute("companyList",this.companyService.listAllElements().stream().map(this.companyMapper::modelToDto).collect(Collectors.toList()));
-		return "addComputer";
+		return NEWCOMPUTER_PATTERN;
 	}
 	
-	@PostMapping("/addComputer")
-	public RedirectView post(
+	@PostMapping(DashboardServlet.COMPUTER_PATTERN)
+	public RedirectView newComputer(
 		@RequestParam("computerName") String name,
 		@RequestParam("introduced") String introduced,
 		@RequestParam("discontinued") String discontinued,
@@ -69,6 +72,6 @@ public class EditionServlet {
 		ComputerDto computerDto = new ComputerDto(0, name, introduced.equals("") ? null : introduced, discontinued.equals("") ? null : discontinued, companyId,"None");
 		this.validator.validateComputerDto(computerDto);
 		this.computerService.create(this.computerMapper.dtoToModel(computerDto));
-		return new RedirectView("dashboard");
+		return new RedirectView(DashboardServlet.COMPUTER_PATTERN);
 	}
 }
