@@ -9,12 +9,15 @@ import org.springframework.stereotype.*;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.excilys.cdb.dto.ComputerDto;
+import com.excilys.cdb.exception.ShouldBeSentToClientException;
 import com.excilys.cdb.mapper.CompanyMapper;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.service.*;
+import com.excilys.cdb.servlet.model.ServletErrorModel;
 import com.excilys.cdb.validator.Validator;
 
 @Controller
@@ -58,10 +61,16 @@ public class EditionServlet {
 	
 	@PutMapping(DashboardServlet.COMPUTER_PATTERN)
 	public RedirectView updateComputer(
-		@Valid @ModelAttribute("computer") ComputerDto computer
+		@ModelAttribute("computer") ComputerDto computer,
+		RedirectAttributes redir
 	) {
-		this.validator.validateComputerDto(computer);
-		this.computerService.update(this.computerMapper.dtoToModel(computer));
+		try {
+			this.validator.validateComputerDto(computer);
+			this.computerService.update(this.computerMapper.dtoToModel(computer));
+		} catch (ShouldBeSentToClientException e) {
+			redir.addFlashAttribute(ErrorServlet.ERROR_PATTERN, new ServletErrorModel(400, e.getMessage(), e.getClass().toString()));
+			return new RedirectView(ErrorServlet.ERROR_PATTERN);
+		}
 		return new RedirectView(DashboardServlet.COMPUTER_PATTERN);
 	}
 	

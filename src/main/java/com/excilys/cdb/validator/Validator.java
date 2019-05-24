@@ -38,9 +38,7 @@ public class Validator {
 	
 	private void validateDateOrder(String before, String after) {
 		if (before != null && after != null && Timestamp.valueOf(before+DEFAULT_TIME_VALUE).after(Timestamp.valueOf(after+DEFAULT_TIME_VALUE))) {
-			RuntimeException exception = new InvalidDateOrderException(before, after);
-			this.logger.error(exception.getMessage());
-			throw exception;
+			throw new InvalidDateOrderException(before, after);
 		}
 	}
 	

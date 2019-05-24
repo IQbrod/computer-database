@@ -32,7 +32,7 @@
                         <fieldset>
                             <div class="form-group">
                                 <sform:label path="name"><spring:message code="computer.name"/></sform:label>
-                                <sform:input type="text" class="form-control" path="name" id="computerName" value="${computer.getName()}" />
+                                <sform:input type="text" class="form-control" path="name" id="computerName" value="${computer.getName()}" required="required"/>
                             </div>
                             <div class="form-group">
                                 <sform:label path="introduction"><spring:message code="computer.introduction"/></sform:label>

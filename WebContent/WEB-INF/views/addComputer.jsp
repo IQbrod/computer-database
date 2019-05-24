@@ -27,7 +27,7 @@
                         <fieldset>
                             <div class="form-group">
                                 <sform:label path="name">${computerName}</sform:label>
-                                <sform:input type="text" path="name" class="form-control" placeholder="${computerName}"/>
+                                <sform:input type="text" path="name" class="form-control" placeholder="${computerName}" required="required"/>
                             </div>
                             <div class="form-group">
                                 <sform:label path="introduction"><spring:message code="computer.introduction"/></sform:label>
