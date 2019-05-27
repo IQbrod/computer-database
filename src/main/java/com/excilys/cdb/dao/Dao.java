@@ -44,8 +44,8 @@ public abstract class Dao<T extends AbstractModel> {
 	public abstract T create(T obj);
 	public abstract T update(T obj);
 	public abstract T delete(T obj);
-	public abstract T deleteById(int i);
-	public abstract T read(int id);
+	public abstract T deleteById(long i);
+	public abstract T read(long id);
 	public abstract List<T> listAll();
 	public abstract List<T> list(int page, int size);
 	public abstract int count();

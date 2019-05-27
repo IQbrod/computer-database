@@ -25,7 +25,7 @@ public abstract class AbstractService<U extends AbstractModel> {
 		return this.dao.delete(modelObject);
 	}
 	
-	public U read(int id) {
+	public U read(long id) {
 		return this.dao.read(id);
 	}
 	

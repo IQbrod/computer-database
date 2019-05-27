@@ -21,20 +21,20 @@ public class ComputerMapper extends Mapper<ComputerDto, Computer>{
 	
 	@Override
 	public Computer dtoToModel(ComputerDto dtoObject) {
-		int id = dtoObject.getId();
+		long id = dtoObject.getId();
 		String name = dtoObject.getName();
 		Timestamp t1;
 		Timestamp t2;
 		t1 = (dtoObject.getIntroduction() == null) ? null : Timestamp.valueOf(dtoObject.getIntroduction()+" 12:00:00");
 		t2 = (dtoObject.getDiscontinued() == null) ? null : Timestamp.valueOf(dtoObject.getDiscontinued()+" 12:00:00");
-		int cid = dtoObject.getCompanyId();
+		long cid = dtoObject.getCompanyId();
 			
 		return new Computer(id,name,t1,t2,(cid == 0) ? null : cid);
 	}
 
 	@Override
 	public ComputerDto modelToDto(Computer modelObject) {
-		CompanyDto companyDto = (modelObject.getCompanyId() <= 0) ? new CompanyDto(0,"_") : this.companyMapper.modelToDto(this.companyService.read(modelObject.getCompanyId()));
+		CompanyDto companyDto = (modelObject.getCompanyId() <= 0) ? new CompanyDto(0L,"_") : this.companyMapper.modelToDto(this.companyService.read(modelObject.getCompanyId()));
 		
 		return new ComputerDto(
 			modelObject.getId(),

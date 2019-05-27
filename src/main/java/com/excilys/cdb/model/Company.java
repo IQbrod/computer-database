@@ -1,9 +1,14 @@
 package com.excilys.cdb.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="company")
 public class Company extends AbstractModel{
 	private String name;
 	
-	public Company(int id, String name) {
+	public Company(long id, String name) {
 		super(id);
 		this.name = name;
 	}
@@ -29,7 +34,7 @@ public class Company extends AbstractModel{
 	
 	@Override
 	public int hashCode() {
-		int result = 31*17 + this.getId();
+		int result = (int) (31*17 + this.getId());
 		result = 31*result + this.getName().hashCode();
 		
 		return result;

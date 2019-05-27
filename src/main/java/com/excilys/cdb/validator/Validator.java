@@ -13,7 +13,7 @@ public class Validator {
 	private static final String DEFAULT_TIME_VALUE = " 12:00:00";
 	protected Logger logger;
 	
-	private void validateId(Integer id) {
+	private void validateId(Long id) {
 		if (id < 0)
 			throw new InvalidIntegerException(id.toString());
 	}

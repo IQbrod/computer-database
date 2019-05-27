@@ -1,17 +1,22 @@
 package com.excilys.cdb.model;
 
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+
+@MappedSuperclass
 public abstract class AbstractModel {
-	protected int id;
+	@Id
+	protected long id;
 	
-	public AbstractModel(int id) {
+	public AbstractModel(long id) {
 		this.id = id;
 	}
 	
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 }

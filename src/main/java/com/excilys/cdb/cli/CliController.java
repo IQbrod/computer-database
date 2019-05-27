@@ -298,9 +298,9 @@ public class CliController {
 				this.validator.validatePagination(splitStr[2]);
 				this.validator.validatePagination(splitStr[3]);
 				if (splitStr[1].equalsIgnoreCase(COMPUTER_TABLE)) {
-					dtoList = this.computerService.list(this.computerMapper.idToInt(splitStr[2]), this.computerMapper.idToInt(splitStr[3])).stream().map(this.computerMapper::modelToDto).collect(Collectors.toList());
+					dtoList = this.computerService.list(Integer.valueOf(splitStr[2]), Integer.valueOf(splitStr[3])).stream().map(this.computerMapper::modelToDto).collect(Collectors.toList());
 				} else if (splitStr[1].equalsIgnoreCase(COMPANY_TABLE)) {
-					dtoList = this.companyService.list(this.companyMapper.idToInt(splitStr[2]), this.companyMapper.idToInt(splitStr[3])).stream().map(this.companyMapper::modelToDto).collect(Collectors.toList());
+					dtoList = this.companyService.list(Integer.valueOf(splitStr[2]), Integer.valueOf(splitStr[3])).stream().map(this.companyMapper::modelToDto).collect(Collectors.toList());
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}

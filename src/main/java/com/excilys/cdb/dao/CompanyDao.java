@@ -87,7 +87,7 @@ public class CompanyDao extends Dao<Company>{
 	}
 	
 	@Override
-	public Company deleteById(int id) {
+	public Company deleteById(long id) {
 		Company company = this.read(id);
 		
 		MapSqlParameterSource params = new MapSqlParameterSource();
@@ -102,7 +102,7 @@ public class CompanyDao extends Dao<Company>{
 	}
 
 	@Override
-	public Company read(int id) {
+	public Company read(long id) {
 		if(id <= 0)
 			throw this.log(new InvalidIdException(id));
 		

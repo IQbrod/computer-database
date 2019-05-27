@@ -23,7 +23,7 @@ public class ComputerServiceTest {
 
 	@Test
 	public void createTest() throws Exception {
-		assertEquals(888,serviceInstance.create(new Computer(888,"Ordinateur",null,null,0)).getId());
+		assertEquals(888,serviceInstance.create(new Computer(888,"Ordinateur",null,null,0L)).getId());
 	}
 	
 	@Test
@@ -33,12 +33,12 @@ public class ComputerServiceTest {
 	
 	@Test
 	public void updateTest() throws Exception {
-		assertNotNull(serviceInstance.update(new Computer(27,"Updated",null,null,0)));
+		assertNotNull(serviceInstance.update(new Computer(27,"Updated",null,null,0L)));
 	}
 	
 	@Test
 	public void deleteTest() throws Exception {
-		assertEquals(888,serviceInstance.delete(new Computer(888,"DeleteMe",null,null,0)).getId());
+		assertEquals(888,serviceInstance.delete(new Computer(888,"DeleteMe",null,null,0L)).getId());
 	}
 	
 	@Test

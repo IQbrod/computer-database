@@ -2,13 +2,20 @@ package com.excilys.cdb.model;
 
 import java.sql.*;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="computer")
 public class Computer extends AbstractModel {
 	private String name;
 	private Timestamp introduced;
 	private Timestamp discontinued;
-	private Integer companyId;
+	@Column(name="company_id")
+	private long companyId;
 	
-	public Computer(int id, String name, Timestamp dateIntro, Timestamp dateDisc, Integer companyId) {
+	public Computer(long id, String name, Timestamp dateIntro, Timestamp dateDisc, long companyId) {
 		super(id);
 		this.setName(name);
 		this.setIntroduced(dateIntro);
@@ -40,11 +47,11 @@ public class Computer extends AbstractModel {
 		this.discontinued = dateDisc;
 	}
 	
-	public Integer getCompanyId() {
+	public long getCompanyId() {
 		return companyId;
 	}
 
-	public void setCompanyId(Integer companyId) {
+	public void setCompanyId(long companyId) {
 		this.companyId = companyId;
 	}
 
@@ -61,11 +68,11 @@ public class Computer extends AbstractModel {
 	
 	@Override
 	public int hashCode() {
-		int result = 31*17 + this.getId();
+		int result = (int) (31*17 + this.getId());
 		result = 31*result + this.getName().hashCode();
 		result = 31*result + ((this.getIntroduced() == null) ? 0 : this.getIntroduced().hashCode());
 		result = 31*result + ((this.getDiscontinued() == null) ? 0 : this.getDiscontinued().hashCode());
-		result = 31*result + this.getCompanyId();
+		result = (int) (31*result + this.getCompanyId());
 		
 		
 		return result;

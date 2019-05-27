@@ -82,7 +82,7 @@ public class ComputerDao extends Dao<Computer> {
 		}
 	}
 
-	public List<Computer> deleteByCompanyId(int companyId) {		
+	public List<Computer> deleteByCompanyId(long companyId) {		
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("cid", companyId);
 		
@@ -99,7 +99,7 @@ public class ComputerDao extends Dao<Computer> {
 	}
 	
 	@Override
-	public Computer deleteById(int id) {
+	public Computer deleteById(long id) {
 		Computer returnComputer = this.read(id);
 		try {
 			MapSqlParameterSource params = new MapSqlParameterSource();
@@ -112,7 +112,7 @@ public class ComputerDao extends Dao<Computer> {
 	}
 
 	@Override
-	public Computer read(int id) {
+	public Computer read(long id) {
 		if(id <= 0) {
 			throw this.log(new InvalidIdException(id));
 		}

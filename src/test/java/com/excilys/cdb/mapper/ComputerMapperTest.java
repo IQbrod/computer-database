@@ -29,7 +29,7 @@ public class ComputerMapperTest {
 	@Test
 	public void TestDtoToModel() {
 		assertTrue(
-			mapperInstance.dtoToModel(new ComputerDto(18,"Computer",null,null,0,"None")).equals(new Computer(18,"Computer",null,null,0))
+			mapperInstance.dtoToModel(new ComputerDto(18L,"Computer",null,null,0L,"None")).equals(new Computer(18,"Computer",null,null,0L))
 		);
 	}
 	
@@ -37,14 +37,14 @@ public class ComputerMapperTest {
 	@Test
 	public void TestDtoToModelDateIntroduction() {
 		assertTrue(
-			mapperInstance.dtoToModel(new ComputerDto(18,"Computer","2017-05-27",null,0,"None")).equals(new Computer(18,"Computer",Timestamp.valueOf("2017-05-27 12:00:00"),null,0))
+			mapperInstance.dtoToModel(new ComputerDto(18L,"Computer","2017-05-27",null,0L,"None")).equals(new Computer(18,"Computer",Timestamp.valueOf("2017-05-27 12:00:00"),null,0L))
 		);
 	}
 	// disc
 	@Test
 	public void TestDtoToModelDateDiscontinued() {
 		assertTrue(
-			mapperInstance.dtoToModel(new ComputerDto(18,"Computer",null,"2017-05-27",0,"None")).equals(new Computer(18,"Computer",null,Timestamp.valueOf("2017-05-27 12:00:00"),0))
+			mapperInstance.dtoToModel(new ComputerDto(18L,"Computer",null,"2017-05-27",0L,"None")).equals(new Computer(18,"Computer",null,Timestamp.valueOf("2017-05-27 12:00:00"),0L))
 		);
 	}
 
@@ -53,7 +53,7 @@ public class ComputerMapperTest {
 	@Test
 	public void TestDtoToModelCompanyId() {
 		assertTrue(
-			mapperInstance.dtoToModel(new ComputerDto(18,"Computer",null,null,12,"None")).equals(new Computer(18,"Computer",null,null,12))
+			mapperInstance.dtoToModel(new ComputerDto(18L,"Computer",null,null,12L,"None")).equals(new Computer(18,"Computer",null,null,12L))
 		);
 	}
 	
@@ -61,28 +61,28 @@ public class ComputerMapperTest {
 	@Test
 	public void TestModelToDto() {
 		assertTrue(
-			mapperInstance.modelToDto(new Computer(5,"Entreprise",null,null,0)).equals(new ComputerDto(5,"Entreprise","","",0,"None"))
+			mapperInstance.modelToDto(new Computer(5,"Entreprise",null,null,0L)).equals(new ComputerDto(5L,"Entreprise","","",0L,"None"))
 		);
 	}
 	
 	@Test
 	public void TestModelToDtoIntroduction() {
 		assertTrue(
-			mapperInstance.modelToDto(new Computer(5,"Entreprise",Timestamp.valueOf("2017-05-27 12:00:00"),null,0)).equals(new ComputerDto(5,"Entreprise","2017-05-27","",0,"None"))
+			mapperInstance.modelToDto(new Computer(5,"Entreprise",Timestamp.valueOf("2017-05-27 12:00:00"),null,0L)).equals(new ComputerDto(5L,"Entreprise","2017-05-27","",0L,"None"))
 		);
 	}
 	
 	@Test
 	public void TestModelToDtoDiscontinued() {
 		assertTrue(
-			mapperInstance.modelToDto(new Computer(5,"Entreprise",null,Timestamp.valueOf("2017-05-27 12:00:00"),0)).equals(new ComputerDto(5,"Entreprise","","2017-05-27",0,"None"))
+			mapperInstance.modelToDto(new Computer(5,"Entreprise",null,Timestamp.valueOf("2017-05-27 12:00:00"),0L)).equals(new ComputerDto(5L,"Entreprise","","2017-05-27",0L,"None"))
 		);
 	}
 	
 	@Test
 	public void TestModelToDtoCompany() {
 		assertTrue(
-			mapperInstance.modelToDto(new Computer(5,"Entreprise",null,null,5)).equals(new ComputerDto(5,"Entreprise","","",5,"None"))
+			mapperInstance.modelToDto(new Computer(5,"Entreprise",null,null,5L)).equals(new ComputerDto(5L,"Entreprise","","",5L,"None"))
 		);
 	}
 

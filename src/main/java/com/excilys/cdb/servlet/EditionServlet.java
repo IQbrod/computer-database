@@ -41,7 +41,7 @@ public class EditionServlet {
 	
 	@ModelAttribute("computer")
 	public ComputerDto computerAttribute() {
-		return new ComputerDto(0);
+		return new ComputerDto(0L);
 	}
 	
 	@InitBinder
@@ -83,7 +83,7 @@ public class EditionServlet {
 	@PostMapping(DashboardServlet.COMPUTER_PATTERN)
 	public RedirectView newComputer(
 		@Valid @ModelAttribute("computer") ComputerDto computer
-	) {;
+	) {
 		this.validator.validateComputerDto(computer);
 		this.computerService.create(this.computerMapper.dtoToModel(computer));
 		return new RedirectView(DashboardServlet.COMPUTER_PATTERN);

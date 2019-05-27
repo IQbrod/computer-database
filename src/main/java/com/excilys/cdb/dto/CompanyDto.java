@@ -6,11 +6,11 @@ public class CompanyDto extends Dto {
 	@NotEmpty
 	private String name;
 	
-	public CompanyDto(Integer id) {
+	public CompanyDto(Long id) {
 		this(id,"");
 	}
 	
-	public CompanyDto(Integer id, String name) {
+	public CompanyDto(Long id, String name) {
 		super(id);
 		this.name = name;
 	}

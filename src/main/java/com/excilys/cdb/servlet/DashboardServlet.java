@@ -74,13 +74,13 @@ public class DashboardServlet {
 	
 	@DeleteMapping(COMPUTER_PATTERN)
 	public RedirectView deleteComputers(
-		@RequestParam(value="selection") Integer[] selection,
+		@RequestParam(value="selection") Long[] selection,
 		@ModelAttribute(PAGINATION_PATTERN) Pagination pagination
 	) {
 		if ((selection.length == pagination.getSize() && pagination.getPage() > 1) || pagination.getNbComputer() - (pagination.getPage()-1) * pagination.getSize() == selection.length)
 			pagination.setPage(pagination.getPage()-1);
 		
-		for (Integer id : selection) {
+		for (Long id : selection) {
 			this.computerService.delete(this.computerMapper.dtoToModel(new ComputerDto(id)));
 		}
 		return new RedirectView(COMPUTER_PATTERN);

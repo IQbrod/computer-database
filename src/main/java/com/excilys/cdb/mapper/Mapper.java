@@ -7,7 +7,7 @@ public abstract class Mapper<T extends Dto, U extends AbstractModel> {
 	public abstract U dtoToModel (T dtoObject);
 	public abstract T modelToDto (U modelObject);
 	
-	public int idToInt(String id) {
-		return Integer.valueOf(id);
+	public long idToInt(String id) {
+		return Long.valueOf(id);
 	}
 }
