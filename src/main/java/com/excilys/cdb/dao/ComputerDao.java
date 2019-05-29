@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.mapper.ComputerRowMapper;
+import com.excilys.cdb.enums.ComputerFields;
 import com.excilys.cdb.model.*;
-import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
@@ -68,13 +68,10 @@ public class ComputerDao extends Dao<Computer> {
 
 	@Override
 	public List<Computer> listAll() {
-		return this.jpaQueryFactory.selectFrom(qComputer).fetch();
+		return this.listAll("id");
 	}	
 	public List<Computer> listAll(String orderBy) {
-		//ICI
-		return this.jpaQueryFactory.selectFrom(qComputer).orderBy(
-			new CaseBuilder().when(qComputer.id.isNull()).then(0).otherwise(1).asc()
-		).fetch();
+		return this.list(1, (int) this.count(), orderBy);
 	}
 	
 	@Override
@@ -91,7 +88,8 @@ public class ComputerDao extends Dao<Computer> {
 				.leftJoin(qCompany).on(qComputer.companyId.eq(qCompany.id))
 				.where(qComputer.name.like("%"+name+"%")
 					.or(qCompany.name.like("%"+name+"%"))
-				).limit(size).offset(offset).fetch();
+				).orderBy(ComputerFields.getOrderByField(orderBy).getField())
+				.limit(size).offset(offset).fetch();
 	}
 	
 	public long countByName(String name) {
