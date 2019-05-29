@@ -2,149 +2,66 @@ package com.excilys.cdb.dao;
 
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.mapper.CompanyRowMapper;
-import com.excilys.cdb.dbconnector.JdbcTemplateProvider;
-import com.excilys.cdb.exception.*;
 import com.excilys.cdb.model.*;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
-public class CompanyDao extends Dao<Company>{	
-	public CompanyDao(JdbcTemplateProvider templateProvider, CompanyRowMapper rowMapper) {		
+@Transactional(propagation = Propagation.NESTED)
+public class CompanyDao extends Dao<Company>{
+	private QCompany qCompany = QCompany.company;
+	
+	public CompanyDao(CompanyRowMapper rowMapper, JPAQueryFactory jpaQueryFactory) {		
 		super(
-			"INSERT INTO company VALUES (:id,:name);",
-			"UPDATE company SET name=:name WHERE id=:id;",
-			
-			"DELETE FROM company WHERE id=?;",
-			
-			"SELECT id, name FROM company WHERE id=:id;",
-			"SELECT id, name FROM company",
-			" LIMIT :offset,:size;",
-			"SELECT count(id) AS count FROM company",
-			templateProvider,
-			rowMapper
+			rowMapper,
+			jpaQueryFactory
 		);
-		
-		this.logger = LogManager.getLogger(this.getClass());
-	}
-	
-	@Override
-	protected Logger getLogger() {
-		return this.logger;
 	}
 
 	@Override
-	public Company create(Company aCompany) {
-		if(aCompany.getId() <= 0) {
-			throw this.log(new InvalidIdException(aCompany.getId()));
-		}
-		
-		try {
-			SqlParameterSource params = new BeanPropertySqlParameterSource(aCompany);
-			
-			if (this.namedTemplate.update(this.sqlCreate, params) == 1)
-				return aCompany;
-			else {
-				throw this.log(new FailedSQLQueryException(this.sqlCreate));
-			}
-		} catch (DuplicateKeyException exception) {
-			throw this.log(new KeyViolationException(aCompany.getId()));			
-		} catch (DataAccessException exception) {
-			throw this.log(new FailedSQLQueryException(this.sqlCreate));
-		}
+	public long create(Company aCompany) {
+		//this.entityManager.persist(aCompany);
+		return 0;
 	}
 
 	@Override
-	public Company update(Company aCompany) {
-		this.read(aCompany.getId());
-		try {
-			SqlParameterSource params = new BeanPropertySqlParameterSource(aCompany);
-			
-			if (this.namedTemplate.update(this.sqlUpdate, params) == 1) 
-				return aCompany;
-			else {
-				throw this.log(new FailedSQLQueryException(this.sqlUpdate));
-			}
-		} catch (DuplicateKeyException exception) {
-			throw this.log(new KeyViolationException(aCompany.getId()));			
-		} catch (DataAccessException exception) {
-			throw this.log(new FailedSQLQueryException(this.sqlCreate));
-		}
+	public void update(Company aCompany) {
+		this.jpaQueryFactory.update(qCompany).where(qCompany.id.eq(aCompany.getId())).set(qCompany.name, aCompany.getName());
 	}
 
 	
 	@Override
-	public Company delete(Company aCompany) {
-		return this.deleteById(aCompany.getId());
+	public void delete(Company aCompany) {
+		this.deleteById(aCompany.getId());
 	}
 	
 	@Override
-	public Company deleteById(long id) {
-		Company company = this.read(id);
-		
-		MapSqlParameterSource params = new MapSqlParameterSource();
-		params.addValue("id", id);
-		
-		try {
-			this.namedTemplate.update(this.sqlDelete, params);
-			return company;
-		} catch (DataAccessException e) {
-			throw this.log(new FailedSQLQueryBySQLException(this.sqlDelete),e);
-		}
+	public void deleteById(long id) {
+		this.jpaQueryFactory.delete(qCompany).where(qCompany.id.eq(id)).execute();
 	}
 
 	@Override
 	public Company read(long id) {
-		if(id <= 0)
-			throw this.log(new InvalidIdException(id));
-		
-		try {
-			MapSqlParameterSource params = new MapSqlParameterSource();
-			params.addValue("id", id);
-			return this.namedTemplate.query(this.sqlSelect, params, this.rowMapper).get(0);
-		} catch (IndexOutOfBoundsException | DataAccessException e) {
-			throw this.log(new FailedSQLQueryException(this.sqlSelect),e);
-		}
+		return this.jpaQueryFactory.selectFrom(qCompany).where(qCompany.id.eq(id)).fetchOne();
 	}
 	
 	@Override
-	public List<Company> listAll() {
-		return this.list(1, this.count());
+	public List<Company> listAll() {	
+		return this.jpaQueryFactory.selectFrom(qCompany).fetch();
 	}
 	
 	@Override
 	public List<Company> list(int page, int size) {
-		if (size <= 0)
-			throw this.log(new InvalidPageSizeException(size));
-		if (page <= 0)
-			throw this.log(new InvalidPageValueException(page));
-		int offset = (page-1)*size;
-		
-		try {
-			MapSqlParameterSource params = new MapSqlParameterSource();
-			params.addValue("offset", offset);
-			params.addValue("size", size);
-			
-			return this.namedTemplate.query(this.sqlList+sqlLimit, params, this.rowMapper);
-		} catch (DataAccessException e) {
-			throw this.log(new FailedSQLQueryException(this.sqlList),e);
-		}
+		int offset = (page-1)*size;		
+		return this.jpaQueryFactory.selectFrom(qCompany).limit(size).offset(offset).fetch();
 	}
 	
 	@Override
-	public int count() {
-		try {
-			return this.template.queryForObject(this.sqlCount, Integer.class);
-		} catch (DataAccessException e) {
-			throw this.log(new FailedSQLQueryException(this.sqlCount),e);
-		}
+	public long count() {
+		return this.jpaQueryFactory.selectFrom(qCompany).fetchCount();
 	}
 }

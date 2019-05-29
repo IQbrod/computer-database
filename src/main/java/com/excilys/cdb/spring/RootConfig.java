@@ -2,14 +2,17 @@ package com.excilys.cdb.spring;
 
 import java.util.Properties;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 import com.excilys.cdb.dbconnector.HikariConnectionProvider;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Configuration
 @EnableTransactionManagement
@@ -20,10 +23,10 @@ import com.excilys.cdb.dbconnector.HikariConnectionProvider;
 		"com.excilys.cdb.service",
 		"com.excilys.cdb.validator"
 	})
-public class RootConfig {	
+public class RootConfig {
+	@PersistenceContext EntityManager em;
 	
 	@Bean
-	@Autowired
 	public LocalSessionFactoryBean sessionFactory(HikariConnectionProvider hikaricp) {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setDataSource(hikaricp.getDataSource());
@@ -33,11 +36,16 @@ public class RootConfig {
 	}
 	
 	@Bean
-	@Autowired
 	public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
 		HibernateTransactionManager txManager = new HibernateTransactionManager();
 		txManager.setSessionFactory(sessionFactory);
+		txManager.setNestedTransactionAllowed(true);
 		return txManager;
+	}
+	
+	@Bean
+	public JPAQueryFactory jpaQueryFactory() {
+		return new JPAQueryFactory(em);
 	}
 	
 	private Properties hibernateProperties() {

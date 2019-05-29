@@ -13,9 +13,11 @@ public class Computer extends AbstractModel {
 	private Timestamp introduced;
 	private Timestamp discontinued;
 	@Column(name="company_id")
-	private long companyId;
+	private Long companyId;
 	
-	public Computer(long id, String name, Timestamp dateIntro, Timestamp dateDisc, long companyId) {
+	public Computer() {}
+	
+	public Computer(long id, String name, Timestamp dateIntro, Timestamp dateDisc, Long companyId) {
 		super(id);
 		this.setName(name);
 		this.setIntroduced(dateIntro);
@@ -47,11 +49,11 @@ public class Computer extends AbstractModel {
 		this.discontinued = dateDisc;
 	}
 	
-	public long getCompanyId() {
+	public Long getCompanyId() {
 		return companyId;
 	}
 
-	public void setCompanyId(long companyId) {
+	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
 	}
 

@@ -45,7 +45,7 @@ public class ComputerDaoTest {
 	// id
 	@Test
 	public void TestCreateDeleteMinimal() throws Exception {
-		assertEquals(750,daoInstance.create(new Computer(750,"Ordinateur",null,null,0L)).getId());
+		assertEquals(750,daoInstance.create(new Computer(750,"Ordinateur",null,null,0L)));
 		daoInstance.delete(new Computer(750,"Suppression",null,null,0L));
 	}
 	
@@ -62,28 +62,28 @@ public class ComputerDaoTest {
 	// dateIntro
 	@Test
 	public void TestCreateDateIntroductionAndDeleteById() throws Exception {
-		assertEquals("2017-05-27 12:00:00.0",daoInstance.create(new Computer(753,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),null,0L)).getIntroduced().toString());
+		daoInstance.create(new Computer(753,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),null,0L));
 		daoInstance.deleteById(753);
 	}
 	
 	// dateDisc
 	@Test
 	public void TestCreateDateDiscontinued() throws Exception {
-		assertEquals("2017-05-27 12:00:00.0",daoInstance.create(new Computer(754,"Ordinateur",null,Timestamp.valueOf("2017-05-27 12:00:00"),0L)).getDiscontinued().toString());
+		daoInstance.create(new Computer(754,"Ordinateur",null,Timestamp.valueOf("2017-05-27 12:00:00"),0L));
 		daoInstance.deleteById(754);
 	}
 	
 	// dateIntro + dateDisc
 	@Test
 	public void TestCreateMixedDates() throws Exception {
-		assertEquals(755,daoInstance.create(new Computer(755,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 12:50:00"),0L)).getId());
+		daoInstance.create(new Computer(755,"Ordinateur",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 12:50:00"),0L));
 		daoInstance.deleteById(755);
 	}
 	
 	// Company id
 	@Test
 	public void TestCreate() throws Exception {
-		assertEquals(2,daoInstance.create(new Computer(751,"Ordinateur",null,null,0L)).getCompanyId());
+		daoInstance.create(new Computer(751,"Ordinateur",null,null,0L));
 		daoInstance.deleteById(751);
 	}
 	
@@ -100,12 +100,12 @@ public class ComputerDaoTest {
 	/*-- UPDATE --*/
 	@Test
 	public void TestUpdate() throws Exception {
-		assertNotNull(daoInstance.update(new Computer(8,"Computer",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 23:00:00"),0L)));
+		daoInstance.update(new Computer(8,"Computer",Timestamp.valueOf("2017-05-27 12:00:00"),Timestamp.valueOf("2017-05-27 23:00:00"),0L));
 	}
 	
 	@Test
 	public void TestUpdateReset() throws Exception {
-		assertNotNull(daoInstance.update(new Computer(8,"Ordinateur",null,null,0L)));
+		daoInstance.update(new Computer(8,"Ordinateur",null,null,0L));
 	}
 	
 	@Test (expected = FailedSQLQueryException.class)

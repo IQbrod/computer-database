@@ -35,6 +35,7 @@ public class CustomExceptionHandler extends ExceptionHandlerExceptionResolver {
 		
 		redir.addFlashAttribute(ErrorServlet.ERROR_PATTERN, error);
 		
+		cause.printStackTrace();
 		return new RedirectView(ErrorServlet.ERROR_PATTERN);
 	}
 }

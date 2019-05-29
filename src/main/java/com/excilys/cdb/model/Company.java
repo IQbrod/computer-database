@@ -8,6 +8,8 @@ import javax.persistence.Table;
 public class Company extends AbstractModel{
 	private String name;
 	
+	public Company() {}
+	
 	public Company(long id, String name) {
 		super(id);
 		this.name = name;

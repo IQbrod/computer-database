@@ -61,7 +61,7 @@ public class DashboardServlet {
 		List<ComputerDto> computerList = this.computerService.listByName(pagination.getSearch(), pagination.getPage(), pagination.getSize(), pagination.getOrderBy()).stream().map(this.computerMapper::modelToDto).collect(Collectors.toList());
 		pagination.setNbComputer(this.computerService.countByName(pagination.getSearch()));
 		model.addAttribute("computerList", computerList);
-		int maxPage = pagination.getNbComputer() / pagination.getSize() + ((pagination.getNbComputer() % pagination.getSize() == 0) ? 0 : 1);
+		long maxPage = pagination.getNbComputer() / pagination.getSize() + ((pagination.getNbComputer() % pagination.getSize() == 0) ? 0 : 1);
 		pagination.setMaxPage(maxPage);
 		
 		if (pagination.getPage() < 3)

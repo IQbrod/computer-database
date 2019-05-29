@@ -2,18 +2,18 @@ package com.excilys.cdb.servlet.model;
 
 public class Pagination {
 	private int page;
-	private int maxPage;
-	private int medianPage;
+	private long maxPage;
+	private long medianPage;
 	private int size;
 	private String search;
 	private String orderBy;
-	private int nbComputer;
+	private long nbComputer;
 	
-	public int getNbComputer() {
+	public long getNbComputer() {
 		return nbComputer;
 	}
 
-	public void setNbComputer(int nbComputer) {
+	public void setNbComputer(long nbComputer) {
 		this.nbComputer = nbComputer;
 	}
 
@@ -35,11 +35,11 @@ public class Pagination {
 		return page;
 	}
 
-	public int getMaxPage() {
+	public long getMaxPage() {
 		return maxPage;
 	}
 
-	public int getMedianPage() {
+	public long getMedianPage() {
 		return medianPage;
 	}
 
@@ -59,11 +59,11 @@ public class Pagination {
 		this.page = page;
 	}
 
-	public void setMaxPage(int maxPage) {
+	public void setMaxPage(long maxPage) {
 		this.maxPage = maxPage;
 	}
 
-	public void setMedianPage(int medianPage) {
+	public void setMedianPage(long medianPage) {
 		this.medianPage = medianPage;
 	}
 

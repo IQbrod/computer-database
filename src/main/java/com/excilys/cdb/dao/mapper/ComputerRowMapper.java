@@ -13,6 +13,6 @@ public class ComputerRowMapper implements RowMapper<Computer>{
 
 	@Override
 	public Computer mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new Computer(rs.getInt("id"), rs.getString("name"), rs.getTimestamp("introduced"), rs.getTimestamp("discontinued"), rs.getInt("company_id"));
+		return new Computer(rs.getInt("id"), rs.getString("name"), rs.getTimestamp("introduced"), rs.getTimestamp("discontinued"), rs.getLong("company_id"));
 	}
 }

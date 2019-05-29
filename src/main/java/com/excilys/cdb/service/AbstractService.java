@@ -13,16 +13,16 @@ public abstract class AbstractService<U extends AbstractModel> {
 		this.dao = dao;
 	}
 	
-	public U create(U modelObject) {
+	public long create(U modelObject) {
 		return this.dao.create(modelObject);
 	}
 	
-	public U update(U modelObject) {
-		return this.dao.update(modelObject);
+	public void update(U modelObject) {
+		this.dao.update(modelObject);
 	}
 	
-	public U delete(U modelObject) {
-		return this.dao.delete(modelObject);
+	public void delete(U modelObject) {
+		this.dao.delete(modelObject);
 	}
 	
 	public U read(long id) {
@@ -37,7 +37,7 @@ public abstract class AbstractService<U extends AbstractModel> {
 		return this.dao.list(page,size);
 	}
 	
-	public int count() {
+	public long count() {
 		return this.dao.count();
 	}
 }

@@ -23,7 +23,7 @@ public class CompanyServiceTest {
 	
 	@Test
 	public void CreateTest() throws Exception {
-		assertEquals(80,serviceInstance.create(new Company(80,"Entreprise")).getId());
+		assertEquals(80,serviceInstance.create(new Company(80,"Entreprise")));
 	}
 	
 	@Test
@@ -33,12 +33,12 @@ public class CompanyServiceTest {
 	
 	@Test
 	public void UpdateTest() throws Exception {
-		assertEquals("Updated",serviceInstance.update(new Company(5,"Updated")).getName());
+		serviceInstance.update(new Company(5,"Updated"));
 	}
 	
 	@Test
 	public void DeleteTest() throws Exception {
-		assertEquals(80,serviceInstance.delete(new Company(80,"DeleteMe")).getId());
+		serviceInstance.delete(new Company(80,"DeleteMe"));
 	}
 	
 	@Test

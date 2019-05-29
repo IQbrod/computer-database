@@ -121,8 +121,7 @@ public class CliController {
 				} else if (splitStr[1].equalsIgnoreCase(COMPANY_TABLE)) {
 					CompanyDto c = new CompanyDto(this.companyMapper.idToInt(splitStr[2]),splitStr[3]);
 					this.validator.validateCompanyDto(c);					
-					CompanyDto ret = this.companyMapper.modelToDto(this.companyService.create(this.companyMapper.dtoToModel(c)));
-					return "Create "+ret.toString();
+					return "Create "+ this.companyService.create(this.companyMapper.dtoToModel(c));
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}
@@ -139,8 +138,7 @@ public class CliController {
 				if (splitStr[1].equalsIgnoreCase(COMPUTER_TABLE)) {
 					ComputerDto c = new ComputerDto(this.companyMapper.idToInt(splitStr[2]),splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),(splitStr[6].contentEquals("_")) ? 0 : this.companyMapper.idToInt(splitStr[6]),"None");
 					this.validator.validateComputerDto(c);
-					ComputerDto ret = this.computerMapper.modelToDto(this.computerService.create(this.computerMapper.dtoToModel(c)));
-					return "Create "+ret.toString();
+					return "Create "+ this.computerService.create(this.computerMapper.dtoToModel(c));
 				} else if (splitStr[1].equalsIgnoreCase(COMPANY_TABLE)) {
 					throw this.log(new TooManyArgumentsException(splitStr[5]));
 				} else {
@@ -191,15 +189,14 @@ public class CliController {
 			case 2:
 				throw this.log(new MissingArgumentException(sizeExpected,splitStr.length));
 			case 3:
-				Dto ret;
 				if (splitStr[1].equalsIgnoreCase(COMPUTER_TABLE)) {
-					ret = this.computerMapper.modelToDto(this.computerService.delete(this.computerMapper.dtoToModel(new ComputerDto(this.companyMapper.idToInt(splitStr[2])))));
+					this.computerService.delete(this.computerMapper.dtoToModel(new ComputerDto(this.companyMapper.idToInt(splitStr[2]))));
 				} else if (splitStr[1].equalsIgnoreCase(COMPANY_TABLE)) {
-					ret = this.companyMapper.modelToDto(this.companyService.delete(this.companyMapper.dtoToModel(new CompanyDto(this.companyMapper.idToInt(splitStr[2])))));
+					this.companyService.delete(this.companyMapper.dtoToModel(new CompanyDto(this.companyMapper.idToInt(splitStr[2]))));
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}
-				return "Delete "+ret.toString();
+				return "Delete";
 			default:
 				throw this.log(new TooManyArgumentsException(splitStr[3]));
 		}
@@ -239,25 +236,24 @@ public class CliController {
 		case 3:
 			throw this.log(new MissingArgumentException(sizeExpected,splitStr.length));
 		default:
-			Dto ret;
 			if (splitStr[1].equalsIgnoreCase(COMPUTER_TABLE)) {
 				ComputerDto c = new ComputerDto(this.companyMapper.idToInt(splitStr[2]));
 				for (String s : Arrays.copyOfRange(splitStr, 3, splitStr.length)) {
 					this.updateTreatOption(c,s);
 				}
 				this.validator.validateComputerDto(c);
-				ret = this.computerMapper.modelToDto(this.computerService.update(this.computerMapper.dtoToModel(c)));
+				this.computerService.update(this.computerMapper.dtoToModel(c));
 			} else if (splitStr[1].equalsIgnoreCase(COMPANY_TABLE)) {
 				if(splitStr.length == 4) {
 					CompanyDto c = new CompanyDto(this.companyMapper.idToInt(splitStr[2]),splitStr[3]);
-					ret = this.companyMapper.modelToDto(this.companyService.update(this.companyMapper.dtoToModel(c)));
+					this.companyService.update(this.companyMapper.dtoToModel(c));
 				} else {
 					throw this.log(new TooManyArgumentsException(splitStr[4]));
 				}
 			} else {
 				throw this.log(new InvalidTableException(splitStr[1]));
 			}
-			return "Update "+ret.toString();
+			return "Update";
 		}
 	}
 	
