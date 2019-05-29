@@ -24,7 +24,6 @@ public class CompanyDao extends Dao<Company>{
 
 	@Override
 	public long create(Company aCompany) {
-		//this.entityManager.persist(aCompany);
 		return 0;
 	}
 
