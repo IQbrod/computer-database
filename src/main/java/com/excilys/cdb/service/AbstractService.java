@@ -13,8 +13,8 @@ public abstract class AbstractService<U extends AbstractModel> {
 		this.dao = dao;
 	}
 	
-	public long create(U modelObject) {
-		return this.dao.create(modelObject);
+	public void create(U modelObject) {
+		this.dao.create(modelObject);
 	}
 	
 	public void update(U modelObject) {

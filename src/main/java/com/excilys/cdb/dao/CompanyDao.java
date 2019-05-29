@@ -2,6 +2,9 @@ package com.excilys.cdb.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +16,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 @Repository
 @Transactional(propagation = Propagation.NESTED)
 public class CompanyDao extends Dao<Company>{
+	@PersistenceContext EntityManager entityManager;
+	
 	private QCompany qCompany = QCompany.company;
 	
 	public CompanyDao(CompanyRowMapper rowMapper, JPAQueryFactory jpaQueryFactory) {		
@@ -23,8 +28,8 @@ public class CompanyDao extends Dao<Company>{
 	}
 
 	@Override
-	public long create(Company aCompany) {
-		return 0;
+	public void create(Company aCompany) {
+		entityManager.persist(aCompany);
 	}
 
 	@Override

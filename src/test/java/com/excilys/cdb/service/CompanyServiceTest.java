@@ -23,7 +23,7 @@ public class CompanyServiceTest {
 	
 	@Test
 	public void CreateTest() throws Exception {
-		assertEquals(80,serviceInstance.create(new Company(80,"Entreprise")));
+		serviceInstance.create(new Company(80,"Entreprise"));
 	}
 	
 	@Test

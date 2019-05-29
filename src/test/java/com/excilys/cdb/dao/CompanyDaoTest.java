@@ -42,7 +42,7 @@ public class CompanyDaoTest {
 	/*-- CREATE --*/
 	@Test
 	public void TestCreate() throws Exception {
-		assertEquals(75,daoInstance.create(new Company(75,"Entreprise")));
+		daoInstance.create(new Company(75,"Entreprise"));
 	}
 	
 	@Test (expected = InvalidIdException.class)

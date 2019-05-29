@@ -121,7 +121,7 @@ public class CliController {
 				} else if (splitStr[1].equalsIgnoreCase(COMPANY_TABLE)) {
 					CompanyDto c = new CompanyDto(this.companyMapper.idToInt(splitStr[2]),splitStr[3]);
 					this.validator.validateCompanyDto(c);					
-					return "Create "+ this.companyService.create(this.companyMapper.dtoToModel(c));
+					return "Create";
 				} else {
 					throw this.log(new InvalidTableException(splitStr[1]));
 				}
@@ -138,7 +138,7 @@ public class CliController {
 				if (splitStr[1].equalsIgnoreCase(COMPUTER_TABLE)) {
 					ComputerDto c = new ComputerDto(this.companyMapper.idToInt(splitStr[2]),splitStr[3],this.castDate(splitStr[4]),this.castDate(splitStr[5]),(splitStr[6].contentEquals("_")) ? 0 : this.companyMapper.idToInt(splitStr[6]),"None");
 					this.validator.validateComputerDto(c);
-					return "Create "+ this.computerService.create(this.computerMapper.dtoToModel(c));
+					return "Create";
 				} else if (splitStr[1].equalsIgnoreCase(COMPANY_TABLE)) {
 					throw this.log(new TooManyArgumentsException(splitStr[5]));
 				} else {

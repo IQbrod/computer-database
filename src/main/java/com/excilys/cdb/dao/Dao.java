@@ -16,7 +16,7 @@ public abstract class Dao<T extends AbstractModel> {
 		this.jpaQueryFactory = jpaQueryFactory;
 	}
 	
-	public abstract long create(T obj);
+	public abstract void create(T obj);
 	public abstract void update(T obj);
 	public abstract void delete(T obj);
 	public abstract void deleteById(long i);

@@ -45,7 +45,7 @@ public class ComputerDaoTest {
 	// id
 	@Test
 	public void TestCreateDeleteMinimal() throws Exception {
-		assertEquals(750,daoInstance.create(new Computer(750,"Ordinateur",null,null,0L)));
+		daoInstance.create(new Computer(750,"Ordinateur",null,null,0L));
 		daoInstance.delete(new Computer(750,"Suppression",null,null,0L));
 	}
 	

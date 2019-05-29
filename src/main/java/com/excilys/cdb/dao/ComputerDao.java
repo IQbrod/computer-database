@@ -2,6 +2,9 @@ package com.excilys.cdb.dao;
 
 import java.util.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 @Repository
 @Transactional(propagation = Propagation.NESTED)
 public class ComputerDao extends Dao<Computer> {
+	@PersistenceContext EntityManager entityManager;
 	private QComputer qComputer = QComputer.computer;
 	private QCompany qCompany = QCompany.company;
 	
@@ -25,10 +29,8 @@ public class ComputerDao extends Dao<Computer> {
 	}
 	
 	@Override
-	public long create(Computer aComputer) {
-//		this.entityManager.persist(aComputer);
-//		this.entityManager.flush();
-		return 0;
+	public void create(Computer aComputer) {
+		this.entityManager.persist(aComputer);
 	}
 
 	@Override
