@@ -6,7 +6,7 @@
     <groupId>fr.iqbrod</groupId>
     <artifactId>computer-database</artifactId>
     <version>1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>pom</packaging>
     
     <properties>
     	<java.version>1.8</java.version>
@@ -36,6 +36,16 @@
 		<querydsl.version>4.0.6</querydsl.version>
 	</properties>
     
+    <modules>
+		<module>binding</module>
+	    <module>console</module>
+	    <module>core</module>
+	    <module>persistence</module>
+	    <module>service</module>
+	    <module>webapp</module>
+	</modules>
+
+
     <dependencies>
 	    <dependency>
 	    	<groupId>junit</groupId>
@@ -241,3 +251,4 @@
         </plugins>
     </build>
 </project>
+
