@@ -1,11 +1,9 @@
 ignore:
-  - "src/main/java/com/excilys/cdb/enums/*"
-  - "src/main/java/com/excilys/cdb/model/*"
-  - "src/main/java/com/excilys/cdb/userinterface/*"
-  - "src/main/java/com/excilys/cdb/main/*"
-  - "src/main/java/com/excilys/cdb/dto/*"
-  - "src/main/java/com/excilys/cdb/servlet/*"
-  - "src/main/java/com/excilys/cdb/spring/*"
+  - "core/src/main/java/com/excilys/cdb/enums/*"
+  - "core/src/main/java/com/excilys/cdb/model/*"
+  - "console/src/main/java/com/excilys/cdb/front_cli/*"
+  - "binding/src/main/java/com/excilys/cdb/dto/*"
+  - "webapp/*"
 
 coverage:
   range: 50..75
