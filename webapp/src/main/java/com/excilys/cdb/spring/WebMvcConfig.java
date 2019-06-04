@@ -38,6 +38,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	   return messageSource;
    }
    
+   @Override
+   public void addViewControllers(ViewControllerRegistry registry) {
+       ViewControllerRegistration r = registry.addViewController("/login");
+       r.setViewName("login");
+   }
+   
    @Bean
    public LocaleResolver localeResolver() {
       return new CookieLocaleResolver();
