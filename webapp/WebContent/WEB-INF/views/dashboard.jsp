@@ -17,6 +17,10 @@
             <a class="navbar-brand" href="${pageContext.request.contextPath}"><spring:message code="app.title"/></a>
         </div>
     </header>
+    
+    <script src="./js/jquery.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+	<script src="./js/dashboard.js"></script>
 
     <section id="main">
         <div class="container">
@@ -123,11 +127,6 @@
 	            <li><a href="?page=1&size=100">100</a></li>
 	        </ul>
         </div>
-
     </footer>
-<script src="./js/jquery.min.js"></script>
-<script src="./js/bootstrap.min.js"></script>
-<script src="./js/dashboard.js"></script>
-
 </body>
 </html>

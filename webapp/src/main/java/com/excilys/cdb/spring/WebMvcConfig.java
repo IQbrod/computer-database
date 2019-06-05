@@ -38,12 +38,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	   return messageSource;
    }
    
-   @Override
-   public void addViewControllers(ViewControllerRegistry registry) {
-       ViewControllerRegistration r = registry.addViewController("/login");
-       r.setViewName("login");
-   }
-   
    @Bean
    public LocaleResolver localeResolver() {
       return new CookieLocaleResolver();
@@ -61,9 +55,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
    
    @Override
    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-	   registry.addResourceHandler("/css/**").addResourceLocations("resources/css/");
-	   registry.addResourceHandler("/js/**").addResourceLocations("resources/js/");
-	   registry.addResourceHandler("/fonts/**").addResourceLocations("resources/fonts/");
+	   registry.addResourceHandler("/css/**").addResourceLocations("static/css/");
+	   registry.addResourceHandler("/js/**").addResourceLocations("static/js/");
+	   registry.addResourceHandler("/fonts/**").addResourceLocations("static/fonts/");
    }
    
    @Override
