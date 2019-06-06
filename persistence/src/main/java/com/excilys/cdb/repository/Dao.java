@@ -10,6 +10,9 @@ public abstract class Dao<T extends AbstractModel> {
 	protected final JPAQueryFactory jpaQueryFactory;
 	protected final RowMapper<T> rowMapper;
 	
+	protected Dao(JPAQueryFactory jpaQueryFactory) {
+		this(null, jpaQueryFactory);
+	}
 	
 	protected Dao(RowMapper<T> rowMapper, JPAQueryFactory jpaQueryFactory) {
 		this.rowMapper = rowMapper;

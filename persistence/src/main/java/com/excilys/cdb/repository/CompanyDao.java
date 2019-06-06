@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.cdb.row_mapper.CompanyRowMapper;
 import com.excilys.cdb.model.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -20,9 +19,8 @@ public class CompanyDao extends Dao<Company>{
 	
 	private QCompany qCompany = QCompany.company;
 	
-	public CompanyDao(CompanyRowMapper rowMapper, JPAQueryFactory jpaQueryFactory) {		
+	public CompanyDao(JPAQueryFactory jpaQueryFactory) {		
 		super(
-			rowMapper,
 			jpaQueryFactory
 		);
 	}

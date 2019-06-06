@@ -6,7 +6,7 @@ import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.model.Company;
 
 @Component
-public class CompanyMapper extends Mapper<CompanyDto, Company>{	
+public class CompanyDtoMapper extends DtoMapper<CompanyDto, Company>{	
 
 	@Override
 	public Company dtoToModel(CompanyDto dtoObject) {

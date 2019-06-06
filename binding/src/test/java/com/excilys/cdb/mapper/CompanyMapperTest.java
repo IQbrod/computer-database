@@ -15,10 +15,10 @@ import com.excilys.cdb.spring.TestConfiguration;
 @ContextConfiguration(classes= TestConfiguration.class)
 public class CompanyMapperTest {
 
-	private CompanyMapper mapperInstance;
+	private CompanyDtoMapper mapperInstance;
 	
 	@Autowired
-	void setInstance(CompanyMapper beanInjection) {
+	void setInstance(CompanyDtoMapper beanInjection) {
 		this.mapperInstance = beanInjection;
 	}
 		

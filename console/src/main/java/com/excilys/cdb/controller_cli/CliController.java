@@ -15,8 +15,8 @@ import com.excilys.cdb.dto.*;
 import com.excilys.cdb.enums.CommandEnum;
 import com.excilys.cdb.enums.CreateOptionEnum;
 import com.excilys.cdb.exception.*;
-import com.excilys.cdb.mapper.CompanyMapper;
-import com.excilys.cdb.mapper.ComputerMapper;
+import com.excilys.cdb.mapper.CompanyDtoMapper;
+import com.excilys.cdb.mapper.ComputerDtoMapper;
 import com.excilys.cdb.service.*;
 import com.excilys.cdb.validator.Validator;
 
@@ -30,9 +30,9 @@ public class CliController {
 	private Logger logger = LogManager.getLogger(this.getClass());
 	
 	@Autowired
-	private ComputerMapper computerMapper;
+	private ComputerDtoMapper computerMapper;
 	@Autowired
-	private CompanyMapper companyMapper;
+	private CompanyDtoMapper companyMapper;
 	@Autowired
 	private ComputerService computerService;
 	@Autowired

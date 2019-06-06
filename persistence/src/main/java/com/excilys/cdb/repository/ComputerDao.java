@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.cdb.row_mapper.ComputerRowMapper;
 import com.excilys.cdb.enums.ComputerFields;
 import com.excilys.cdb.model.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,9 +20,8 @@ public class ComputerDao extends Dao<Computer> {
 	private QComputer qComputer = QComputer.computer;
 	private QCompany qCompany = QCompany.company;
 	
-	public ComputerDao(ComputerRowMapper rowMapper, JPAQueryFactory jpaQueryFactory) {
+	public ComputerDao(JPAQueryFactory jpaQueryFactory) {
 		super(
-			rowMapper,
 			jpaQueryFactory
 		);
 	}

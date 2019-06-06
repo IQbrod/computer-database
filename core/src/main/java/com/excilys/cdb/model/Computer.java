@@ -78,9 +78,5 @@ public class Computer extends AbstractModel {
 		
 		
 		return result;
-	}
-	
-	
-	
-	
+	}	
 }

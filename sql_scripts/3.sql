@@ -1,3 +1,6 @@
+insert into role (id,name) values ( 1,'USER' );
+insert into role (id,name) values ( 2,'ADMIN' );
+
 insert into company (id,name) values (  1,'Apple Inc.');
 insert into company (id,name) values (  2,'Thinking Machines');
 insert into company (id,name) values (  3,'RCA');

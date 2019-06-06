@@ -12,7 +12,7 @@ public class AppInitializer extends
  
    @Override
    protected Class<?>[] getRootConfigClasses() {
-      return new Class[] { RootConfig.class, SpringSecurityConfig.class };
+      return new Class[] { SpringSecurityConfig.class, RootConfig.class };
    }
  
    @Override

@@ -56,6 +56,13 @@ public class Validator {
 		this.validateId(computerDto.getCompanyId());
 	}
 	
+	public void validateUserDto(UserDto userDto) {
+		this.validateId(userDto.getId());
+		this.required(userDto.getUsername(), "username");
+		this.required(userDto.getPassword(), "password");
+		this.validateId(userDto.getRoleId());
+	}
+	
 	public void validatePagination(String paginationValue) {
 		try {
 			int localId = Integer.parseInt(paginationValue);

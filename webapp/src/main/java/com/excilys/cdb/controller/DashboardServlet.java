@@ -10,7 +10,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.excilys.cdb.dto.ComputerDto;
-import com.excilys.cdb.mapper.ComputerMapper;
+import com.excilys.cdb.mapper.ComputerDtoMapper;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.controller.model.Pagination;
 
@@ -22,9 +22,9 @@ public class DashboardServlet {
 	private static final String DASHBOARD_PATTERN = "dashboard";
 	
 	private final ComputerService computerService;
-	private final ComputerMapper computerMapper;
+	private final ComputerDtoMapper computerMapper;
 	
-	public DashboardServlet(ComputerService computerService, ComputerMapper computerMapper) {
+	public DashboardServlet(ComputerService computerService, ComputerDtoMapper computerMapper) {
 		this.computerService = computerService;
 		this.computerMapper = computerMapper;
 	}

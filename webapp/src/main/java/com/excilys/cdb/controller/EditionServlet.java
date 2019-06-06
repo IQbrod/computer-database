@@ -14,8 +14,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.exception.ShouldBeSentToClientException;
-import com.excilys.cdb.mapper.CompanyMapper;
-import com.excilys.cdb.mapper.ComputerMapper;
+import com.excilys.cdb.mapper.CompanyDtoMapper;
+import com.excilys.cdb.mapper.ComputerDtoMapper;
 import com.excilys.cdb.service.*;
 import com.excilys.cdb.controller.model.ServletErrorModel;
 import com.excilys.cdb.validator.Validator;
@@ -27,11 +27,11 @@ public class EditionServlet {
 	
 	private final ComputerService computerService;
 	private final CompanyService companyService;
-	private final CompanyMapper companyMapper;
-	private final ComputerMapper computerMapper;
+	private final CompanyDtoMapper companyMapper;
+	private final ComputerDtoMapper computerMapper;
 	private final Validator validator;
 	
-	public EditionServlet(ComputerService computerService, CompanyService companyService, CompanyMapper companyMapper, ComputerMapper computerMapper, Validator validator) {
+	public EditionServlet(ComputerService computerService, CompanyService companyService, CompanyDtoMapper companyMapper, ComputerDtoMapper computerMapper, Validator validator) {
 		this.computerService = computerService;
 		this.companyService = companyService;
 		this.companyMapper = companyMapper;

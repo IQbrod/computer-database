@@ -10,11 +10,11 @@ import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.CompanyService;
 
 @Component
-public class ComputerMapper extends Mapper<ComputerDto, Computer>{
-	private final CompanyMapper companyMapper;
+public class ComputerDtoMapper extends DtoMapper<ComputerDto, Computer>{
+	private final CompanyDtoMapper companyMapper;
 	private final CompanyService companyService;
 	
-	public ComputerMapper(CompanyMapper companyMapper, CompanyService companyService) {
+	public ComputerDtoMapper(CompanyDtoMapper companyMapper, CompanyService companyService) {
 		this.companyMapper = companyMapper;
 		this.companyService = companyService;
 	}
