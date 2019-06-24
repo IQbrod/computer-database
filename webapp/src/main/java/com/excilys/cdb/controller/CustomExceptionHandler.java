@@ -33,7 +33,9 @@ public class CustomExceptionHandler extends ExceptionHandlerExceptionResolver {
 			error.setCustomMessage("Something went wrong unfortunately: "+cause.getClass().toString());
 		}
 		
+		cause.printStackTrace();
+		
 		redir.addFlashAttribute(ErrorServlet.ERROR_PATTERN, error);
-		return new RedirectView(ErrorServlet.ERROR_PATTERN);
+		return new RedirectView("/"+ErrorServlet.ERROR_PATTERN, true);
 	}
 }

@@ -6,6 +6,10 @@ public class RoleDto extends Dto {
 	@NotEmpty
 	private String name;
 	
+	public RoleDto() {
+		this(0L);
+	}
+	
 	public RoleDto(Long id) {
 		this(id,"");
 	}

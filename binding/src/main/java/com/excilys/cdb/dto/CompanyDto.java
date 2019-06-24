@@ -6,6 +6,10 @@ public class CompanyDto extends Dto {
 	@NotEmpty
 	private String name;
 	
+	public CompanyDto() {
+		this(0L);
+	}
+	
 	public CompanyDto(Long id) {
 		this(id,"");
 	}

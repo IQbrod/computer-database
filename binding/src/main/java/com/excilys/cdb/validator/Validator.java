@@ -72,4 +72,9 @@ public class Validator {
 			throw new InvalidIntegerException(paginationValue);
 		}
 	}
+	
+	public void validateRoleDto(RoleDto roleDto) {
+		this.validateId(roleDto.getId());
+		this.required(roleDto.getName(), "name");
+	}
 }

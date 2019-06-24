@@ -13,6 +13,10 @@ public class UserDto extends Dto {
 	@NotEmpty
 	private String roleName;
 	
+	public UserDto() {
+		this(0L);
+	}
+	
 	public UserDto(Long id) {
 		this(id,"name","pass",1L,"USER");
 	}

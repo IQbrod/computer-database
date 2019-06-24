@@ -27,7 +27,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public RoleHierarchy roleHierarchy() {
 		RoleHierarchyImpl role = new RoleHierarchyImpl();
-		role.setHierarchy("ROLE_ADMIN > ROLE_USER");
+		role.setHierarchy("ROLE_ADMIN > ROLE_CUSTOM > ROLE_USER");
 		return role;
 	}
 	
@@ -36,13 +36,18 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
 		
 		http.authorizeRequests()
-			.antMatchers("/css/**", "/js/**", "/fonts/**").permitAll()
+			.mvcMatchers("/css/**", "/js/**", "/fonts/**").permitAll()
 			
-			.antMatchers(HttpMethod.GET, "/", "/computers", "/error", "/signup").permitAll()
-			.antMatchers(HttpMethod.POST, "/signup").permitAll()
+			.mvcMatchers(HttpMethod.GET, "/", "/computers", "/error", "/signup").permitAll()
+			.mvcMatchers(HttpMethod.POST, "/signup").permitAll()
 			
-			.antMatchers(HttpMethod.GET, "/computers/new").hasRole("USER")
-			.antMatchers(HttpMethod.POST, "/computers").hasRole("USER")
+			.mvcMatchers("/api/**").permitAll()
+			
+			.mvcMatchers(HttpMethod.GET, "/computers/new").hasRole("USER")
+			.mvcMatchers(HttpMethod.POST, "/computers").hasRole("USER")
+			
+			.mvcMatchers(HttpMethod.GET, "/computers/**").hasRole("CUSTOM")
+			.mvcMatchers(HttpMethod.PUT, "/computers").hasRole("CUSTOM")
 			
 			.anyRequest().hasRole("ADMIN")
 		.and().formLogin()

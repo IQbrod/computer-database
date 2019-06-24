@@ -35,7 +35,12 @@ public class UserDao extends Dao<User>{
 		this.jpaQueryFactory.update(qUser).where(qUser.id.eq(aUser.getId()))
 			.set(qUser.username, aUser.getUsername())
 			.set(qUser.password, aUser.getPassword())
-			.set(qUser.roleId, aUser.getRoleId());
+			.set(qUser.roleId, aUser.getRoleId()).execute();
+	}
+	
+	public void updateByRoleId(long id) {
+		this.jpaQueryFactory.update(qUser).where(qUser.roleId.eq(id))
+			.set(qUser.roleId, 1L).execute();
 	}
 
 	
@@ -55,7 +60,6 @@ public class UserDao extends Dao<User>{
 	}
 	
 	public User findByUsername(String name) {
-		System.out.println("OUI");
 		return this.jpaQueryFactory.selectFrom(qUser).where(qUser.username.eq(name)).fetchOne();
 	}
 	
@@ -73,5 +77,12 @@ public class UserDao extends Dao<User>{
 	@Override
 	public long count() {
 		return this.jpaQueryFactory.selectFrom(qUser).fetchCount();
+	}
+	
+	@Override
+	public long countByName(String name) {
+		return this.jpaQueryFactory.selectFrom(qUser)
+			.where(qUser.username.like("%"+name+"%")
+			).fetchCount();
 	}
 }

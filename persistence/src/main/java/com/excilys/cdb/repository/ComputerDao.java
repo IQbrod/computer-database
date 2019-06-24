@@ -90,6 +90,7 @@ public class ComputerDao extends Dao<Computer> {
 				.limit(size).offset(offset).fetch();
 	}
 	
+	@Override
 	public long countByName(String name) {
 		return this.jpaQueryFactory.selectFrom(qComputer)
 			.leftJoin(qCompany).on(qComputer.companyId.eq(qCompany.id))

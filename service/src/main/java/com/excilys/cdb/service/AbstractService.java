@@ -40,4 +40,8 @@ public abstract class AbstractService<U extends AbstractModel> {
 	public long count() {
 		return this.dao.count();
 	}
+	
+	public long countByName(String name) {
+		return this.dao.countByName(name);
+	}
 }

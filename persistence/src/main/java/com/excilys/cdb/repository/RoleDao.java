@@ -32,7 +32,7 @@ public class RoleDao extends Dao<Role>{
 
 	@Override
 	public void update(Role aRole) {
-		this.jpaQueryFactory.update(qRole).where(qRole.id.eq(aRole.getId())).set(qRole.name, aRole.getName());
+		this.jpaQueryFactory.update(qRole).where(qRole.id.eq(aRole.getId())).set(qRole.name, aRole.getName()).execute();
 	}
 
 	
@@ -69,5 +69,12 @@ public class RoleDao extends Dao<Role>{
 	@Override
 	public long count() {
 		return this.jpaQueryFactory.selectFrom(qRole).fetchCount();
+	}
+	
+	@Override
+	public long countByName(String name) {
+		return this.jpaQueryFactory.selectFrom(qRole)
+			.where(qRole.name.like("%"+name+"%")
+			).fetchCount();
 	}
 }

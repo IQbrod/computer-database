@@ -18,7 +18,7 @@ import com.excilys.cdb.controller.CustomExceptionHandler;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = { "com.excilys.cdb.controller" })
+@ComponentScan(basePackages = { "com.excilys.cdb.controller", "com.excilys.cdb.webservice" })
 public class WebMvcConfig implements WebMvcConfigurer {
 	
    @Bean

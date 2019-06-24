@@ -32,7 +32,7 @@ public class CompanyDao extends Dao<Company>{
 
 	@Override
 	public void update(Company aCompany) {
-		this.jpaQueryFactory.update(qCompany).where(qCompany.id.eq(aCompany.getId())).set(qCompany.name, aCompany.getName());
+		this.jpaQueryFactory.update(qCompany).where(qCompany.id.eq(aCompany.getId())).set(qCompany.name, aCompany.getName()).execute();
 	}
 
 	
@@ -65,5 +65,12 @@ public class CompanyDao extends Dao<Company>{
 	@Override
 	public long count() {
 		return this.jpaQueryFactory.selectFrom(qCompany).fetchCount();
+	}
+	
+	@Override
+	public long countByName(String name) {
+		return this.jpaQueryFactory.selectFrom(qCompany)
+			.where(qCompany.name.like("%"+name+"%")
+			).fetchCount();
 	}
 }

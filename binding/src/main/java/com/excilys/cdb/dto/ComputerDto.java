@@ -18,6 +18,10 @@ public class ComputerDto extends Dto {
 	
 	private static final String DATE_PATTERN = "^(((19|2[0-9])[0-9]{2})/(0[469]|11)/(0[1-9]|[12][0-9]|30))$";
 	
+	public ComputerDto() {
+		this(0L);
+	}
+	
 	public ComputerDto(Long id) {
 		this(id,"",null,null,0L,"None");
 	}

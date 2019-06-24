@@ -27,5 +27,6 @@ public abstract class Dao<T extends AbstractModel> {
 	public abstract List<T> listAll();
 	public abstract List<T> list(int page, int size);
 	public abstract long count();
+	public abstract long countByName(String name);
 	
 }
