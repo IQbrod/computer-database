@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.excilys.cdb.enums.UserFields;
 import com.excilys.cdb.model.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -18,6 +19,7 @@ public class UserDao extends Dao<User>{
 	@PersistenceContext EntityManager entityManager;
 	
 	private QUser qUser = QUser.user;
+	private QRole qRole = QRole.role;
 	
 	public UserDao(JPAQueryFactory jpaQueryFactory) {		
 		super(
@@ -63,6 +65,10 @@ public class UserDao extends Dao<User>{
 		return this.jpaQueryFactory.selectFrom(qUser).where(qUser.username.eq(name)).fetchOne();
 	}
 	
+	public User checkLogin(String name, String encodedPassword) {
+		return this.jpaQueryFactory.selectFrom(qUser).where(qUser.username.eq(name).and(qUser.password.eq(encodedPassword))).fetchOne();
+	}
+	
 	@Override
 	public List<User> listAll() {	
 		return this.jpaQueryFactory.selectFrom(qUser).fetch();
@@ -72,6 +78,16 @@ public class UserDao extends Dao<User>{
 	public List<User> list(int page, int size) {
 		int offset = (page-1)*size;		
 		return this.jpaQueryFactory.selectFrom(qUser).limit(size).offset(offset).fetch();
+	}
+	
+	@Override
+	public List<User> listByName(String name, int page, int size, String orderBy) {
+		int offset = (page-1)*size;	
+		return this.jpaQueryFactory.selectFrom(qUser)
+				.leftJoin(qRole).on(qUser.roleId.eq(qRole.id))
+				.where(qUser.username.like("%"+name+"%")
+				).orderBy(UserFields.getOrderByField(orderBy).getField())
+				.limit(size).offset(offset).fetch();
 	}
 	
 	@Override

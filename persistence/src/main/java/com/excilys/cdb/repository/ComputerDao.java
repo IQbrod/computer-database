@@ -80,6 +80,7 @@ public class ComputerDao extends Dao<Computer> {
 		return this.listByName("", page, size, orderBy);
 	}
 	
+	@Override
 	public List<Computer> listByName(String name, int page, int size, String orderBy) {
 		int offset = (page-1)*size;	
 		return this.jpaQueryFactory.selectFrom(qComputer)

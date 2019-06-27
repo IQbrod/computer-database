@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.excilys.cdb.enums.RoleFields;
 import com.excilys.cdb.model.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -64,6 +65,15 @@ public class RoleDao extends Dao<Role>{
 	public List<Role> list(int page, int size) {
 		int offset = (page-1)*size;		
 		return this.jpaQueryFactory.selectFrom(qRole).limit(size).offset(offset).fetch();
+	}
+	
+	@Override
+	public List<Role> listByName(String name, int page, int size, String orderBy) {
+		int offset = (page-1)*size;	
+		return this.jpaQueryFactory.selectFrom(qRole)
+				.where(qRole.name.like("%"+name+"%")
+				).orderBy(RoleFields.getOrderByField(orderBy).getField())
+				.limit(size).offset(offset).fetch();
 	}
 	
 	@Override

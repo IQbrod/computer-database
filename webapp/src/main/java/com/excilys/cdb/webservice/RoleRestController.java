@@ -34,10 +34,18 @@ public class RoleRestController {
 	
 	@GetMapping
 	public Iterable<RoleDto> getPart(
-		@RequestParam(value="page") Integer page,
-    	@RequestParam(value="size") Integer size
+		@RequestParam(value="page", required = false) Integer page,
+    	@RequestParam(value="size", required = false) Integer size,
+    	@RequestParam(value="search", required = false) String search,
+    	@RequestParam(value="orderBy", required = false) String orderBy
 	) {
-		return this.roleService.list(page, size).stream().map(this.roleDtoMapper::modelToDto).collect(Collectors.toList());
+		if (page == null && size == null && search == null && orderBy == null) {
+			return this.roleService.listAllElements().stream().map(this.roleDtoMapper::modelToDto).collect(Collectors.toList());
+		} else if (page == null || size == null || search == null || orderBy == null) {
+			return null;
+		} else {
+			return this.roleService.list(page, size, search, orderBy).stream().map(this.roleDtoMapper::modelToDto).collect(Collectors.toList());
+		}
 	}
 	
 	@PostMapping

@@ -21,6 +21,10 @@ public class UserService extends AbstractService<User> implements UserDetailsSer
 	public User findByUsername(String name) {
 		return ((UserDao)this.dao).findByUsername(name);
 	}
+	
+	public User findByNameAndPass(String name, String pass) {
+		return ((UserDao)this.dao).checkLogin(name, pass);
+	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

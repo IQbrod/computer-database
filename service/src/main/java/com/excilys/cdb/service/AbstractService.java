@@ -37,6 +37,10 @@ public abstract class AbstractService<U extends AbstractModel> {
 		return this.dao.list(page,size);
 	}
 	
+	public List<U> list(int page, int size, String name, String orderBy) {
+		return this.dao.listByName(name, page, size, orderBy);
+	}
+	
 	public long count() {
 		return this.dao.count();
 	}

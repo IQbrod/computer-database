@@ -39,7 +39,7 @@ public class ComputerRestController {
     	@RequestParam(value="search") String search,
     	@RequestParam(value="orderBy") String orderBy
 	) {
-		return this.computerService.listByName(search, page, size, orderBy).stream().map(this.computerDtoMapper::modelToDto).collect(Collectors.toList());
+		return this.computerService.list(page, size, search, orderBy).stream().map(this.computerDtoMapper::modelToDto).collect(Collectors.toList());
 	}
 	
 	@PostMapping

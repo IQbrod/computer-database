@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.excilys.cdb.enums.CompanyFields;
 import com.excilys.cdb.model.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -60,6 +61,15 @@ public class CompanyDao extends Dao<Company>{
 	public List<Company> list(int page, int size) {
 		int offset = (page-1)*size;		
 		return this.jpaQueryFactory.selectFrom(qCompany).limit(size).offset(offset).fetch();
+	}
+	
+	@Override
+	public List<Company> listByName(String name, int page, int size, String orderBy) {
+		int offset = (page-1)*size;	
+		return this.jpaQueryFactory.selectFrom(qCompany)
+				.where(qCompany.name.like("%"+name+"%")
+				).orderBy(CompanyFields.getOrderByField(orderBy).getField())
+				.limit(size).offset(offset).fetch();
 	}
 	
 	@Override

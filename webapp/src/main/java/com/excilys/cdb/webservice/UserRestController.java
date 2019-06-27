@@ -35,9 +35,11 @@ public class UserRestController {
 	@GetMapping
 	public Iterable<UserDto> getPart(
 		@RequestParam(value="page") Integer page,
-    	@RequestParam(value="size") Integer size
+    	@RequestParam(value="size") Integer size,
+    	@RequestParam(value="search") String search,
+    	@RequestParam(value="orderBy") String orderBy
 	) {
-		return this.userService.list(page, size).stream().map(this.userDtoMapper::modelToDto).collect(Collectors.toList());
+		return this.userService.list(page, size, search, orderBy).stream().map(this.userDtoMapper::modelToDto).collect(Collectors.toList());
 	}
 	
 	@PostMapping
