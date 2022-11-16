@@ -35,7 +35,7 @@
 		<querydsl.version>4.0.6</querydsl.version>
 		<spring.security.version>5.1.5.RELEASE</spring.security.version>
 		<javax.ws.version>2.1.1</javax.ws.version>
-		<jackson.version>2.9.4</jackson.version>
+		<jackson.version>2.12.7.1</jackson.version>
 		<jwt.version>0.10.5</jwt.version>
 	</properties>
 
